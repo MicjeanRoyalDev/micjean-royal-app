@@ -133,6 +133,41 @@ BE = Backend End
 * Always test your screen or logic before pushing
 
 ---
+## Folder Structure
+MicjeanApp/
+├── apps/
+│   ├── customer/              # Customer-facing app (student user)
+│   │   ├── App.js
+│   │   ├── screens/
+│   │   ├── components/
+│   │   └── navigation/
+│   │
+│   ├── vendor/                # Vendor-facing app (restaurant staff)
+│   │   ├── App.js
+│   │   ├── screens/
+│   │   ├── components/
+│   │   └── navigation/
+│
+├── backend/
+│   ├── supabase/              # Supabase client, auth, and queries
+│   │   ├── client.js
+│   │   ├── auth.js
+│   │   └── orders.js
+│   └── utils/                 # Shared server-side utils or mock APIs
+│
+├── shared/                    # Code reused across apps
+│   ├── components/            # UI components used in both apps
+│   ├── constants/             # Colors, themes, config values
+│   ├── hooks/                 # Shared React hooks (e.g. auth hook)
+│   └── assets/                # Images, icons, fonts
+│
+├── .gitignore
+├── package.json               # Workspace config or root dependencies
+├── README.md
+└── Guildlines.md
+
+// NOTE: an empty .gitkeep file has been added to all the folders to enable Github to recognise the empty folders, you can delete it when you add a content to each folder. 
+
 
 
 Let’s work as a team and ship something great together. 🚀
