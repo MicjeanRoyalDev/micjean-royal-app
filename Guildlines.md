@@ -134,7 +134,7 @@ BE = Backend End
 
 ---
 ## Folder Structure
-MicjeanApp/
+``` MicjeanApp/
 ├── apps/
 │   ├── customer/              # Customer-facing app (student user)
 │   │   ├── App.js
@@ -164,9 +164,11 @@ MicjeanApp/
 ├── .gitignore
 ├── package.json               # Workspace config or root dependencies
 ├── README.md
-└── Guildlines.md
+└── Guildlines.md```
 
-// NOTE: an empty .gitkeep file has been added to all the folders to enable Github to recognise the empty folders, you can delete it when you add a content to each folder. 
+
+> 💡 **NOTE:** An empty `.gitkeep` file has been added to all folders so GitHub can track them. You may safely delete `.gitkeep` when you add real files to a folder.
+ 
 
 
 
