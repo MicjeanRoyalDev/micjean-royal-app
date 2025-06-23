@@ -47,7 +47,7 @@ git checkout -b feature/task-name
 
 # Work on your feature, then commit and push
 git add .
-git commit -m "FE-01: Add login screen UI"
+git commit -m "CA: Add login screen UI"
 git push origin feature/task-name
 
 # Go to GitHub and open a PR to merge into dev
