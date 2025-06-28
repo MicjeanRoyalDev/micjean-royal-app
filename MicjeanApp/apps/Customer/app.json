@@ -1,0 +1,29 @@
+{
+    "expo": {
+        "name": "CustomerApp",
+        "slug": "customer-app",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "../../shared/assets/images/tilapia pic for mock data.jpeg",
+        "splash": {
+            "image": "../../shared/assets/images/micjean photo for background.jpg",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "assetBundlePatterns": [
+            "../../shared/assets/**/*"
+        ],
+        "ios": {
+            "supportsTablet": true
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "../../shared/assets/images/micjean royal logo.png",
+                "backgroundColor": "#ffffff"
+            }
+        },
+        "web": {
+            "favicon": "../../shared/assets/images/micjean royal logo.png"
+        }
+    }
+}
