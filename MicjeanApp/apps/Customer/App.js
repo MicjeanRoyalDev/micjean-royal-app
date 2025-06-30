@@ -1,10 +1,12 @@
+// apps/customer/App.js
 import React from 'react';
-import { View, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import AuthStack from './navigation/AuthStack';
 
-export default function App() {
-  return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-      <Text>Welcome to Customer App! ❤️</Text>
-    </View>
-  );
-}
+const App = () => (
+  <NavigationContainer>
+    <AuthStack />
+  </NavigationContainer>
+);
+
+export default App;
