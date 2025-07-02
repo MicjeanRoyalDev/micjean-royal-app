@@ -6,7 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { Appearance, Platform, View } from 'react-native';
 import { NAV_THEME } from '~/lib/constants';
-import { useColorScheme } from '~/lib/useColorScheme';
+import { useColorScheme } from '~/hooks/useColorScheme';
 import { PortalHost } from '@rn-primitives/portal';
 import { ThemeToggle } from '~/components/ThemeToggle';
 import { setAndroidNavigationBar } from '~/lib/android-navigation-bar';
@@ -15,7 +15,6 @@ const LIGHT_THEME: Theme = {
   ...DefaultTheme,
   colors: NAV_THEME.light,
 };
-
 const DARK_THEME: Theme = {
   ...DarkTheme,
   colors: NAV_THEME.dark,
@@ -62,3 +61,20 @@ function useSetAndroidNavigationBar() {
 }
 
 function noop() {}
+
+/*
+
+export default function RootLayout() {
+  usePlatformSpecificSetup();
+  const { isDarkColorScheme } = useColorScheme();
+
+  return (
+    <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+      <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+      <Slot />
+      <PortalHost />
+    </ThemeProvider>
+  );
+}
+
+*/
