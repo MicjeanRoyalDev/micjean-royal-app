@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Image, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Easing, Image, Text, View } from "react-native";
 import { Label } from "./ui/label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
@@ -17,6 +17,27 @@ export const LoginScreen = ({ afterLogin }: LoginScreenProps) => {
   const [password, setPassword] = useState("");
   const [authenticating, setAuthenticating] = useState(false);
   const router = useRouter();
+  const spinValue = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (authenticating) {
+      const animation = Animated.loop(
+        Animated.timing(spinValue, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        })
+      );
+      animation.start();
+      return () => animation.stop();
+    }
+  }, [authenticating, spinValue]);
+
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
 
   const handleLogin = () => {
     setAuthenticating(true);
@@ -91,7 +112,9 @@ export const LoginScreen = ({ afterLogin }: LoginScreenProps) => {
           <Button size="lg" className="mt-8" onPress={handleLogin}>
             <Text className="text-lg font-semibold text-primary-foreground">
               {authenticating ? (
-                <Loader className="animate-spin" />
+                <Animated.View style={{ transform: [{ rotate: spin }] }}>
+                  <Loader />
+                </Animated.View>
               ) : (
                 "Sign In"
               )}

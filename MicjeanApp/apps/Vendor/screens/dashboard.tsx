@@ -70,17 +70,17 @@ const mostOrdered = [
   {
     name: "Spicy seasoned seafood noodles",
     orders: 200,
-    image: require("../../assets/images/tilapia pic for mock data.jpeg"),
+    image: require("~/assets/images/tilapia pic for mock data.jpeg"),
   },
   {
     name: "Salted pasta with mushroom sauce",
     orders: 120,
-    image: require("../../assets/images/tilapia pic for mock data.jpeg"),
+    image: require("~/assets/images/tilapia pic for mock data.jpeg"),
   },
   {
     name: "Beef dumpling in hot and sour soup",
     orders: 80,
-    image: require("../../assets/images/tilapia pic for mock data.jpeg"),
+    image: require("~/assets/images/tilapia pic for mock data.jpeg"),
   },
 ];
 

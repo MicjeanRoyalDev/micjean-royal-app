@@ -6,9 +6,7 @@ import { DashboardLayout } from "~/components/DashboardLayout";
 export default function Screen() {
   return (
     <AuthProvider>
-      <DashboardLayout>
-        <Slot />
-      </DashboardLayout>
+      <DashboardLayout />
     </AuthProvider>
   );
 }

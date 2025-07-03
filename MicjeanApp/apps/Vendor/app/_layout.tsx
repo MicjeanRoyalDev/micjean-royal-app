@@ -1,7 +1,7 @@
 import '~/global.css';
 
 import { DarkTheme, DefaultTheme, Theme, ThemeProvider } from '@react-navigation/native';
-import { Slot, Stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { Appearance, Platform, View } from 'react-native';
@@ -38,7 +38,44 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
       <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-      <Slot />
+      <Stack>
+              <Stack.Screen
+                name="index"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="orders"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="products"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="customers"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="menu"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="settings"
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </Stack>
       <PortalHost />
     </ThemeProvider>
   );

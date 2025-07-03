@@ -1,6 +1,6 @@
 import React from "react";
-import { Text, View, Pressable, StyleSheet } from "react-native";
-import { Link } from "expo-router";
+import { Text, View, Pressable } from "react-native";
+import { useNavigation, useNavigationState } from "@react-navigation/native";
 import {
   Bell,
   ChevronsLeft,
@@ -14,28 +14,38 @@ import {
 import { Button } from "~/components/ui/button";
 import { useAuth } from "~/context/auth";
 import { logout } from "~/api/dummy";
+import { DrawerContentComponentProps } from "@react-navigation/drawer";
 
 const navItems = [
-  { href: "/(authenticated)", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/(authenticated)/orders", icon: Bell, label: "Orders" },
-  { href: "/(authenticated)/menu", icon: UtensilsCrossed, label: "Menu" },
-  { href: "/(authenticated)/products", icon: ShoppingCart, label: "Products" },
-  { href: "/(authenticated)/customers", icon: Users, label: "Customers" },
-  { href: "/(authenticated)/settings", icon: Settings, label: "Settings" },
+  { name: "Dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { name: "Orders", icon: Bell, label: "Orders" },
+  { name: "Menu", icon: UtensilsCrossed, label: "Menu" },
+  { name: "Products", icon: ShoppingCart, label: "Products" },
+  { name: "Customers", icon: Users, label: "Customers" },
+  { name: "Settings", icon: Settings, label: "Settings" },
 ] as const;
 
 interface SidebarContentProps {
   isExpanded: boolean;
-  pathname: string;
   onToggleExpand?: () => void;
+  others?: DrawerContentComponentProps;
 }
 
 export function SidebarContent({
   isExpanded,
-  pathname,
   onToggleExpand,
+  others
 }: SidebarContentProps) {
   const { user, clearUser } = useAuth();
+  const navigation = useNavigation();
+  const routeName = useNavigationState(
+    (state) => state.routes[state.index]?.name
+  );
+
+  const handleNavigate = (screenName: string) => {
+    (navigation as any).navigate(screenName);
+    others?.navigation.closeDrawer();
+  };
 
   const handleLogout = () => {
     logout();
@@ -45,19 +55,19 @@ export function SidebarContent({
   return (
     <View
       className={`
-                border-r border-border bg-card p-4 flex flex-col h-full
+                border-r border-border bg-muted/40 p-4 flex flex-col h-full
                 ${isExpanded ? "w-72" : "w-20"}
                 transition-all duration-300 ease-in-out`}
     >
       {/* Header Section */}
-      <View className="p-4 mb-4 flex-row items-center justify-between">
+      <View className="p-4 mt-12 mb-4 flex-row items-center justify-between">
         {isExpanded && (
-          <Text className="text-3xl font-extrabold text-primary">Micjean</Text>
+          <Text className="text-3xl font-extrabold text-foreground">Micjean</Text>
         )}
         {onToggleExpand && (
           <Pressable
             onPress={onToggleExpand}
-            className="p-2 rounded-full hover:bg-muted"
+            className="p-2 rounded-full hover:bg-accent"
           >
             <ChevronsLeft size={28} className="text-foreground" />
           </Pressable>
@@ -68,58 +78,58 @@ export function SidebarContent({
       <View className="gap-y-2 flex-1">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive =
-            pathname === item.href ||
-            (item.href !== "/(authenticated)" &&
-              pathname.startsWith(item.href));
+          const isActive = routeName === item.name;
           return (
-            <Link href={item.href} asChild key={item.href}>
+            <Pressable
+              onPress={() => handleNavigate(item.name)}
+              key={item.name}
+            >
               <Button
                 variant={isActive ? "secondary" : "ghost"}
-                className={`justify-start gap-3 px-3 py-6 rounded-lg ${
+                className={`flex-row items-center justify-start gap-3 px-3 py-6 rounded-lg ${
                   isExpanded ? "" : "items-center justify-center w-full"
-                }`}
+                } ${isActive ? "bg-accent" : ""}`}
               >
                 <Icon
                   size={24}
-                  className={isActive ? "text-primary" : "text-foreground"}
+                  className={isActive ? "text-accent-foreground" : "text-muted-foreground"}
                 />
                 {isExpanded && (
                   <Text
                     className={`font-semibold ${
-                      isActive ? "text-primary" : "text-foreground"
+                      isActive ? "text-accent-foreground" : "text-muted-foreground"
                     }`}
                   >
                     {item.label}
                   </Text>
                 )}
               </Button>
-            </Link>
+            </Pressable>
           );
         })}
       </View>
 
-      {/* User Info and Logout Section - A much cleaner look */}
-      <View className="gap-y-2 border-t border-border pt-4 mt-4">
+      {/* User Info and Logout Section */}
+      <View className="gap-y-2 border-t border-border pt-4 mt-4 mb-20">
         {isExpanded && user && (
           <View className="p-2 flex-row items-center gap-3">
             <View className="w-10 h-10 bg-primary rounded-full items-center justify-center">
-              <Text className="text-primary-foreground text-lg font-bold">
-                {user.name?.charAt(0).toUpperCase()}
+              <Text className="text-primary-foreground font-bold text-lg">
+                {user.email?.[0].toUpperCase()}
               </Text>
             </View>
             <View>
-              <Text className="font-bold text-foreground">{user.name}</Text>
-              <Text className="text-sm text-muted-foreground">
-                {user.email}
+              <Text className="font-bold text-foreground">
+                {user.name || "Vendor"}
               </Text>
+              <Text className="text-sm text-muted-foreground">{user.email}</Text>
             </View>
           </View>
         )}
         <Button
           variant="ghost"
           onPress={handleLogout}
-          className={`justify-start gap-3 px-3 py-4 rounded-lg ${
+          className={`flex-row items-center justify-start gap-3 px-3 py-4 rounded-lg ${
             isExpanded ? "" : "items-center justify-center w-full"
           }`}
         >
