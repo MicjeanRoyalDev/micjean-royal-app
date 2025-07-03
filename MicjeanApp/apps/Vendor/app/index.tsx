@@ -1,12 +1,18 @@
+import "react-native-gesture-handler";
 import * as React from "react";
 import { AuthProvider } from "~/context/auth";
-import { Slot } from "expo-router";
-import { DashboardLayout } from "~/components/DashboardLayout";
+import { HomeScreen } from "~/components/HomeScreen";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 export default function Screen() {
   return (
     <AuthProvider>
-      <DashboardLayout />
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1 }}>
+          <HomeScreen />
+        </SafeAreaView>
+      </GestureHandlerRootView>
     </AuthProvider>
   );
 }

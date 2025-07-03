@@ -11,9 +11,4 @@ export type HomePageParamList = {
     Settings: undefined;
 };
 
-export type DrawerParamList = {
-    Home: NavigatorScreenParams<HomePageParamList>;
-};
-
 export type HomePageNavigationProp = StackNavigationProp<HomePageParamList>;
-export type AppDrawerNavigationProp = DrawerNavigationProp<DrawerParamList>;

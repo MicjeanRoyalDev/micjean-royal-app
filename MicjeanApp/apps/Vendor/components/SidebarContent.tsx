@@ -1,7 +1,7 @@
 import React from "react";
 import { Text, View, Pressable } from "react-native";
-import { DrawerActions, useNavigation, useNavigationState } from "@react-navigation/native";
-import { AppDrawerNavigationProp, HomePageParamList } from "~/lib/navigation";
+import { useNavigationState } from "@react-navigation/native";
+import { HomePageParamList } from "~/lib/navigation";
 import {
   Bell,
   ChevronsLeft,
@@ -27,7 +27,7 @@ const navItems = [
 
 interface SidebarContentProps {
   isExpanded: boolean;
-  onToggleExpand?: () => void;
+  onToggleExpand: () => void;
   navigate: (screenName: keyof HomePageParamList) => void;
 }
 
@@ -37,9 +37,15 @@ export function SidebarContent({
   navigate,
 }: SidebarContentProps) {
   const { user, clearUser } = useAuth();
-  const routeName = useNavigationState(
-    (state) => state.routes[state.index]?.name
-  );
+  const routeName = useNavigationState((state) => {
+    const parentRoute = state.routes[state.index];
+
+    const targetRoute =
+      parentRoute?.state && parentRoute.state.index
+        ? parentRoute.state.routes[parentRoute.state.index]
+        : undefined;
+    return targetRoute?.name;
+  });
 
   const handleLogout = () => {
     logout();
@@ -54,9 +60,11 @@ export function SidebarContent({
                 transition-all duration-300 ease-in-out`}
     >
       {/* Header Section */}
-      <View className="p-4 mt-6 mb-4 flex-row items-center justify-center gap-6">
+      <View className="p-4 mb-4 flex-row items-center justify-center gap-6">
         {isExpanded && (
-          <Text className="text-3xl font-extrabold text-foreground">Micjean</Text>
+          <Text className="text-3xl font-extrabold text-foreground">
+            Micjean
+          </Text>
         )}
         {onToggleExpand && (
           <Pressable
@@ -74,26 +82,28 @@ export function SidebarContent({
           const Icon = item.icon;
           const isActive = routeName === item.name;
           return (
-            <Pressable
-              key={item.name}
-            >
+            <Pressable key={item.name}>
               <Button
                 onPress={() => navigate(item.name)}
                 variant={isActive ? "secondary" : "ghost"}
                 className={`flex-row items-center justify-start gap-3 px-3 py-6 rounded-lg ${
                   isExpanded ? "" : "items-center justify-center w-full"
-                } ${isActive ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"}`}
+                } ${
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-accent text-accent-foreground"
+                }`}
               >
                 <Icon
                   size={24}
-                  className={isActive ? "text-accent-foreground" : "text-muted-foreground"}
+                  className={
+                    isActive
+                      ? "text-accent-foreground"
+                      : "text-muted-foreground"
+                  }
                 />
                 {isExpanded && (
-                  <Text
-                    className="font-semibold"
-                  >
-                    {item.label}
-                  </Text>
+                  <Text className="font-semibold">{item.label}</Text>
                 )}
               </Button>
             </Pressable>
@@ -102,7 +112,7 @@ export function SidebarContent({
       </View>
 
       {/* User Info and Logout Section */}
-      <View className="gap-y-2 border-t border-border pt-4 mt-4 mb-16">
+      <View className="gap-y-2 border-t border-border pt-4 mt-4 mb-6">
         {isExpanded && user && (
           <View className="p-2 flex-row items-center gap-3">
             <View className="w-10 h-10 bg-primary rounded-full items-center justify-center">
@@ -114,7 +124,9 @@ export function SidebarContent({
               <Text className="font-bold text-foreground">
                 {user.name || "Vendor"}
               </Text>
-              <Text className="text-sm text-muted-foreground">{user.email}</Text>
+              <Text className="text-sm text-muted-foreground">
+                {user.email}
+              </Text>
             </View>
           </View>
         )}

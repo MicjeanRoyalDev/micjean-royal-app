@@ -1,14 +1,13 @@
-import { useState, ReactNode } from "react";
-import { View, Pressable, Text } from "react-native";
+import { useState } from "react";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useBreakpoint } from "~/hooks/useBreakpoint";
 import { SidebarContent } from "~/components/SidebarContent";
 import { Menu, User } from "lucide-react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { Drawer } from "react-native-drawer-layout";
 import {
   createNavigationContainerRef,
-  DrawerActions,
   NavigationContainer,
   NavigationIndependentTree,
   useNavigation,
@@ -23,17 +22,12 @@ import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useAuth } from "~/context/auth";
 import { useColorScheme } from "nativewind";
-import {
-  AppDrawerNavigationProp,
-  HomePageNavigationProp,
-  HomePageParamList,
-} from "~/lib/navigation";
+import { HomePageParamList } from "~/lib/navigation";
 
 const Stack = createStackNavigator();
-const Drawer = createDrawerNavigator();
+const navigationRef = createNavigationContainerRef<HomePageParamList>();
 
-function AppStackNavigator() {
-  const navigation = useNavigation<AppDrawerNavigationProp>();
+function AppStackNavigator({ expanded, setExpanded }: SidebarNavigatorProps) {
   const { isLargeScreen } = useBreakpoint();
   const { user } = useAuth();
   const { colorScheme } = useColorScheme();
@@ -61,7 +55,7 @@ function AppStackNavigator() {
               variant="ghost"
               size="icon"
               className="ml-2"
-              onPress={() => navigation.toggleDrawer()}
+              onPress={() => setExpanded(!expanded)}
             >
               <Menu size={24} color={iconColor} />
             </Button>
@@ -88,67 +82,77 @@ function AppStackNavigator() {
   );
 }
 
-function DrawerNavigator() {
+function DrawerNavigator({ expanded, setExpanded }: SidebarNavigatorProps) {
   return (
-    <Drawer.Navigator
-      drawerContent={({ navigation }) => {
+    <Drawer
+      open={expanded}
+      onOpen={() => setExpanded(true)}
+      onClose={() => setExpanded(false)}
+      drawerPosition="left"
+      renderDrawerContent={() => {
         const navigate = (screenName: keyof HomePageParamList) => {
-          navigation.dispatch(DrawerActions.closeDrawer());
-          navigation.navigate("Home", { screen: screenName });
+          navigationRef.navigate(screenName);
+          setExpanded(false);
         };
-        return <SidebarContent navigate={navigate} isExpanded={true} />;
+        return <SidebarContent navigate={navigate} isExpanded={true} onToggleExpand={() => setExpanded(!expanded)} />;
       }}
-      screenOptions={{ headerShown: false, drawerStyle: { width: 288 } }}
+      drawerStyle={{ width: 288 }}
     >
-      <Drawer.Screen name="Home" component={AppStackNavigator} />
-    </Drawer.Navigator>
+      <AppStackNavigator expanded={expanded} setExpanded={setExpanded} />
+    </Drawer>
   );
 }
 
-const tabletNavigationRef = createNavigationContainerRef<HomePageParamList>();
+type SidebarNavigatorProps = {
+  expanded: boolean;
+  setExpanded: (expanded: boolean) => void;
+};
 
-function TabletNavigator() {
+function TabletNavigator({ expanded, setExpanded }: SidebarNavigatorProps) {
   const { colorScheme } = useColorScheme();
-  const [isSidebarExpanded, setSidebarExpanded] = useState(true);
   const isDark = colorScheme === "dark";
   const safeAreaBgColor = isDark ? "#08080A" : "#FFFFFF";
 
   const navigate = (screenName: keyof HomePageParamList) => {
-    if (tabletNavigationRef.isReady()) {
-      tabletNavigationRef.navigate(screenName);
+    if (navigationRef.isReady()) {
+      navigationRef.navigate(screenName);
     }
   };
 
   return (
-    <NavigationIndependentTree>
-      <SafeAreaView
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          backgroundColor: safeAreaBgColor,
-        }}
-      >
-        <SidebarContent
-          isExpanded={isSidebarExpanded}
-          onToggleExpand={() => setSidebarExpanded((prev) => !prev)}
-          navigate={navigate}
-        />
-        <View style={{ flex: 1 }}>
-          <NavigationContainer ref={tabletNavigationRef}>
-            <AppStackNavigator />
-          </NavigationContainer>
-        </View>
-      </SafeAreaView>
-    </NavigationIndependentTree>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        flexDirection: "row",
+        backgroundColor: safeAreaBgColor,
+      }}
+    >
+      <SidebarContent
+        isExpanded={expanded}
+        onToggleExpand={() => setExpanded(!expanded)}
+        navigate={navigate}
+      />
+      <View style={{ flex: 1 }}>
+        <AppStackNavigator expanded={expanded} setExpanded={setExpanded} />
+      </View>
+    </SafeAreaView>
   );
 }
 
-export function DashboardLayout() {
+export function HomeScreen() {
   const { isLargeScreen } = useBreakpoint();
 
-  if (isLargeScreen) {
-    return <TabletNavigator />;
-  }
+  const [isExpanded, setExpanded] = useState(isLargeScreen);
 
-  return <DrawerNavigator />;
+  const content = isLargeScreen ? (
+    <TabletNavigator expanded={isExpanded} setExpanded={setExpanded} />
+  ) : (
+    <DrawerNavigator expanded={isExpanded} setExpanded={setExpanded} />
+  );
+
+  return (
+    <NavigationIndependentTree>
+      <NavigationContainer ref={navigationRef}>{content}</NavigationContainer>
+    </NavigationIndependentTree>
+  );
 }
