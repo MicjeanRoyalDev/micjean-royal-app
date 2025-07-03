@@ -10,6 +10,7 @@ const SignInScreen = () => {
   const [password, setPassword] = useState('');
   const navigation = useNavigation();
 
+  // Resolve navigation target
   const handleSignIn = () => {
     // TODO: Implement sign in logic
     navigation.navigate('Success', { message: 'Sign in successful' });
