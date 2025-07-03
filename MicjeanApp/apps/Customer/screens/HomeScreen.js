@@ -49,7 +49,7 @@ const HomeScreen = () => {
   const handleTabPress = (tabId) => {
     setActiveTab(tabId);
     console.log('Tab pressed:', tabId);
-    // Add navigation logic here if needed
+    // Navigation is now handled by BottomNavbar component
   };
 
   return (

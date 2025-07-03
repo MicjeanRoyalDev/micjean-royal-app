@@ -1,7 +1,10 @@
 import React from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const BottomNavbar = ({ activeTab = 'home', onTabPress }) => {
+  const navigation = useNavigation();
+  
   const navItems = [
     { id: 'home', icon: '🏠', label: 'Home' },
     { id: 'menu', icon: '🍽️', label: 'Menu' },
@@ -10,10 +13,17 @@ const BottomNavbar = ({ activeTab = 'home', onTabPress }) => {
   ];
 
   const handleTabPress = (tabId) => {
+    // Navigate to appropriate screens
+    if (tabId === 'home') {
+      navigation.navigate('Home');
+    } else if (tabId === 'menu') {
+      navigation.navigate('Menu');
+    }
+    // Add navigation for cart and profile when ready
+    
+    // Call parent onTabPress if provided
     if (onTabPress) {
       onTabPress(tabId);
-    } else {
-      console.log('Tab pressed:', tabId);
     }
   };
 
