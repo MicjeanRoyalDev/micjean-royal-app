@@ -75,14 +75,14 @@ export function SidebarContent({
           const isActive = routeName === item.name;
           return (
             <Pressable
-              onPress={() => navigate(item.name)}
               key={item.name}
             >
               <Button
+                onPress={() => navigate(item.name)}
                 variant={isActive ? "secondary" : "ghost"}
                 className={`flex-row items-center justify-start gap-3 px-3 py-6 rounded-lg ${
                   isExpanded ? "" : "items-center justify-center w-full"
-                } ${isActive ? "bg-accent" : ""}`}
+                } ${isActive ? "bg-primary text-primary-foreground" : "bg-accent text-accent-foreground"}`}
               >
                 <Icon
                   size={24}
@@ -90,9 +90,7 @@ export function SidebarContent({
                 />
                 {isExpanded && (
                   <Text
-                    className={`font-semibold ${
-                      isActive ? "text-accent-foreground" : "text-muted-foreground"
-                    }`}
+                    className="font-semibold"
                   >
                     {item.label}
                   </Text>

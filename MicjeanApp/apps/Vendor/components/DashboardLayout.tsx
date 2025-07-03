@@ -6,7 +6,13 @@ import { SidebarContent } from "~/components/SidebarContent";
 import { Menu, User } from "lucide-react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { DrawerActions, useNavigation } from "@react-navigation/native";
+import {
+  createNavigationContainerRef,
+  DrawerActions,
+  NavigationContainer,
+  NavigationIndependentTree,
+  useNavigation,
+} from "@react-navigation/native";
 import DashboardScreen from "~/screens/dashboard";
 import OrdersScreen from "~/screens/orders";
 import MenuScreen from "~/screens/menu";
@@ -17,7 +23,11 @@ import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useAuth } from "~/context/auth";
 import { useColorScheme } from "nativewind";
-import { AppDrawerNavigationProp, HomePageNavigationProp, HomePageParamList } from "~/lib/navigation";
+import {
+  AppDrawerNavigationProp,
+  HomePageNavigationProp,
+  HomePageParamList,
+} from "~/lib/navigation";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -79,18 +89,15 @@ function AppStackNavigator() {
 }
 
 function DrawerNavigator() {
-  const navigation = useNavigation<AppDrawerNavigationProp>();
-
-  const navigate = (screenName: keyof HomePageParamList) => {
-    navigation.dispatch(DrawerActions.closeDrawer());
-    navigation.navigate("Home", { screen: screenName });
-  };
-
   return (
     <Drawer.Navigator
-      drawerContent={() => (
-        <SidebarContent navigate={navigate} isExpanded={true} />
-      )}
+      drawerContent={({ navigation }) => {
+        const navigate = (screenName: keyof HomePageParamList) => {
+          navigation.dispatch(DrawerActions.closeDrawer());
+          navigation.navigate("Home", { screen: screenName });
+        };
+        return <SidebarContent navigate={navigate} isExpanded={true} />;
+      }}
       screenOptions={{ headerShown: false, drawerStyle: { width: 288 } }}
     >
       <Drawer.Screen name="Home" component={AppStackNavigator} />
@@ -98,35 +105,41 @@ function DrawerNavigator() {
   );
 }
 
-function TabletNavigator({}) {
+const tabletNavigationRef = createNavigationContainerRef<HomePageParamList>();
+
+function TabletNavigator() {
   const { colorScheme } = useColorScheme();
   const [isSidebarExpanded, setSidebarExpanded] = useState(true);
-  // Is this the correct type for useNavigation?
-  const navigation = useNavigation<HomePageNavigationProp>();
   const isDark = colorScheme === "dark";
   const safeAreaBgColor = isDark ? "#08080A" : "#FFFFFF";
 
   const navigate = (screenName: keyof HomePageParamList) => {
-    navigation.navigate(screenName);
+    if (tabletNavigationRef.isReady()) {
+      tabletNavigationRef.navigate(screenName);
+    }
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        flexDirection: "row",
-        backgroundColor: safeAreaBgColor,
-      }}
-    >
-      <SidebarContent
-        isExpanded={isSidebarExpanded}
-        onToggleExpand={() => setSidebarExpanded((prev) => !prev)}
-        navigate={navigate}
-      />
-      <View style={{ flex: 1 }}>
-        <AppStackNavigator />
-      </View>
-    </SafeAreaView>
+    <NavigationIndependentTree>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          backgroundColor: safeAreaBgColor,
+        }}
+      >
+        <SidebarContent
+          isExpanded={isSidebarExpanded}
+          onToggleExpand={() => setSidebarExpanded((prev) => !prev)}
+          navigate={navigate}
+        />
+        <View style={{ flex: 1 }}>
+          <NavigationContainer ref={tabletNavigationRef}>
+            <AppStackNavigator />
+          </NavigationContainer>
+        </View>
+      </SafeAreaView>
+    </NavigationIndependentTree>
   );
 }
 
@@ -134,10 +147,8 @@ export function DashboardLayout() {
   const { isLargeScreen } = useBreakpoint();
 
   if (isLargeScreen) {
-    // --- TABLET LAYOUT ---
     return <TabletNavigator />;
   }
 
-  // --- PHONE LAYOUT ---
   return <DrawerNavigator />;
 }
