@@ -12,7 +12,7 @@ const SignInScreen = () => {
 
   const handleSignIn = () => {
     // TODO: Implement sign in logic
-    navigation.navigate('Main'); // Or your main stack
+    navigation.navigate('Success', { message: 'Sign in successful' });
   };
 
   return (

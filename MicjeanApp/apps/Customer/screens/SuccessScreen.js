@@ -13,7 +13,7 @@ const SuccessScreen = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.navigate('SignIn');
+      navigation.navigate('Home');
     }, 2000);
 
     return () => clearTimeout(timer);
