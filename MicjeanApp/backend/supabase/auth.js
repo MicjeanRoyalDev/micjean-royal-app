@@ -14,20 +14,20 @@ export const auth = {
       email,
       password,
     });
-    // insert username to database
     if (user) {
-      const { data } = await supabase.from("profiles").insert({
+      await supabase.from("profiles").insert({
         username,
         phone,
       });
     }
-    if (error) {
-      throw new Error(error.message && error.code);
-    }
     return {
-      success: true,
-      message: "User registered successfully",
-      data: user,
+      user: user || null,
+      error: error
+        ? {
+            message: error.message,
+            code: error.code,
+          }
+        : null,
     };
   },
   login: async (email, password) => {
@@ -35,17 +35,27 @@ export const auth = {
       email,
       password,
     });
-    if (error) {
-      throw new Error(error.message && error.code);
-    }
-    return { success: true, message: "User logged in successfully", data };
+    return {
+      user: data?.user || null,
+      session: data?.session || null,
+      error: error
+        ? {
+            message: error.message,
+            code: error.code,
+          }
+        : null,
+    };
   },
   logout: async () => {
     const { error } = await supabase.auth.signOut();
-    if (error) {
-      throw new Error(error.message && error.code);
-    }
-    return { success: true, message: "User logged out successfully" };
+    return {
+      error: error
+        ? {
+            message: error.message,
+            code: error.code,
+          }
+        : null,
+    };
   },
   getProfile: async () => {
     const {
@@ -62,10 +72,16 @@ export const auth = {
       .eq("id", session.user.id)
       .single();
 
-    if (profileError) {
-      throw new Error(profileError.message && profileError.code);
-    }
-    return { session, profile };
+    return {
+      session,
+      profile: profile || null,
+      error: profileError
+        ? {
+            message: profileError.message,
+            code: profileError.code,
+          }
+        : null,
+    };
   },
   //update user details
   updateProfile: async (phone, username) => {
@@ -82,27 +98,46 @@ export const auth = {
       .eq("id", session.user.id)
       .select()
       .single();
-    if (updateProfileError) {
-      throw new Error(updateProfileError.message && updateProfileError.code);
-    }
+
+    return {
+      profile: updateProfile || null,
+      error: updateProfileError
+        ? {
+            message: updateProfileError.message,
+            code: updateProfileError.code,
+          }
+        : null,
+    };
   },
   resetPassword: async (email) => {
     //reset password
     const { error, data } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: "customer-app/reset-password" || "vendor-app/reset-password",
     });
-    if (error) {
-      throw new Error(error.message && error.code);
-    }
-    return { success: true, message: "Password reset sent successfully", data };
+    return {
+      success: true,
+      message: "Password reset email sent successfully",
+      error: error
+        ? {
+            message: error.message,
+            code: error.code,
+          }
+        : null,
+    };
   },
   updatePassword: async (newPassword) => {
     const { error } = await supabase.auth.updateUser({
       password: newPassword,
     });
-    if (error) {
-      throw new Error(error.message || "Failed to update password");
-    }
-    return { success: true, message: "Password updated successfully" };
+    return {
+      success: true,
+      message: "Password updated successfully",
+      error: error
+        ? {
+            message: error.message,
+            code: error.code,
+          }
+        : null,
+    };
   },
 };
