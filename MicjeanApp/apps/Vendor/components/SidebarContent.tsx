@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, View, Pressable } from "react-native";
-import { useNavigation, useNavigationState } from "@react-navigation/native";
+import { DrawerActions, useNavigation, useNavigationState } from "@react-navigation/native";
+import { AppDrawerNavigationProp, HomePageParamList } from "~/lib/navigation";
 import {
   Bell,
   ChevronsLeft,
@@ -14,7 +15,6 @@ import {
 import { Button } from "~/components/ui/button";
 import { useAuth } from "~/context/auth";
 import { logout } from "~/api/dummy";
-import { DrawerContentComponentProps } from "@react-navigation/drawer";
 
 const navItems = [
   { name: "Dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -28,24 +28,18 @@ const navItems = [
 interface SidebarContentProps {
   isExpanded: boolean;
   onToggleExpand?: () => void;
-  others?: DrawerContentComponentProps;
+  navigate: (screenName: keyof HomePageParamList) => void;
 }
 
 export function SidebarContent({
   isExpanded,
   onToggleExpand,
-  others
+  navigate,
 }: SidebarContentProps) {
   const { user, clearUser } = useAuth();
-  const navigation = useNavigation();
   const routeName = useNavigationState(
     (state) => state.routes[state.index]?.name
   );
-
-  const handleNavigate = (screenName: string) => {
-    (navigation as any).navigate(screenName);
-    others?.navigation.closeDrawer();
-  };
 
   const handleLogout = () => {
     logout();
@@ -60,7 +54,7 @@ export function SidebarContent({
                 transition-all duration-300 ease-in-out`}
     >
       {/* Header Section */}
-      <View className="p-4 mt-12 mb-4 flex-row items-center justify-between">
+      <View className="p-4 mt-6 mb-4 flex-row items-center justify-center gap-6">
         {isExpanded && (
           <Text className="text-3xl font-extrabold text-foreground">Micjean</Text>
         )}
@@ -81,7 +75,7 @@ export function SidebarContent({
           const isActive = routeName === item.name;
           return (
             <Pressable
-              onPress={() => handleNavigate(item.name)}
+              onPress={() => navigate(item.name)}
               key={item.name}
             >
               <Button
@@ -110,7 +104,7 @@ export function SidebarContent({
       </View>
 
       {/* User Info and Logout Section */}
-      <View className="gap-y-2 border-t border-border pt-4 mt-4 mb-20">
+      <View className="gap-y-2 border-t border-border pt-4 mt-4 mb-16">
         {isExpanded && user && (
           <View className="p-2 flex-row items-center gap-3">
             <View className="w-10 h-10 bg-primary rounded-full items-center justify-center">
