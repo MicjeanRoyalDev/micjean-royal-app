@@ -8,7 +8,7 @@ import {
 import { User } from "~/api/types";
 import { Text, View } from "react-native";
 import { ApiClient } from "~/api";
-import { LoginScreen } from "~/components/LoginScreen";
+import { Login } from "~/components/LoginScreen";
 import { me } from "~/api/dummy";
 
 const authClient = new ApiClient();
@@ -77,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   if (!user) {
-    return <LoginScreen afterLogin={afterLogin} />;
+    return <Login afterLogin={afterLogin} />;
   }
 
   return (
