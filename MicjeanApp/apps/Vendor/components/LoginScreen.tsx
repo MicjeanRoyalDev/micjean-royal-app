@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { Animated, Easing, Image, Text, View } from "react-native";
-import { Label } from "./ui/label";
+import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Eye, Loader } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { login } from "~/api/dummy";
 
-interface LoginScreenProps {
+interface LoginProps {
   afterLogin: () => void;
 }
 
-export const LoginScreen = ({ afterLogin }: LoginScreenProps) => {
+export const Login = ({ afterLogin }: LoginProps) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
