@@ -5,6 +5,8 @@ import SignUpScreen from '../screens/SignUpScreen';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import SuccessScreen from '../screens/SuccessScreen';
 import SplashScreen from '../screens/SplashScreen';
+import HomeScreen from '../screens/HomeScreen';
+import MenuScreen from '../screens/MenuScreen';
 
 const Stack = createStackNavigator();
 
@@ -21,6 +23,8 @@ const AuthStack = () => {
       <Stack.Screen name="SignIn" component={SignInScreen} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="Success" component={SuccessScreen} />
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Menu" component={MenuScreen} />
     </Stack.Navigator>
   );
 };
