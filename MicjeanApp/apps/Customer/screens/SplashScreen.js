@@ -4,7 +4,9 @@ import { View, Text, StyleSheet, Image, ImageBackground, Dimensions } from 'reac
 import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
-const CURVE_HEIGHT = height * 0.43; // Deeper curve for bottom image
+// Define heights for top curve and bottom image
+const TOP_CONTAINER_HEIGHT = height * 0.62; // Height for top white curve
+const CURVE_HEIGHT = height - TOP_CONTAINER_HEIGHT; // Remaining height for bottom image
 
 const SplashScreen = () => {
   const navigation = useNavigation();
@@ -49,10 +51,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   topContainer: {
-    height: height - CURVE_HEIGHT / 1.6, // More oval
+    height: TOP_CONTAINER_HEIGHT,
     backgroundColor: '#fff',
-    borderBottomLeftRadius: width * 1.1, // Large radius for oval
-    borderBottomRightRadius: width * 1.1,
+    borderBottomLeftRadius: width * 1.5,  // Concave dip for background
+    borderBottomRightRadius: width * 1.5,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 2,
@@ -61,7 +63,8 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 0,
+    marginTop: TOP_CONTAINER_HEIGHT * 0.5, // Push logo fully below curve
+    marginBottom: 10,
   },
   logo: {
     width: 170,
@@ -82,6 +85,7 @@ const styles = StyleSheet.create({
     height: CURVE_HEIGHT,
     overflow: 'hidden',
     zIndex: 1,
+    // Full image under top container's concave curve
   },
   bgImage: {
     width: '100%',
@@ -91,8 +95,7 @@ const styles = StyleSheet.create({
   bgImageStyle: {
     width: '100%',
     height: '100%',
-    borderTopLeftRadius: width * 1.1, // Match top curve
-    borderTopRightRadius: width * 1.1,
+    // Removed radii from image to let container rounding show convex curve
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
