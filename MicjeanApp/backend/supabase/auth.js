@@ -14,12 +14,42 @@ export const auth = {
       email,
       password,
     });
-    if (user) {
-      await supabase.from("profiles").insert({
+    
+    // Handle profile creation separately with proper error handling
+    if (user && !error) {
+      const { error: profileError } = await supabase.from("profiles").insert({
+        id: user.id, // Include user ID
         username,
         phone,
       });
+      
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+        // Don't fail registration if profile creation fails
+        // The user account is still created successfully
+      }
     }
+    
+    return {
+      user: user || null,
+      error: error
+        ? {
+            message: error.message,
+            code: error.code,
+          }
+        : null,
+    };
+  },
+  // Alternative registration without profile table (for testing)
+  registerSimple: async (email, password) => {
+    const {
+      error,
+      data: { user },
+    } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    
     return {
       user: user || null,
       error: error
