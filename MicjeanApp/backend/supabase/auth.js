@@ -7,27 +7,22 @@ or destructure individual functionality from auth
 */
 export const auth = {
   register: async (email, password, username, phone) => {
-    const {
-      error,
-      data: { user },
-    } = await supabase.auth.signUp({
-      email,
-      password,
-    });
+    // Sign up user and get data and error
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    const user = data?.user || null;
+    const session = data?.session || null;
+    // If a new user was created, insert into profiles table with the user ID
     if (user) {
-      await supabase.from("profiles").insert({
-        username,
-        phone,
-      });
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([{ id: user.id, username, phone }]);
+      if (profileError) console.error('Profile insert error:', profileError.message);
     }
     return {
-      user: data?.user || null,
-      session: data?.session || null,
+      user,
+      session,
       error: error
-        ? {
-            message: error.message,
-            code: error.code,
-          }
+        ? { message: error.message, code: error.code }
         : null,
     };
   },

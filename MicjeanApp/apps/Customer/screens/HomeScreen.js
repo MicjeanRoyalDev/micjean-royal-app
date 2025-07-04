@@ -13,14 +13,17 @@ import {
 import Header from '../components/Header';
 import PopularDishes from '../components/PopularDishes';
 import BottomNavbar from '../components/BottomNavbar';
+import { supabase } from '../../../backend/supabase/clients';
 
 const { width } = Dimensions.get('window');
 
 const HomeScreen = () => {
   const scrollViewRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  // Maintain fetched username
+  const [userName, setUserName] = useState('');
   const [activeTab, setActiveTab] = useState('home');
-  
+
   const carouselImages = [
     require('../../../shared/assets/images/micjean photo for background.jpg'),
     require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
@@ -31,19 +34,39 @@ const HomeScreen = () => {
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => {
         const nextIndex = (prevIndex + 1) % carouselImages.length;
-        
+
         if (scrollViewRef.current) {
           scrollViewRef.current.scrollTo({
             x: nextIndex * width,
             animated: true,
           });
         }
-        
+
         return nextIndex;
       });
     }, 5000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  // Fetch the current user’s profile username on mount
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('id', session.user.id)
+          .single();
+        // Fallback to prefix of email (before '@') if no username in profile
+        const emailPrefix = session.user.email.split('@')[0];
+        setUserName(profile?.username || emailPrefix);
+      }
+    };
+    fetchProfile();
   }, []);
 
   const handleTabPress = (tabId) => {
@@ -55,10 +78,10 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header Component */}
-      <Header userName="Eren" />
+      <Header userName={userName} />
 
-      <ScrollView 
-        style={styles.content} 
+      <ScrollView
+        style={styles.content}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         bounces={true}
@@ -66,32 +89,32 @@ const HomeScreen = () => {
       >
         {/* Image Carousel */}
         <View style={styles.carouselContainer}>
-          <ScrollView 
+          <ScrollView
             ref={scrollViewRef}
-            horizontal 
-            pagingEnabled 
+            horizontal
+            pagingEnabled
             showsHorizontalScrollIndicator={false}
             style={styles.carousel}
           >
             {carouselImages.map((image, index) => (
               <View key={index} style={styles.carouselItem}>
-                <Image 
-                  source={image} 
-                  style={styles.carouselImage} 
+                <Image
+                  source={image}
+                  style={styles.carouselImage}
                 />
               </View>
             ))}
           </ScrollView>
-          
+
           {/* Carousel indicators */}
           <View style={styles.indicators}>
             {carouselImages.map((_, index) => (
-              <View 
-                key={index} 
+              <View
+                key={index}
                 style={[
-                  styles.indicator, 
-                  currentIndex === index && styles.activeIndicator
-                ]} 
+                  styles.indicator,
+                  currentIndex === index && styles.activeIndicator,
+                ]}
               />
             ))}
           </View>
@@ -102,9 +125,9 @@ const HomeScreen = () => {
       </ScrollView>
 
       {/* Bottom Navigation Component */}
-      <BottomNavbar 
-        activeTab={activeTab} 
-        onTabPress={handleTabPress} 
+      <BottomNavbar
+        activeTab={activeTab}
+        onTabPress={handleTabPress}
       />
     </SafeAreaView>
   );
