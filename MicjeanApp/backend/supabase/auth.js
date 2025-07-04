@@ -14,44 +14,15 @@ export const auth = {
       email,
       password,
     });
-    
-    // Handle profile creation separately with proper error handling
-    if (user && !error) {
-      const { error: profileError } = await supabase.from("profiles").insert({
-        id: user.id, // Include user ID
+    if (user) {
+      await supabase.from("profiles").insert({
         username,
         phone,
       });
-      
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-        // Don't fail registration if profile creation fails
-        // The user account is still created successfully
-      }
     }
-    
     return {
-      user: user || null,
-      error: error
-        ? {
-            message: error.message,
-            code: error.code,
-          }
-        : null,
-    };
-  },
-  // Alternative registration without profile table (for testing)
-  registerSimple: async (email, password) => {
-    const {
-      error,
-      data: { user },
-    } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    
-    return {
-      user: user || null,
+      user: data?.user || null,
+      session: data?.session || null,
       error: error
         ? {
             message: error.message,
@@ -77,8 +48,9 @@ export const auth = {
     };
   },
   logout: async () => {
-    const { error } = await supabase.auth.signOut();
+    const { data, error } = await supabase.auth.signOut();
     return {
+      data: data || null,
       error: error
         ? {
             message: error.message,
@@ -92,49 +64,31 @@ export const auth = {
       data: { session },
       error: sessionError,
     } = await supabase.auth.getSession();
-    if (!session || sessionError) {
-      throw new Error(sessionError?.message || "unauthorized");
-    }
-    //get user profile
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", session.user.id)
-      .single();
-
     return {
       session,
-      profile: profile || null,
-      error: profileError
+      profile: session?.user?.user_metadata || null,
+      error: sessionError
         ? {
-            message: profileError.message,
-            code: profileError.code,
+            message: sessionError.message,
+            code: sessionError.code,
           }
         : null,
     };
   },
   //update user details
   updateProfile: async (phone, username) => {
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.getSession();
-    if (error) {
-      throw new Error(error.message && error.code);
-    }
-    const { data: updateProfile, error: updateProfileError } = await supabase
-      .from("profiles")
-      .update({ phone, username })
-      .eq("id", session.user.id)
-      .select()
-      .single();
-
+    const { data, error } = await supabase.auth.updateUser({
+      data: {
+        phone: phone,
+        username: username,
+      },
+    });
     return {
-      profile: updateProfile || null,
-      error: updateProfileError
+      user: data?.user || null,
+      error: error
         ? {
-            message: updateProfileError.message,
-            code: updateProfileError.code,
+            message: error.message,
+            code: error.code,
           }
         : null,
     };
@@ -142,7 +96,7 @@ export const auth = {
   resetPassword: async (email) => {
     //reset password
     const { error, data } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: "customer-app/reset-password" || "vendor-app/reset-password",
+      redirectTo: "https://micjeanroyal.com/reset-password",
     });
     return {
       success: true,
