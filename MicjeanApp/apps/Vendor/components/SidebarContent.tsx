@@ -63,7 +63,6 @@ export function SidebarContent({ expanded, setExpanded }: SidebarContentProps) {
 
   const navigate = (screenName: keyof HomePageParamList) => {
     navigation.navigate("Home", { screen: screenName });
-    setScreenName(screenName);
     if (!isLargeScreen) setExpanded(false);
   };
 
@@ -102,8 +101,7 @@ export function SidebarContent({ expanded, setExpanded }: SidebarContentProps) {
 
           return (
             // Use Pressable for the navigation action
-            <Pressable key={item.name} onPress={() => navigate(item.name)}>
-              <View
+            <Pressable 
                 className={`
                   flex-row items-center gap-4 p-3 rounded-lg
                   ${isActive
@@ -111,8 +109,7 @@ export function SidebarContent({ expanded, setExpanded }: SidebarContentProps) {
                     : 'bg-transparent hover:bg-accent' // Inactive: transparent, with accent on hover
                   }
                   ${expanded ? 'justify-start' : 'justify-center'}
-                `}
-              >
+                `} key={item.name} onPress={() => navigate(item.name)}>
                 <Icon
                   size={24}
                   className={`
@@ -135,7 +132,6 @@ export function SidebarContent({ expanded, setExpanded }: SidebarContentProps) {
                     {item.label}
                   </Text>
                 )}
-              </View>
             </Pressable>
           );
         })}
