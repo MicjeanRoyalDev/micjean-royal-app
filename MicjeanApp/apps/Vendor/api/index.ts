@@ -41,13 +41,13 @@ export class ApiClient {
     this.client.interceptors.response.eject(id);
   }
 
-  async get<T>(url: string, params?: any): Promise<T> {
+  async get<T>(url: string, params?: any) {
     const response = await this.client.get<T>(url, { params });
-    return response.data;
+    return response;
   }
 
-  async post<T>(url: string, data?: any): Promise<T> {
+  async post<T>(url: string, data?: any) {
     const response = await this.client.post<T>(url, data);
-    return response.data;
+    return response;
   }
 }
