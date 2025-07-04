@@ -7,7 +7,10 @@ or destructure individual functionality from auth
 */
 export const auth = {
   register: async (email, password, username, phone) => {
-    const { error, data } = await supabase.auth.signUp({
+    const {
+      error,
+      data: { session },
+    } = await supabase.auth.signUp({
       email: email,
       password: password,
       options: {
@@ -19,8 +22,8 @@ export const auth = {
       },
     });
     return {
-      user: data?.user || null,
-      session: data?.session || null,
+      user: session?.user?.user_metadata || null,
+      session: session || null,
       error: error
         ? {
             message: error.message,
@@ -30,13 +33,16 @@ export const auth = {
     };
   },
   login: async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     return {
-      user: data?.user || null,
-      session: data?.session || null,
+      user: session?.user?.user_metadata || null,
+      session: session || null,
       error: error
         ? {
             message: error.message,
