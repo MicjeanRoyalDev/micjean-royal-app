@@ -10,9 +10,9 @@ export const auth = {
     const { error, data } = await supabase.auth.signUp({
       email: email,
       password: password,
-      phone: phone,
       options: {
         data: {
+          phone: phone,
           username: username,
           isAdmin: false,
         },
