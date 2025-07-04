@@ -18,8 +18,6 @@ export const auth = {
         },
       },
     });
-    console.log("user", data);
-    console.log("error", error);
     return {
       user: data?.user || null,
       session: data?.session || null,
@@ -36,8 +34,6 @@ export const auth = {
       email,
       password,
     });
-    console.log("login data", data);
-    console.log("login error", error);
     return {
       user: data?.user || null,
       session: data?.session || null,
@@ -50,8 +46,9 @@ export const auth = {
     };
   },
   logout: async () => {
-    const { error } = await supabase.auth.signOut();
+    const { data, error } = await supabase.auth.signOut();
     return {
+      data: data || null,
       error: error
         ? {
             message: error.message,
@@ -62,19 +59,16 @@ export const auth = {
   },
   getProfile: async () => {
     const {
-      data: { session, user: profile },
+      data: { session },
       error: sessionError,
     } = await supabase.auth.getSession();
-    if (!session || sessionError) {
-      throw new Error(sessionError?.message || "unauthorized");
-    }
     return {
       session,
-      profile: profile || null,
-      error: profileError
+      profile: session?.user?.user_metadata || null,
+      error: sessionError
         ? {
-            message: profileError.message,
-            code: profileError.code,
+            message: sessionError.message,
+            code: sessionError.code,
           }
         : null,
     };
