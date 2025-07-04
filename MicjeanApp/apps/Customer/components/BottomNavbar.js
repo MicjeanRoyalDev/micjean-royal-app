@@ -1,98 +1,119 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { MaterialIcons } from '@expo/vector-icons';
+import ProfileScreen from '../screens/Profile/ProfileScreen';
+import HomeScreen from '../screens/HomeScreen';
+import MenuScreen from '../screens/MenuScreen';
+import { ThemeProvider, createTheme } from '@rneui/themed';
 
-const BottomNavbar = ({ activeTab = 'home', onTabPress }) => {
-  const navigation = useNavigation();
-  
-  const navItems = [
-    { id: 'home', icon: '🏠', label: 'Home' },
-    { id: 'menu', icon: '🍽️', label: 'Menu' },
-    { id: 'cart', icon: '🛒', label: 'Cart' },
-    { id: 'profile', icon: '👤', label: 'Profile' }
-  ];
-
-  const handleTabPress = (tabId) => {
-    // Navigate to appropriate screens
-    if (tabId === 'home') {
-      navigation.navigate('Home');
-    } else if (tabId === 'menu') {
-      navigation.navigate('Menu');
-    }
-    // Add navigation for cart and profile when ready
-    
-    // Call parent onTabPress if provided
-    if (onTabPress) {
-      onTabPress(tabId);
-    }
-  };
-
-  return (
-    <View style={styles.navContainer}>
-      <View style={styles.bottomNav}>
-        {navItems.map((item) => (
-          <TouchableOpacity 
-            key={item.id}
-            style={[
-              styles.navItem,
-              activeTab === item.id && styles.activeNavItem
-            ]}
-            onPress={() => handleTabPress(item.id)}
-          >
-            <Text style={[
-              styles.navIcon,
-              activeTab === item.id && styles.activeNavIcon
-            ]}>
-              {item.icon}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  navContainer: {
-    position: 'absolute',
-    bottom: 30,
-    left: 0,
-    right: 0,
-    paddingHorizontal: 5,
-    paddingBottom: 10,
+const theme = createTheme({
+  lightColors: {
+    primary: '#ffff',
+    secondary: '#000000',
+    background: '#ba272e',
   },
-  bottomNav: {
-    backgroundColor: '#B71C1C',
-    flexDirection: 'row',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-    marginHorizontal: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -5,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 10,
+  darkColors: {
+    primary: '#710707',
+    secondary: '#d2dae2',
+    background: '#1e272e',
   },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 5,
-    borderRadius: 15,
-  },
-  activeNavItem: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  navIcon: {
-    fontSize: 26,
-    color: 'white',
-  },
-  activeNavIcon: {
-    color: '#FFD700', // Gold color for active state
-  },
+  mode: 'light', 
 });
 
-export default BottomNavbar;
+export default function BottomNavbar() {
+  function Orders() {
+    return null;
+  }
+
+  const Tab = createBottomTabNavigator();
+
+  return (
+    <ThemeProvider theme={theme}>
+      <NavigationContainer>
+        <Tab.Navigator
+        //making the home the initial route
+         initialRouteName='Home'
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
+              
+              if (route.name === 'Home') {
+                iconName = 'home';
+              } else if (route.name === 'Menu') {
+                iconName = 'local-dining';
+              } else if (route.name === 'Orders') {
+                iconName = 'list-alt';
+              } else if (route.name === 'Profile') {
+                iconName = 'person';
+              }
+              
+              return (
+                <MaterialIcons name={iconName} color={color} size={size} />
+              );
+            },
+            tabBarStyle: {
+              backgroundColor: theme.lightColors.background,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              borderBottomLeftRadius:20,
+              borderBottomRightRadius:20,
+              height: 56,
+              position: 'absolute',      
+              bottom: 45,                 
+              left: 0,                   
+              right: 0,  
+              alignSelf:'center',            
+              elevation: 30,            
+              shadowColor: '#000',       
+              shadowOffset: { width: 0, height: -3 }, 
+              shadowOpacity: 0.1,        
+              shadowRadius: 5,           
+              zIndex: 100,              
+            },
+            tabBarActiveTintColor: theme.lightColors.primary,
+            tabBarInactiveTintColor: theme.lightColors.secondary,
+            tabBarLabelStyle: {
+              fontSize: 12,
+              marginBottom: 10, 
+            },
+            tabBarItemStyle: {
+              paddingVertical: 5, 
+            },
+          })}
+        >
+          <Tab.Screen 
+            name="Home" 
+            component={HomeScreen} 
+            options={{ headerShown: false }} 
+          />
+          <Tab.Screen 
+            name="Menu" 
+            component={MenuScreen} 
+            options={{ headerShown: false }} 
+          />
+          {/*I am yet to add the orders or cart screen*/}
+          <Tab.Screen 
+            name="Orders" 
+            component={Orders} 
+            options={{ headerShown: false }} 
+          />
+          <Tab.Screen 
+            name="Profile" 
+            component={ProfileScreen} 
+            options={{ 
+              headerShown: true,
+              headerStyle: {
+                backgroundColor: theme.lightColors.background,
+              },
+              headerTintColor: theme.lightColors.primary,
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+            }} 
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </ThemeProvider>
+  );
+}
