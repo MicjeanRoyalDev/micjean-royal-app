@@ -1,18 +1,40 @@
 // apps/customer/screens/SignInScreen.js
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Dimensions, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { auth } from '../../../backend/supabase/auth';
 
 const { width, height } = Dimensions.get('window');
 
 const SignInScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
-  const handleSignIn = () => {
-    // TODO: Implement sign in logic
-    navigation.navigate('Success', { message: 'Sign in successful' });
+  const handleSignIn = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter both email and password');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await auth.login(email, password);
+      
+      if (result.error) {
+        Alert.alert('Login Failed', result.error.message);
+        console.error('Login error:', result.error);
+      } else {
+        console.log('Login successful:', result.user);
+        navigation.navigate('Success', { message: 'Sign in successful!' });
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+      console.error('Sign in error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,8 +69,8 @@ const SignInScreen = () => {
         placeholderTextColor="#B80000"
       />
       {/* Sign in button */}
-      <TouchableOpacity style={styles.signInButton} onPress={handleSignIn}>
-        <Text style={styles.signInButtonText}>Sign in</Text>
+      <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
+        <Text style={styles.signInButtonText}>{loading ? 'Signing in...' : 'Sign in'}</Text>
       </TouchableOpacity>
       {/* Bottom right red circle */}
       <View style={styles.redCircle} />

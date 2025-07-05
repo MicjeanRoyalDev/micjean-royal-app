@@ -25,13 +25,11 @@ export const auth = {
       user: session?.user?.user_metadata || null,
       session: session || null,
       error: error
-        ? {
-            message: error.message,
-            code: error.code,
-          }
+        ? { message: error.message, code: error.code }
         : null,
     };
   },
+
   login: async (email, password) => {
     const {
       data: { session },
@@ -51,6 +49,7 @@ export const auth = {
         : null,
     };
   },
+
   logout: async () => {
     const { data, error } = await supabase.auth.signOut();
     return {
@@ -63,6 +62,7 @@ export const auth = {
         : null,
     };
   },
+
   getProfile: async () => {
     const {
       data: { session },
@@ -79,7 +79,8 @@ export const auth = {
         : null,
     };
   },
-  //update user details
+
+  // Update user details
   updateProfile: async (phone, username) => {
     const { data, error } = await supabase.auth.updateUser({
       data: {
@@ -97,8 +98,9 @@ export const auth = {
         : null,
     };
   },
+
   resetPassword: async (email) => {
-    //reset password
+    // Reset password
     const { error, data } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: "https://micjeanroyal.com/reset-password",
     });
@@ -113,6 +115,7 @@ export const auth = {
         : null,
     };
   },
+
   updatePassword: async (newPassword) => {
     const { error } = await supabase.auth.updateUser({
       password: newPassword,
