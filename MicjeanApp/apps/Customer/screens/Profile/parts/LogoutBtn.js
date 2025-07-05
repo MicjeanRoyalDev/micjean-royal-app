@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button } from '@rneui/themed';
 import { StyleSheet, Alert } from 'react-native';
-//import { supabase } from './clients'; 
+import { supabase } from './clients'; 
 
 export default function LogoutBtn({ onLogoutSuccess }) {
-  /*const handleLogout = async () => {
+  const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
       
@@ -22,7 +22,7 @@ export default function LogoutBtn({ onLogoutSuccess }) {
       Alert.alert('Error', 'An unexpected error occurred during logout');
       console.error('Logout error:', error);
     }
-  };*/
+  };
 
   return (
     <Button

@@ -2,9 +2,10 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
-import ProfileScreen from '../screens/Profile/ProfileScreen';
+import ProfileStack from '../screens/Profile/parts/ProfileStack';
 import HomeScreen from '../screens/HomeScreen';
 import MenuScreen from '../screens/MenuScreen';
+import CartScreen from '../screens/Cart/Cart'
 import { ThemeProvider, createTheme } from '@rneui/themed';
 
 const theme = createTheme({
@@ -95,12 +96,12 @@ export default function BottomNavbar() {
           {/*I am yet to add the orders or cart screen*/}
           <Tab.Screen 
             name="Orders" 
-            component={Orders} 
+            component={CartScreen} 
             options={{ headerShown: false }} 
           />
           <Tab.Screen 
             name="Profile" 
-            component={ProfileScreen} 
+            component={ProfileStack} 
             options={{ 
               headerShown: true,
               headerStyle: {
