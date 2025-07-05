@@ -7,33 +7,40 @@ or destructure individual functionality from auth
 */
 export const auth = {
   register: async (email, password, username, phone) => {
-    // Sign up user and get data and error
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    const user = data?.user || null;
-    const session = data?.session || null;
-    // If a new user was created, insert into profiles table with the user ID
-    if (user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert([{ id: user.id, username, phone }]);
-      if (profileError) console.error('Profile insert error:', profileError.message);
-    }
+    const {
+      error,
+      data: { session },
+    } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          phone: phone,
+          username: username,
+          isAdmin: false,
+        },
+      },
+    });
     return {
-      user,
-      session,
+      user: session?.user?.user_metadata || null,
+      session: session || null,
       error: error
         ? { message: error.message, code: error.code }
         : null,
     };
   },
+
   login: async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     return {
-      user: data?.user || null,
-      session: data?.session || null,
+      user: session?.user?.user_metadata || null,
+      session: session || null,
       error: error
         ? {
             message: error.message,
@@ -42,6 +49,7 @@ export const auth = {
         : null,
     };
   },
+
   logout: async () => {
     const { data, error } = await supabase.auth.signOut();
     return {
@@ -54,6 +62,7 @@ export const auth = {
         : null,
     };
   },
+
   getProfile: async () => {
     const {
       data: { session },
@@ -70,7 +79,8 @@ export const auth = {
         : null,
     };
   },
-  //update user details
+
+  // Update user details
   updateProfile: async (phone, username) => {
     const { data, error } = await supabase.auth.updateUser({
       data: {
@@ -88,8 +98,9 @@ export const auth = {
         : null,
     };
   },
+
   resetPassword: async (email) => {
-    //reset password
+    // Reset password
     const { error, data } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: "https://micjeanroyal.com/reset-password",
     });
@@ -104,6 +115,7 @@ export const auth = {
         : null,
     };
   },
+
   updatePassword: async (newPassword) => {
     const { error } = await supabase.auth.updateUser({
       password: newPassword,
