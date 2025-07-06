@@ -69,10 +69,17 @@ export const menu = {
         )
         .eq("is_available", true);
 
-      if (menuError) throw menuError;
+      const menuItemsByCategory = menuItems.reduce((acc, item) => {
+        if (!acc[item.category_id]) {
+          acc[item.category_id] = [];
+        }
+        acc[item.category_id].push(item);
+        return acc;
+      }, {});
+
       const menuByCategory = categories.map((category) => ({
         ...category,
-        items: menuItems.filter((item) => item.category_id === category.id),
+        items: menuItemsByCategory[category.id] || [],
       }));
 
       return {
@@ -99,11 +106,9 @@ export const menu = {
         .select("id, name")
         .order("display_order");
 
-      if (error) throw error;
-
       return {
         data: data || [],
-        error: error || null,
+        error: error ? error.message : null,
       };
     } catch (error) {
       console.error("Error fetching all categories:", error);
