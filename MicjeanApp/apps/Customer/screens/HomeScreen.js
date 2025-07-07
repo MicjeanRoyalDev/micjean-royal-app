@@ -1,18 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  Image,
-  TouchableOpacity,
-  Dimensions,
-  Animated,
-} from 'react-native';
+import {View,Text,StyleSheet,SafeAreaView,ScrollView, Image,TouchableOpacity,Dimensions,Animated,} from 'react-native';
 import Header from '../components/Header';
 import PopularDishes from '../components/PopularDishes';
-import BottomNavbar from '../components/BottomNavbar';
 import { supabase } from '../../../backend/supabase/clients';
 
 const { width } = Dimensions.get('window');
@@ -125,10 +114,7 @@ const HomeScreen = () => {
       </ScrollView>
 
       {/* Bottom Navigation Component */}
-      <BottomNavbar
-        activeTab={activeTab}
-        onTabPress={handleTabPress}
-      />
+    
     </SafeAreaView>
   );
 };

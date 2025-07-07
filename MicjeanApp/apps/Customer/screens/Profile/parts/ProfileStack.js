@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import ProfileScreen from '../ProfileScreen';
 import OrdersScreen from '../../Cart/Cart';
 import ContactScreen from './ContactScreen.js';
-import PolicyScreen from './PolicyScreen.js/index.js';
+import PolicyScreen from './PolicyScreen.js';
 import EmptyCartScreen from '../../Cart/EmptyCart';
 
 const Stack = createStackNavigator();

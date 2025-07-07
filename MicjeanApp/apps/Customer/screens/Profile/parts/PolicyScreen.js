@@ -43,7 +43,7 @@ export default function PrivacyScreen() {
 
       <Text style={styles.sectionTitle}>8. Contact Us</Text>
       <Text style={styles.paragraph}>
-        If you have any questions about this Privacy Policy, please contact us at support@example.com.
+        If you have any questions about this Privacy Policy, please contact us at support@gmail.com.
       </Text>
     </ScrollView>
   );

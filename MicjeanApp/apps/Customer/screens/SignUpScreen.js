@@ -1,6 +1,6 @@
 // apps/customer/screens/SignUpScreen.js
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ImageBackground, Dimensions, Platform, Alert } from 'react-native';
+import { ScrollView,View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ImageBackground, Dimensions, Platform, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../../backend/supabase/auth';
 
@@ -41,6 +41,7 @@ const SignUpScreen = () => {
   };
 
   return (
+    <ScrollView>
     <ImageBackground
       source={require('../../../shared/assets/images/micjean photo for background.jpg')}
       style={styles.container}
@@ -126,6 +127,7 @@ const SignUpScreen = () => {
         </TouchableOpacity>
       </View>
     </ImageBackground>
+    </ScrollView>
   );
 };
 
@@ -258,7 +260,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     marginTop: 10,
-    marginBottom: 10,
+    marginBottom: 50,
   },
   registerButtonText: {
     color: '#fff',

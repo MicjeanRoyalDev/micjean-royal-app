@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-} from 'react-native';
+import {View,Text,StyleSheet,SafeAreaView,ScrollView,} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import SearchBar from '../components/SearchBar';
 import CategoryTabs from '../components/CategoryTabs';
 import DishGrid from '../components/DishGrid';
-import BottomNavbar from '../components/BottomNavbar';
-
 const MENU_CATEGORIES = [
   { id: 'main', label: 'main dish' },
   { id: 'soups', label: 'soups & stews' },
@@ -97,7 +89,6 @@ const MenuScreen = () => {
       <ScrollView contentContainerStyle={styles.dishesGrid} showsVerticalScrollIndicator={false}>
         <DishGrid dishes={MOCK_DISHES} />
       </ScrollView>
-      <BottomNavbar activeTab={activeTab} onTabPress={handleTabPress} />
     </SafeAreaView>
   );
 };

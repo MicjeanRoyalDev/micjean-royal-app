@@ -1,13 +1,12 @@
 import React from 'react';
 import { Button } from '@rneui/themed';
 import { StyleSheet, Alert } from 'react-native';
-import { supabase } from './clients'; 
+import { auth } from '../../../../../backend/supabase/auth'
 
 export default function LogoutBtn({ onLogoutSuccess }) {
-  const handleLogout = async () => {
+  const logout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      
+      const { error } = await auth.logout();
       if (error) {
         Alert.alert('Logout Error', error.message);
         return;
@@ -30,7 +29,7 @@ export default function LogoutBtn({ onLogoutSuccess }) {
       type="solid"
       buttonStyle={styles.button}
       titleStyle={styles.buttonText}
-      //onPress={handleLogout}
+      onPress={logout}
     />
   );
 }
