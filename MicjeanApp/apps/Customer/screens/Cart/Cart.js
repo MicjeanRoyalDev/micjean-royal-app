@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   price: {
-    color: '#ba272e',
+    color: '#B71C1C',
     marginTop: 4,
   },
   checkoutBar: {
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   checkoutButton: {
-    backgroundColor: '#ba272e',
+    backgroundColor: '#B71C1C',
     paddingHorizontal: 20,
     borderRadius: 20,
   },

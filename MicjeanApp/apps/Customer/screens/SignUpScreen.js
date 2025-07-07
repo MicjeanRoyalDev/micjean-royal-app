@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../../backend/supabase/auth';
 
 const { width } = Dimensions.get('window');
-const CURVE_HEIGHT = width * 0.75; // Make the curve much taller
+const CURVE_HEIGHT = width * 0.65; // Make the curve much taller
 
 const SignUpScreen = () => {
   const [name, setName] = useState('');
@@ -53,7 +53,7 @@ const SignUpScreen = () => {
       {/* Curved red overlay */}
       <View style={styles.curveOverlay}>
         <Text style={styles.welcome}>WELCOME</Text>
-        <Text style={styles.subtitle}>create an account  make an order</Text>
+        <Text style={styles.subtitle}>Sign up to Order</Text>
       </View>
 
       {/* Logo just below the curve */}
@@ -164,8 +164,8 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     letterSpacing: 1,
-    marginBottom: 6,
-    marginTop: 10,
+    marginBottom: 5,
+    marginTop: 0,
     textAlign: 'center',
   },
   subtitle: {
@@ -178,12 +178,13 @@ const styles = StyleSheet.create({
   logoContainer: {
     zIndex: 3,
     alignItems: 'center',
-    marginTop: CURVE_HEIGHT - 40,
+    marginTop: CURVE_HEIGHT - 70,
     marginBottom: 10,
   },
   logo: {
     width: 120,
-    height: 50,
+    height: 80,
+    color:'#fff',
   },
   formContainer: {
     flex: 1,

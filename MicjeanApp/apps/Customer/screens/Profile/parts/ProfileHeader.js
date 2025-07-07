@@ -39,7 +39,7 @@ useEffect(() => {
         size="large"
         rounded
         title={profile.initials}
-        overlayContainerStyle={{ backgroundColor: '#ba272e' }}
+        overlayContainerStyle={{ backgroundColor: '#B71C1C' }}
         containerStyle={styles.avatar}
       />
 
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   borderColor: '#fff',
   shadowColor: '#000',
   shadowOffset: { width: 0, height: 2 },
-  backgroundColor: '#ba272e',
+  backgroundColor: '#B71C1C',
   shadowOpacity: 0.1,
   shadowRadius: 3,
   elevation: 5,
