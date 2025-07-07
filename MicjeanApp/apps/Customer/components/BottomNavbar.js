@@ -1,5 +1,4 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 import ProfileStack from '../screens/Profile/parts/ProfileStack';
@@ -31,7 +30,6 @@ export default function BottomNavbar() {
 
   return (
     <ThemeProvider theme={theme}>
-      <NavigationContainer>
         <Tab.Navigator
         //making the home the initial route
          initialRouteName='Home'
@@ -114,7 +112,6 @@ export default function BottomNavbar() {
             }} 
           />
         </Tab.Navigator>
-      </NavigationContainer>
     </ThemeProvider>
   );
 }

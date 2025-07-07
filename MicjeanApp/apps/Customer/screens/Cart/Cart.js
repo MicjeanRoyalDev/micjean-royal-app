@@ -6,16 +6,13 @@ import { MaterialIcons } from '@expo/vector-icons';
 
 export default function CartScreen() {
   const [orders, setOrders] = useState([]);
-
   useEffect(() => {
     fetchCartItems();
   }, []);
-
   const fetchCartItems = async () => {
     const { data, error } = await supabase
       .from('orders') 
       .select('item_name, price, image_url');
-
     if (error) {
       console.error(error);
     } else {

@@ -1,9 +1,11 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import { Card, Text } from '@rneui/themed';
 
-export default function Options({ navigation }) {
+export default function Options() {
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
       {/* Orders Card */}
@@ -51,7 +53,6 @@ const styles = StyleSheet.create({
     padding: 16,
     margin: 0,
     marginBottom: 0,
-    
   },
   cardContent: {
     flexDirection: 'row',

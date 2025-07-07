@@ -39,7 +39,7 @@ useEffect(() => {
         size="large"
         rounded
         title={profile.initials}
-        overlayContainerStyle={{ backgroundColor: '#dc3545' }}
+        overlayContainerStyle={{ backgroundColor: '#ba272e' }}
         containerStyle={styles.avatar}
       />
 
@@ -55,7 +55,18 @@ useEffect(() => {
 
 const styles = StyleSheet.create({
   container: { alignItems: 'center', padding: 16, width: '100%' },
-  avatar: { marginBottom: 12 },
+ avatar: {
+  marginBottom: 12,
+  borderWidth: 2,
+  borderRadius: 50,
+  borderColor: '#fff',
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  backgroundColor: '#ba272e',
+  shadowOpacity: 0.1,
+  shadowRadius: 3,
+  elevation: 5,
+},
   card: {
     width: '100%',
     borderRadius: 8,

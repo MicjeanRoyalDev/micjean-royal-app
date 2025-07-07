@@ -1,10 +1,11 @@
 // apps/customer/App.js
 import React, { useEffect, useState } from 'react';
 import { AppRegistry } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AuthStack from './navigation/AuthStack';
-import BottomNavbar from './navigation/BottomNavbar';
-import { supabase } from './auth/clients';
+import BottomNavbar from './components/BottomNavbar';
+import { supabase } from '../../backend/supabase/clients';
+import { NavigationContainer } from '@react-navigation/native';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -31,9 +32,11 @@ const App = () => {
   if (loading) return null;
 
   return (
-    <NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
       {isAuthenticated ? <BottomNavbar /> : <AuthStack />}
-    </NavigationContainer>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 };
 
