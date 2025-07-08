@@ -28,35 +28,39 @@ export const orders = {
       instructions,
       packageId,
     } = order;
+
     try {
-      const addonsData =
-        addons?.map((addon) => ({
-          id: addon.id,
-          quantity: addon.quantity,
-          price: addon.price,
-        })) ?? [];
-      const { data, error } = await supabase.rpc("create_complete_order", {
-        p_user_id: userId,
-        p_menu_id: menuId,
-        p_location_id: locationId,
-        p_total: total,
-        p_quantity: quantity,
-        p_addons: addonsData,
-        p_instructions: instructions,
-        p_package_id: packageId,
-      });
+      // 1. Create the order first
+      const { data, error: orderError } = await supabase.rpc(
+        "create_complete_order",
+        {
+          p_user_id: userId,
+          p_menu_id: menuId,
+          p_location_id: locationId,
+          p_total: total,
+          p_quantity: quantity,
+          p_addons:
+            addons?.map((a) => ({
+              id: a.id,
+              quantity: a.quantity,
+            })) ?? [],
+          p_instructions: instructions,
+          p_package_id: packageId,
+        }
+      );
 
-      if (error) throw error;
-
+      if (orderError)
+        throw new Error(`Order creation failed: ${orderError.message}`);
       return {
         success: true,
-        message: "Order created successfully with addons",
+        message: "Order created successfully",
       };
     } catch (error) {
-      console.error("Order creation failed:", error);
+      console.error("Order processing failed:", error.message);
       return {
-        data: null,
+        success: false,
         error: error.message,
+        data: null,
       };
     }
   },
