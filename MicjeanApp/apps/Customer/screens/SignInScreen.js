@@ -73,6 +73,7 @@ const SignInScreen = () => {
         <Text style={styles.signInButtonText}>{loading ? 'Signing in...' : 'Sign in'}</Text>
       </TouchableOpacity>
       {/* Bottom right red circle */}
+      {/*Okay I will be replacing this big circle with an animation*/}
       <View style={styles.redCircle} />
     </View>
   );
@@ -94,10 +95,10 @@ const styles = StyleSheet.create({
   },
   logo: {
     position: 'absolute',
-    top: 36,
+    top: 30,
     right: 32,
-    width: 70,
-    height: 28,
+    width: 87,
+    height: 90,
     zIndex: 2,
   },
   title: {

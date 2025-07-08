@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginTop:30,
     marginBottom: 15,
-    color: '#ba272e',
+    color: '#B71C1C',
   },
   paragraph: {
     fontSize: 16,
@@ -197,14 +197,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   selectedOption: {
-    backgroundColor: '#ba272e',
-    borderColor: '#ba272e',
+    backgroundColor: '#B71C1C',
+    borderColor: '#B71C1C',
   },
   optionText: {
     color: '#333',
   },
   button: {
-    backgroundColor: '#ba272e',
+    backgroundColor: '#B71C1C',
     borderRadius: 25,
     paddingVertical: 12,
     width: 160,

@@ -4,14 +4,15 @@ import { MaterialIcons } from '@expo/vector-icons';
 import ProfileStack from '../screens/Profile/parts/ProfileStack';
 import HomeScreen from '../screens/HomeScreen';
 import MenuScreen from '../screens/MenuScreen';
-import CartScreen from '../screens/Cart/Cart'
+import CartStack from '../screens/Cart/CartStack';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { ThemeProvider, createTheme } from '@rneui/themed';
 
 const theme = createTheme({
   lightColors: {
     primary: '#ffff',
     secondary: '#000000',
-    background: '#ba272e',
+    background: '#B71C1C',
   },
   darkColors: {
     primary: '#710707',
@@ -53,15 +54,11 @@ export default function BottomNavbar() {
             },
             tabBarStyle: {
               backgroundColor: theme.lightColors.background,
-              borderTopLeftRadius: 20,
-              borderTopRightRadius: 20,
-              borderBottomLeftRadius:20,
-              borderBottomRightRadius:20,
+              borderRadius: 20,
               height: 56,
               position: 'absolute',      
-              bottom: 45,                 
-              left: 0,                   
-              right: 0,  
+              bottom: 45,                   
+              marginHorizontal:8,                  
               alignSelf:'center',            
               elevation: 30,            
               shadowColor: '#000',       
@@ -94,23 +91,61 @@ export default function BottomNavbar() {
           {/*I am yet to add the orders or cart screen*/}
           <Tab.Screen 
             name="Orders" 
-            component={CartScreen} 
-            options={{ headerShown: false }} 
+            component={CartStack} 
+           options={({ route }) => {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'Orders';
+    const hideTabBar = routeName == 'Orders';
+    return {
+      headerShown: false,
+      tabBarStyle: hideTabBar? { display: 'none' }
+        : {
+            backgroundColor: theme.lightColors.background,
+            borderRadius: 20,
+            height: 56,
+            position: 'absolute',
+            bottom: 45,
+            marginHorizontal: 8,
+            alignSelf: 'center',
+            elevation: 30,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: -3 },
+            shadowOpacity: 0.1,
+            shadowRadius: 5,
+            zIndex: 100,
+          },
+    };
+  }}
           />
-          <Tab.Screen 
-            name="Profile" 
-            component={ProfileStack} 
-            options={{ 
-              headerShown: true,
-              headerStyle: {
-                backgroundColor: theme.lightColors.background,
-              },
-              headerTintColor: theme.lightColors.primary,
-              headerTitleStyle: {
-                fontWeight: 'bold',
-              },
-            }} 
-          />
+       <Tab.Screen
+  name="Profile"
+  component={ProfileStack}
+  options={({ route }) => {
+    const routeName = getFocusedRouteNameFromRoute(route) ?? 'ProfileMain';
+    const hideTabBar = routeName !== 'ProfileMain';
+    return {
+      headerShown: false,
+      tabBarStyle: hideTabBar? { display: 'none' }
+        : {
+            backgroundColor: theme.lightColors.background,
+            borderRadius: 20,
+            height: 56,
+            position: 'absolute',
+            bottom: 45,
+            marginHorizontal: 8,
+            alignSelf: 'center',
+            elevation: 30,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: -3 },
+            shadowOpacity: 0.1,
+            shadowRadius: 5,
+            zIndex: 100,
+          },
+    };
+  }}
+/>
+
+
+
         </Tab.Navigator>
     </ThemeProvider>
   );
