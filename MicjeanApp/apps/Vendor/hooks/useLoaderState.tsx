@@ -12,10 +12,15 @@ export function useLoaderState<T>(active: boolean, loader: () => Promise<T>) {
   }, [loader]);
 
   useEffect(() => {
-    if (active) {
+    if (active && data == null) {
       fetchData();
     }
-  }, [active]);
+  }, [active, data == null]);
 
-  return { data, isLoading, refetch: fetchData };
+  const reset = useCallback(() => {
+    setData(null);
+    setIsLoading(false);
+  }, []);
+
+  return { data, isLoading, refetch: fetchData, reset };
 }
