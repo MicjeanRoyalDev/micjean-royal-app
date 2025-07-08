@@ -114,6 +114,7 @@ const HomeScreen = () => {
       </ScrollView>
 
       {/* Bottom Navigation Component */}
+    
     </SafeAreaView>
   );
 };

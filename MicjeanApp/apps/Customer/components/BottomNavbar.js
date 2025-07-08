@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 import ProfileStack from '../screens/Profile/parts/ProfileStack';

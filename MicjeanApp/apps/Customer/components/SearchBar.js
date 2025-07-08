@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TextInput, Text, StyleSheet } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+
 const SearchBar = ({ value, onChangeText, placeholder = "Search for your meal..." }) => {
   return (
     <View style={styles.searchBarContainer}>
@@ -10,7 +10,7 @@ const SearchBar = ({ value, onChangeText, placeholder = "Search for your meal...
         value={value}
         onChangeText={onChangeText}
       />
-      <MaterialIcons name="search" size={22} color="#B71C1C" />
+      <Text style={styles.searchIcon}>🔍</Text>
     </View>
   );
 };

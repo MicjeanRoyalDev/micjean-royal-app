@@ -89,7 +89,7 @@ const MenuScreen = () => {
       <ScrollView contentContainerStyle={styles.dishesGrid} showsVerticalScrollIndicator={false}>
         <DishGrid dishes={MOCK_DISHES} />
       </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
   );
 };
 

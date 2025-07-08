@@ -6,7 +6,7 @@ const Header = ({ userName = "Eren" }) => {
     <View style={styles.header}>
       <View style={styles.headerLeft}>
         <Text style={styles.greeting}>Hello, {userName}</Text>
-        <Text style={styles.subGreeting}>Order a delicious meal, right here!</Text>
+        <Text style={styles.subGreeting}>READY FOR ANY DELICIOUS</Text>
       </View>
       <View style={styles.logoContainer}>
         <Image 

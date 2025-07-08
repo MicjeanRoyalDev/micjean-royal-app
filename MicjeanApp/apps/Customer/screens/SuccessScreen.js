@@ -1,4 +1,3 @@
-// apps/customer/screens/SuccessScreen.js
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -9,13 +8,12 @@ const CIRCLE_SIZE = width * 0.7;
 const SuccessScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { message } = route.params || { message: 'Sign up successful' };
+  const { message } = route.params || { message: 'Success' };
 
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.navigate('Home');
     }, 2000);
-
     return () => clearTimeout(timer);
   }, [navigation]);
 
