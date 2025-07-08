@@ -259,3 +259,15 @@ export const fetchOrders = async (params: Record<string, any>) => {
     limit,
   };
 }
+
+export const fetchOrderById = async (id: string) => {
+  await new Promise((resolve) => setTimeout(resolve, 750));
+  const order = dummyOrders.find((o) => o.id === id);
+  if (order) {
+    // In a real API, you'd return more details here.
+    // We'll just return the list item for now.
+    return Promise.resolve(order);
+  } else {
+    return Promise.reject(new Error("Order not found"));
+  }
+};

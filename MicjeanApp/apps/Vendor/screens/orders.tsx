@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, ActivityIndicator, Alert } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  ActivityIndicator,
+  Alert,
+  BackHandler,
+} from "react-native";
 
 import { useAuth } from "~/context/auth";
 import { useDebounce } from "~/hooks/useDebounce";
@@ -13,6 +20,9 @@ import { OrderCard } from "~/components/OrderCard";
 import { ListPagination } from "~/components/ListPagination";
 import { fetchOrders } from "~/api/dummy";
 import { useColorScheme } from "~/hooks/useColorScheme";
+import { useBreakpoint } from "~/hooks/useBreakpoint";
+import { OrderDetailsSidebar } from "~/components/OrderDetailsSidebar";
+import OrderDetails from "~/components/OrderDetails";
 
 const FOOD_CATEGORIES = [
   "Pizza",
@@ -29,6 +39,7 @@ const FOOD_CATEGORIES = [
 export default function OrdersScreen() {
   const { authClient } = useAuth();
   const { themeColors } = useColorScheme();
+  const { isLargeScreen } = useBreakpoint();
 
   const [orders, setOrders] = useState<OrderListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,6 +52,8 @@ export default function OrdersScreen() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
+
+  const [activeOrderId, setActiveOrderId] = useState<string | null>(null);
 
   const totalPages = Math.ceil(totalItems / pageSize);
 
@@ -83,21 +96,50 @@ export default function OrdersScreen() {
     loadOrders();
   }, [debouncedSearchQuery, filters, currentPage, pageSize]);
 
+  useEffect(() => {
+    const backAction = () => {
+      if (activeOrderId) {
+        setActiveOrderId(null);
+        return true;
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [activeOrderId]);
+
   const handlePageSizeChange = (size: number) => {
     setPageSize(size);
     setCurrentPage(1);
   };
 
   const handleOrderPress = (id: string) => {
-    Alert.alert("Order Pressed", `Navigate to details for order #${id}.`);
+    setActiveOrderId(id);
   };
+
+  if (activeOrderId && !isLargeScreen) {
+    return (
+      <OrderDetails
+        orderId={activeOrderId}
+        onClose={() => setActiveOrderId(null)}
+      />
+    );
+  }
 
   const renderContent = () => {
     if (isLoading && orders.length === 0) {
       return (
         <View className="flex-1 justify-center items-center p-5">
           {/* The color prop is the correct way to style ActivityIndicator */}
-          <ActivityIndicator size="large" color={themeColors["accent-2-foreground"]} />
+          <ActivityIndicator
+            size="large"
+            color={themeColors["accent-2-foreground"]}
+          />
         </View>
       );
     }
@@ -144,15 +186,23 @@ export default function OrdersScreen() {
   };
 
   return (
-    <View className="flex-1 bg-background px-4">
-      <OrdersScreenHeader
-        initialSearchQuery={searchQuery}
-        initialFilters={filters}
-        foodCategories={FOOD_CATEGORIES}
-        onSearchChange={setSearchQuery}
-        onFilterChange={setFilters}
-      />
-      {renderContent()}
+    <View className="flex-1 flex-row bg-background px-4">
+      <View className="flex-1">
+        <OrdersScreenHeader
+          initialSearchQuery={searchQuery}
+          initialFilters={filters}
+          foodCategories={FOOD_CATEGORIES}
+          onSearchChange={setSearchQuery}
+          onFilterChange={setFilters}
+        />
+        <View className="flex-1">{renderContent()}</View>
+      </View>
+      {isLargeScreen && activeOrderId && (
+        <OrderDetailsSidebar
+          orderId={activeOrderId}
+          onClose={() => setActiveOrderId(null)}
+        />
+      )}
     </View>
   );
 }
