@@ -1,4 +1,4 @@
-import { OrderListItem, User } from "./types";
+import { OrderListItem, User, Paginated, Menu, Category } from "./types";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const logout = async () => {
@@ -48,6 +48,48 @@ export const me = async () => {
     console.error('Failed to clear expired login time:', e);
   }
   throw new Error('Unauthenticated');
+};
+
+const dummyCategories: Category[] = [
+  { id: 'cat1', name: 'Main Dishes' },
+  { id: 'cat2', name: 'Starters' },
+  { id: 'cat3', name: 'Drinks' },
+  { id: 'cat4', name: 'Desserts' },
+];
+
+const dummyMenus: Menu[] = [
+  { id: 'menu1', name: 'Tilapia', imageUrl: 'https://example.com/tilapia.jpg', categoryId: 'cat1', status: 'Available', description: 'Delicious fried tilapia.', price: 15.99 },
+  { id: 'menu2', name: 'Spicy Seafood Noodles', imageUrl: 'https://example.com/noodles.jpg', categoryId: 'cat1', status: 'Available', description: 'Noodles with a kick.', price: 12.50 },
+  { id: 'menu3', name: 'Beef Dumplings', imageUrl: 'https://example.com/dumplings.jpg', categoryId: 'cat2', status: 'Sold Out', description: 'Steamed beef dumplings.', price: 9.99 },
+  { id: 'menu4', name: 'Iced Tea', imageUrl: 'https://example.com/iced-tea.jpg', categoryId: 'cat3', status: 'Available', price: 2.50 },
+  { id: 'menu5', name: 'Mushroom Pasta', imageUrl: 'https://example.com/pasta.jpg', categoryId: 'cat1', status: 'Hidden', description: 'Creamy mushroom pasta.', price: 13.75 },
+  { id: 'menu6', name: 'Garlic Bread', imageUrl: 'https://example.com/garlic-bread.jpg', categoryId: 'cat2', status: 'Available', price: 4.25 },
+  { id: 'menu7', name: 'Coke', imageUrl: 'https://example.com/coke.jpg', categoryId: 'cat3', status: 'Available', price: 2.00 },
+  { id: 'menu8', name: 'Black Tea', imageUrl: 'https://example.com/black-tea.jpg', categoryId: 'cat3', status: 'Sold Out', price: 2.25 },
+  { id: 'menu9', name: 'Cheesecake', imageUrl: 'https://example.com/cheesecake.jpg', categoryId: 'cat4', status: 'Available', description: 'Creamy New York cheesecake.', price: 6.50 },
+  { id: 'menu10', name: 'Spring Rolls', imageUrl: 'https://example.com/spring-rolls.jpg', categoryId: 'cat2', status: 'Available', price: 5.75 },
+];
+
+export const fetchCategories = async (): Promise<Paginated<Category>> => {
+  await new Promise(resolve => setTimeout(resolve, 500));
+  return {
+    items: dummyCategories,
+    total: dummyCategories.length,
+    page: 1,
+    limit: dummyCategories.length,
+  };
+};
+
+export const fetchMenus = async (params: { categoryId?: string }): Promise<Paginated<Menu>> => {
+  await new Promise(resolve => setTimeout(resolve, 500));
+  const { categoryId } = params;
+  const items = categoryId ? dummyMenus.filter(menu => menu.categoryId === categoryId) : dummyMenus;
+  return {
+    items,
+    total: items.length,
+    page: 1,
+    limit: items.length,
+  };
 };
 
 const dummyOrders: OrderListItem[] = [

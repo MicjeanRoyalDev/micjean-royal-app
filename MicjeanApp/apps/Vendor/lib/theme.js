@@ -1,4 +1,4 @@
-export const colors = {
+const colors = {
   light: {
     background: "#FAFAFA",
     foreground: "#0E1529",
@@ -54,3 +54,5 @@ export const colors = {
     "accent-4-foreground": "#4A152B",
   },
 };
+
+module.exports = { colors };

@@ -1,32 +1,15 @@
 import "~/global.css";
-
-import {
-  DarkTheme,
-  DefaultTheme,
-  Theme,
-  ThemeProvider,
-} from "@react-navigation/native";
-import { Slot, Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import { Slot } from "expo-router";
 import * as React from "react";
 import { Appearance, Platform, View } from "react-native";
-import { NAV_THEME } from "~/lib/constants";
-import { useColorScheme } from "~/hooks/useColorScheme";
 import { PortalHost } from "@rn-primitives/portal";
-import { ThemeToggle } from "~/components/ThemeToggle";
 import { setAndroidNavigationBar } from "~/lib/android-navigation-bar";
-
-const LIGHT_THEME: Theme = {
-  ...DefaultTheme,
-  colors: NAV_THEME.light,
-};
-const DARK_THEME: Theme = {
-  ...DarkTheme,
-  colors: NAV_THEME.dark,
-};
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+import { toastConfig } from "../components/toasts/SuccessToast";
 
 export {
-  // Catch any errors thrown by the Layout component.
   ErrorBoundary,
 } from "expo-router";
 
@@ -38,13 +21,19 @@ const usePlatformSpecificSetup = Platform.select({
 
 export default function RootLayout() {
   usePlatformSpecificSetup();
-  const { isDarkColorScheme } = useColorScheme();
 
   return (
-    <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-      <Slot />
+    <>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={{ flex: 1 }} className="bg-background">
+          <SafeAreaView style={{ flex: 1 }}>
+            <Slot />
+          </SafeAreaView>
+        </View>
+      </GestureHandlerRootView>
       <PortalHost />
-    </ThemeProvider>
+      <Toast config={toastConfig} />
+    </>
   );
 }
 
@@ -55,7 +44,6 @@ const useIsomorphicLayoutEffect =
 
 function useSetWebBackgroundClassName() {
   useIsomorphicLayoutEffect(() => {
-    // Adds the background color to the html element to prevent white background on overscroll.
     document.documentElement.classList.add("bg-background");
   }, []);
 }
@@ -66,4 +54,4 @@ function useSetAndroidNavigationBar() {
   }, []);
 }
 
-function noop() {}
+function noop() { }

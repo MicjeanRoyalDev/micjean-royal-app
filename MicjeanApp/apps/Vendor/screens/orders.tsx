@@ -5,7 +5,6 @@ import { useAuth } from "~/context/auth";
 import { useDebounce } from "~/hooks/useDebounce";
 import { OrderListItem, Paginated } from "~/api/types";
 
-// --- UI Components ---
 import {
   OrdersScreenHeader,
   OrdersFilters,
@@ -13,8 +12,8 @@ import {
 import { OrderCard } from "~/components/OrderCard";
 import { ListPagination } from "~/components/ListPagination";
 import { fetchOrders } from "~/api/dummy";
+import { useColorScheme } from "~/hooks/useColorScheme";
 
-// In a real app, this might come from an API endpoint
 const FOOD_CATEGORIES = [
   "Pizza",
   "Burgers",
@@ -28,33 +27,27 @@ const FOOD_CATEGORIES = [
 // --- MAIN SCREEN COMPONENT ---
 
 export default function OrdersScreen() {
-  // Authentication client from our custom hook
   const { authClient } = useAuth();
+  const { themeColors } = useColorScheme();
 
-  // State for data and loading
   const [orders, setOrders] = useState<OrderListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // State for search and filters
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<OrdersFilters>({ status: "active" });
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
-  // State for pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
 
-  // Derived state
   const totalPages = Math.ceil(totalItems / pageSize);
 
-  // Effect to reset to page 1 when filters or search change
   useEffect(() => {
     setCurrentPage(1);
   }, [debouncedSearchQuery, filters]);
 
-  // Main data fetching effect using the authClient
   useEffect(() => {
     const loadOrders = async () => {
       setIsLoading(true);
@@ -88,9 +81,8 @@ export default function OrdersScreen() {
     };
 
     loadOrders();
-  }, [debouncedSearchQuery, filters, currentPage, pageSize, authClient]);
+  }, [debouncedSearchQuery, filters, currentPage, pageSize]);
 
-  // --- Handlers ---
   const handlePageSizeChange = (size: number) => {
     setPageSize(size);
     setCurrentPage(1);
@@ -100,13 +92,12 @@ export default function OrdersScreen() {
     Alert.alert("Order Pressed", `Navigate to details for order #${id}.`);
   };
 
-  // --- Render Logic ---
   const renderContent = () => {
     if (isLoading && orders.length === 0) {
       return (
         <View className="flex-1 justify-center items-center p-5">
           {/* The color prop is the correct way to style ActivityIndicator */}
-          <ActivityIndicator size="large" color="#a1a1aa" />
+          <ActivityIndicator size="large" color={themeColors["accent-2-foreground"]} />
         </View>
       );
     }

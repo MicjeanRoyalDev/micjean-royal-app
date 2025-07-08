@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, Modal, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Modal } from 'react-native';
 import { Search, SlidersHorizontal, X } from 'lucide-react-native';
 import { useBreakpoint } from '~/hooks/useBreakpoint';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select'; // Assuming this exists
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
+import { useColorScheme } from '~/hooks/useColorScheme';
 
-// --- TYPE DEFINITIONS ---
 export type FilterStatus = 'active' | 'completed' | 'cancelled';
 
 export type OrdersFilters = {
   status: FilterStatus;
-  category?: string; // `undefined` or '' for 'All'
+  category?: string;
 };
 
 interface OrdersScreenHeaderProps {
@@ -17,29 +17,24 @@ interface OrdersScreenHeaderProps {
   initialFilters: OrdersFilters;
   foodCategories: string[];
   onSearchChange: (query: string) => void;
-  onFilterChange: (filters: OrdersFilters) => void;
+  onFilterChange: React.Dispatch<React.SetStateAction<OrdersFilters>>;
 }
 
 
-// --- REUSABLE SUB-COMPONENTS ---
-
-// A reusable button for the status filters
 const FilterButton = ({ label, isActive, onPress }: { label: string, isActive: boolean, onPress: () => void }) => (
   <Pressable
     onPress={onPress}
-    className={`px-4 py-2 rounded-md ${
-      isActive ? 'bg-primary shadow' : 'bg-muted'
-    }`}
+    className={`px-4 py-2 rounded-md ${isActive ? 'bg-primary shadow' : 'bg-muted'
+      }`}
   >
-    <Text className={`font-semibold capitalize ${
-      isActive ? 'text-primary-foreground' : 'text-muted-foreground'
-    }`}>
+    <Text className={`font-semibold capitalize ${isActive ? 'text-primary-foreground' : 'text-muted-foreground'
+      }`}>
       {label}
     </Text>
   </Pressable>
 );
 
-// --- MOBILE VIEW ---
+
 function MobileHeader({
   initialSearchQuery = '',
   initialFilters,
@@ -48,23 +43,8 @@ function MobileHeader({
   onFilterChange,
 }: OrdersScreenHeaderProps) {
   const [modalVisible, setModalVisible] = useState(false);
-  // Staged filters for the modal, only applied on confirmation
-  const [stagedFilters, setStagedFilters] = useState<OrdersFilters>(initialFilters);
-
-  // Sync staged filters when the modal opens
-  useEffect(() => {
-    if (modalVisible) {
-      setStagedFilters(initialFilters);
-    }
-  }, [modalVisible, initialFilters]);
-
-  const handleApplyFilters = () => {
-    onFilterChange(stagedFilters);
-    setModalVisible(false);
-  };
-
-  const hasChanges = JSON.stringify(stagedFilters) !== JSON.stringify(initialFilters);
-
+  const { themeColors } = useColorScheme();
+  
   return (
     <>
       <View className="flex-row items-center w-full p-4 gap-x-3 bg-card border-b border-border">
@@ -73,7 +53,8 @@ function MobileHeader({
           <Search size={20} className="text-muted-foreground" />
           <TextInput
             placeholder="Search by customer name..."
-            placeholderTextColor="#a1a1aa" // text-muted-foreground
+            placeholderTextColor={themeColors.mutedForeground}
+
             className="flex-1 p-2 text-foreground"
             defaultValue={initialSearchQuery}
             onChangeText={onSearchChange}
@@ -96,7 +77,55 @@ function MobileHeader({
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View className="flex-1 justify-end bg-black/60">
+        <MobileHeaderContent
+          initialFilters={initialFilters}
+          foodCategories={foodCategories}
+          onFilterChange={onFilterChange}
+          setModalVisible={setModalVisible}
+        />
+      </Modal>
+    </>
+  );
+}
+
+type MobileHeaderContentProps = {
+  initialFilters: OrdersFilters;
+  foodCategories: string[];
+  onFilterChange: React.Dispatch<React.SetStateAction<OrdersFilters>>;
+  setModalVisible: (visible: boolean) => void;
+};
+
+function MobileHeaderContent({ initialFilters, foodCategories, onFilterChange, setModalVisible }: MobileHeaderContentProps) {
+  const [stagedFilters, setStagedFilters] = useState<{ status?: FilterStatus, category?: string }>({});
+
+  const hasChanges = Object.keys(stagedFilters).length > 0;
+
+  const handleStatusChange = (status: FilterStatus) => {
+    setStagedFilters(prev => ({
+      ...prev,
+      status,
+    }));
+  }
+
+  const handleCategoryChange = (category: string | undefined) => {
+    setStagedFilters(prev => ({
+      ...prev,
+      category: category,
+    }));
+  }
+  
+  const handleApplyFilters = () => {
+    onFilterChange(prev => {
+      const newFilters = {
+        ...prev,
+      };
+      return newFilters;
+    });
+    setModalVisible(false);
+  };
+
+
+  return (<View className="flex-1 justify-end bg-black/60">
           <View className="bg-card rounded-t-2xl p-6 h-[55%]">
             {/* Modal Header */}
             <View className="flex-row justify-between items-center mb-6">
@@ -110,12 +139,12 @@ function MobileHeader({
             <View className="mb-6">
               <Text className="text-base font-semibold text-muted-foreground mb-3">Status</Text>
               <View className="flex-row gap-x-3">
-                {(['active', 'completed', 'cancelled'] as FilterStatus[]).map((status) => (
+                {(['active', 'completed', 'cancelled'] as const).map((status) => (
                   <FilterButton
                     key={status}
                     label={status}
-                    isActive={stagedFilters.status === status}
-                    onPress={() => setStagedFilters(prev => ({ ...prev, status }))}
+                    isActive={(stagedFilters.status ?? initialFilters.status) === status}
+                    onPress={() => handleStatusChange(status)}
                   />
                 ))}
               </View>
@@ -124,14 +153,8 @@ function MobileHeader({
             {/* Category Filter */}
             <View className="mb-8">
               <Text className="text-base font-semibold text-muted-foreground mb-3">Food Category</Text>
-              <Select
-                onValueChange={(option) => {
-                  const value = typeof option === 'string' ? option : option?.value;
-                  setStagedFilters(prev => ({
-                    ...prev,
-                    category: value === 'all' ? undefined : value
-                  }));
-                }}
+              {/* <Select
+                onValueChange={(option) => handleCategoryChange(option?.value)}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="All Categories" />
@@ -142,28 +165,21 @@ function MobileHeader({
                     <SelectItem key={cat} value={cat} label={cat}>{cat}</SelectItem>
                   ))}
                 </SelectContent>
-              </Select>
+              </Select> */}
             </View>
 
             {/* Apply Button */}
             <Pressable
               onPress={handleApplyFilters}
-              disabled={!hasChanges}
-              className={`w-full py-4 rounded-lg ${
-                hasChanges ? 'bg-primary' : 'bg-muted'
-              }`}
+              disabled={false}
+              className={`w-full py-4 rounded-lg ${hasChanges ? 'bg-primary' : 'bg-muted'}`}
             >
-              <Text className={`text-center font-bold text-lg ${
-                hasChanges ? 'text-primary-foreground' : 'text-muted-foreground'
-              }`}>
+              <Text className={`text-center font-bold text-lg ${hasChanges ? 'text-primary-foreground' : 'text-muted-foreground'}`}>
                 Apply Filters
               </Text>
             </Pressable>
           </View>
-        </View>
-      </Modal>
-    </>
-  );
+        </View>)
 }
 
 // --- TABLET / LARGE SCREEN VIEW ---
@@ -205,27 +221,27 @@ function TabletHeader({
 
       {/* Category Filter */}
       <View className="w-52">
-         <Select
-            value={
-              initialFilters.category
-                ? { value: initialFilters.category, label: initialFilters.category }
-                : undefined
-            }
-            onValueChange={(option) => {
-              const value = typeof option === 'string' ? option : option?.value;
-              onFilterChange({ ...initialFilters, category: value === 'all' ? undefined : value });
-            }}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="All Categories" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all" label="All Categories">All Categories</SelectItem>
-              {foodCategories.map((cat) => (
-                <SelectItem key={cat} value={cat} label={cat}>{cat}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <Select
+          value={
+            initialFilters.category
+              ? { value: initialFilters.category, label: initialFilters.category }
+              : undefined
+          }
+          onValueChange={(option) => {
+            const value = typeof option === 'string' ? option : option?.value;
+            onFilterChange({ ...initialFilters, category: value === 'all' ? undefined : value });
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="All Categories" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all" label="All Categories">All Categories</SelectItem>
+            {foodCategories.map((cat) => (
+              <SelectItem key={cat} value={cat} label={cat}>{cat}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </View>
     </View>
   );
