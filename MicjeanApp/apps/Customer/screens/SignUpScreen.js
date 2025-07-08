@@ -1,22 +1,47 @@
 // apps/customer/screens/SignUpScreen.js
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ImageBackground, Dimensions, Platform } from 'react-native';
+import { ScrollView,View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ImageBackground, Dimensions, Platform, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { auth } from '../../../backend/supabase/auth';
 
 const { width } = Dimensions.get('window');
-const CURVE_HEIGHT = width * 0.75; // Make the curve much taller
+const CURVE_HEIGHT = width * 0.65; // Make the curve much taller
 
 const SignUpScreen = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [telephone, setTelephone] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
-  const handleSignUp = () => {
-    navigation.navigate('Success', { message: 'Sign up successful' });
+  const handleSignUp = async () => {
+    if (!email || !password || !name || !telephone) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = await auth.register(email, password, name, telephone);
+      
+      if (result.error) {
+        Alert.alert('Registration Failed', result.error.message);
+        console.error('Registration error:', result.error);
+      } else {
+        console.log('Registration successful:', result.user);
+        navigation.navigate('Success', { message: 'Sign up successful!' });
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+      console.error('Sign up error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
+    <ScrollView>
     <ImageBackground
       source={require('../../../shared/assets/images/micjean photo for background.jpg')}
       style={styles.container}
@@ -28,7 +53,7 @@ const SignUpScreen = () => {
       {/* Curved red overlay */}
       <View style={styles.curveOverlay}>
         <Text style={styles.welcome}>WELCOME</Text>
-        <Text style={styles.subtitle}>create an account  make an order</Text>
+        <Text style={styles.subtitle}>Sign up to Order</Text>
       </View>
 
       {/* Logo just below the curve */}
@@ -71,6 +96,16 @@ const SignUpScreen = () => {
           keyboardType="phone-pad"
           placeholderTextColor="#B80000"
         />
+        {/* Password */}
+        <Text style={styles.label}>Password</Text>
+        <TextInput
+          style={styles.input}
+          placeholder=""
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          placeholderTextColor="#B80000"
+        />
         {/* Social row */}
         <View style={styles.socialRow}>
           <View style={styles.line} />
@@ -87,11 +122,12 @@ const SignUpScreen = () => {
           </TouchableOpacity>
         </View>
         {/* Register button */}
-        <TouchableOpacity style={styles.registerButton} onPress={handleSignUp}>
-          <Text style={styles.registerButtonText}>Register</Text>
+        <TouchableOpacity style={styles.registerButton} onPress={handleSignUp} disabled={loading}>
+          <Text style={styles.registerButtonText}>{loading ? 'Registering...' : 'Register'}</Text>
         </TouchableOpacity>
       </View>
     </ImageBackground>
+    </ScrollView>
   );
 };
 
@@ -128,8 +164,8 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     letterSpacing: 1,
-    marginBottom: 6,
-    marginTop: 10,
+    marginBottom: 5,
+    marginTop: 0,
     textAlign: 'center',
   },
   subtitle: {
@@ -142,12 +178,13 @@ const styles = StyleSheet.create({
   logoContainer: {
     zIndex: 3,
     alignItems: 'center',
-    marginTop: CURVE_HEIGHT - 40,
+    marginTop: CURVE_HEIGHT - 70,
     marginBottom: 10,
   },
   logo: {
     width: 120,
-    height: 50,
+    height: 80,
+    color:'#fff',
   },
   formContainer: {
     flex: 1,
@@ -224,7 +261,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     marginTop: 10,
-    marginBottom: 10,
+    marginBottom: 50,
   },
   registerButtonText: {
     color: '#fff',

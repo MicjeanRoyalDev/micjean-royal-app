@@ -18,12 +18,12 @@ const AuthStack = () => {
         headerShown: false,
       }}
     >
+      <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="Welcome" component={WelcomeScreen} />
       <Stack.Screen name="SignIn" component={SignInScreen} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="Success" component={SuccessScreen} />
-      <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Menu" component={MenuScreen} />
     </Stack.Navigator>
   );

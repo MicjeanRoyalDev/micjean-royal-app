@@ -1,93 +1,134 @@
-
-import {supabase} from "./clients";
+import { supabase } from "./clients";
 /*
 to use functionality
 import auth
 and call any functionality using the dot notation (ie - auth.login(params))
 or destructure individual functionality from auth
 */
-export  const auth={
-    register: async(email,password,username,phone)=>{
-        const {error, data:{user}} = await supabase.auth.signUp({
-            email,
-            password
-        })
-        // insert username to database
-        if(user){
-            const {data} = await supabase.from("profiles")
-                .insert({
-                    username,
-                    phone
-                })
-        }
-        if(error){
-            throw new Error(error.message && error.code)
-        }
-    },
-    login: async(email,password)=>{
-        const {data,error} = await supabase.auth.signInWithPassword({
-            email,password
-        })
-        if(error){
-            throw new Error(error.message && error.code)
-        }
-    },
-    logout: async()=>{
-        const {error} = await supabase.auth.signOut();
-        if(error){
-            throw new Error(error.message && error.code)
-        }
-    },
-    getProfile: async()=>{
-        const {data: {session}, error: sessionError} = await supabase.auth.getSession()
-        if(!session || sessionError){
-            throw new Error(sessionError?.message || "unauthorized")
-        }
-        //get user profile
-        const {data: profile, error: profileError} = await supabase
-            .from("profiles")
-            .select("*")
-            .eq('id',session.user.id)
-            .single()
+export const auth = {
+  register: async (email, password, username, phone) => {
+    const {
+      error,
+      data: { session },
+    } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          phone: phone,
+          username: username,
+          isAdmin: false,
+        },
+      },
+    });
+    return {
+      user: session?.user?.user_metadata || null,
+      session: session || null,
+      error: error
+        ? { message: error.message, code: error.code }
+        : null,
+    };
+  },
 
-        if(profileError){
-            throw new Error(profileError.message && profileError.code)
-        }
-        return {session, profile}
-    },
-    //update user details
-    updateProfile: async(phone,username)=>{
-        const {data: {session}, error} = await supabase.auth.getSession()
-        if(error){
-            throw new Error(error.message && error.code)
-        }
-        const {data: updateProfile, error: updateProfileError} = await supabase
-            .from("profiles")
-            .update({phone,username})
-            .eq('id',session.user.id)
-            .select()
-            .single()
-        if(updateProfileError){
-            throw new Error(updateProfileError.message && updateProfileError.code)
-        }
-    },
-    resetPassword: async(email)=>{
-        //reset password
-        const {error, data} = await supabase.auth.resetPasswordForEmail(email,{
-            redirectTo: "customer-app/reset-password" || "vendor-app/reset-password",
-        })
-        if(error){
-            throw new Error(error.message && error.code)
-        }
-        return {success:true, message:"Password reset sent successfully",data};
-    },
-    updatePassword: async (newPassword) => {
-        const { error } = await supabase.auth.updateUser({
-            password: newPassword
-        });
-        if (error) {
-            throw new Error(error.message || 'Failed to update password');
-        }
-        return { success: true, message: 'Password updated successfully' };
-    }
-}
+  login: async (email, password) => {
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    return {
+      user: session?.user?.user_metadata || null,
+      session: session || null,
+      error: error
+        ? {
+            message: error.message,
+            code: error.code,
+          }
+        : null,
+    };
+  },
+
+  logout: async () => {
+    const { data, error } = await supabase.auth.signOut();
+    return {
+      data: data || null,
+      error: error
+        ? {
+            message: error.message,
+            code: error.code,
+          }
+        : null,
+    };
+  },
+
+  getProfile: async () => {
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+    return {
+      session,
+      profile: session?.user?.user_metadata || null,
+      error: sessionError
+        ? {
+            message: sessionError.message,
+            code: sessionError.code,
+          }
+        : null,
+    };
+  },
+
+  // Update user details
+  updateProfile: async (phone, username) => {
+    const { data, error } = await supabase.auth.updateUser({
+      data: {
+        phone: phone,
+        username: username,
+      },
+    });
+    return {
+      user: data?.user || null,
+      error: error
+        ? {
+            message: error.message,
+            code: error.code,
+          }
+        : null,
+    };
+  },
+
+  resetPassword: async (email) => {
+    // Reset password
+    const { error, data } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: "https://micjeanroyal.com/reset-password",
+    });
+    return {
+      success: true,
+      message: "Password reset email sent successfully",
+      error: error
+        ? {
+            message: error.message,
+            code: error.code,
+          }
+        : null,
+    };
+  },
+
+  updatePassword: async (newPassword) => {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+    return {
+      success: true,
+      message: "Password updated successfully",
+      error: error
+        ? {
+            message: error.message,
+            code: error.code,
+          }
+        : null,
+    };
+  },
+};
