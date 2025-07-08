@@ -179,30 +179,32 @@ export default function MenuScreen() {
   }
 
   return (
-    <View className="flex-1 bg-background">
-      <MenuScreenHeader
-        selectedCategory={selectedCategory}
-        selectedMenu={activeMenu && "id" in activeMenu ? activeMenu : null}
-        onCategoryDeselected={() => {
-          setActiveMenu(null);
-          resetMenus();
-          setSelectedCategory(null);
-        }}
-        onMenuDeselected={() => {
-          setActiveMenu(null);
-        }}
-      />
-      <View className="flex-1 flex-row">
-        {renderContent()}
-        {isLargeScreen && activeMenu && categories && (
-          <MenuEditSidebar
-            menu={activeMenu}
-            categories={categories.items}
-            onClose={() => setActiveMenu(null)}
-            onSave={handleSaveMenu}
-          />
-        )}
+    <View className="flex-1 flex-row bg-background">
+      <View className='flex-1'>
+        <MenuScreenHeader
+          selectedCategory={selectedCategory}
+          selectedMenu={activeMenu && "id" in activeMenu ? activeMenu : null}
+          onCategoryDeselected={() => {
+            setActiveMenu(null);
+            resetMenus();
+            setSelectedCategory(null);
+          }}
+          onMenuDeselected={() => {
+            setActiveMenu(null);
+          }}
+        />
+        <View className="flex-1 flex-row">
+          {renderContent()}
+        </View>
       </View>
+      {isLargeScreen && activeMenu && categories && (
+        <MenuEditSidebar
+          menu={activeMenu}
+          categories={categories.items}
+          onClose={() => setActiveMenu(null)}
+          onSave={handleSaveMenu}
+        />
+      )}
     </View>
   );
 }
