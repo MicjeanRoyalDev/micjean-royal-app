@@ -29,10 +29,6 @@ export const orders = {
       packageId,
     } = order;
     try {
-      const { profile: user, error: authError } = await auth.getProfile();
-      if (authError || !user || user.sub !== userId) {
-        throw new Error("Authentication failed");
-      }
       const addonsData =
         addons?.map((addon) => ({
           id: addon.id,
@@ -71,6 +67,10 @@ export const orders = {
    * @returns {Promise<{data: Array, error: string|null}>}
    */
   getUserOrders: async (userId) => {
+    const { profile: user, error: authError } = await auth.getProfile();
+    if (authError || !user || user.sub !== userId) {
+      throw new Error("Authentication failed");
+    }
     const { data, error } = await supabase
       .from("orders")
       .select(
