@@ -2,34 +2,43 @@ import { supabase } from "./clients";
 import { auth } from "./auth";
 export const orders = {
   /**
-   * Create a new order
-   * @param {Object} order - The order object containing details like userId, productId, quantity, etc.
+   * @param {Object} order - The order object containing the following properties:
+   * @param {number} order.userId - The ID of the user creating the order.
+   * @param {number} order.menuId - The ID of the menu item being ordered.
+   * @param {Array} order.addons - List of addons for the order.
+   * @param {number} order.locationId - The ID of the location for the order.
+   * @param {number} order.total - The total price of the order.
+   * @param {number} order.quantity - The quantity of the menu item ordered.
+   * @param {string} order.instructions - Special instructions for the order.
+   * @param {number} order.packageId - The ID of the package for the order.
    * @returns {Promise<{data: string, error: string | null}  >} - The created order object or an error message
    * @example
    * const {data:profile, error} = await auth.getProfile();
    * const userId = profile?.sub;
    *
    */
-  createOrder: async (
-    userId,
-    menuId,
-    addons,
-    locationId,
-    total,
-    quantity,
-    instructions,
-    packageId
-  ) => {
+  createOrder: async (order) => {
+    const {
+      userId,
+      menuId,
+      addons,
+      locationId,
+      total,
+      quantity,
+      instructions,
+      packageId,
+    } = order;
     try {
       const { profile: user, error: authError } = await auth.getProfile();
       if (authError || !user || user.sub !== userId) {
         throw new Error("Authentication failed");
       }
-      const addonsData = addons?.map((addon) => ({
-        id: addon.id,
-        quantity: addon.quantity,
-        price: addon.price,
-      }));
+      const addonsData =
+        addons?.map((addon) => ({
+          id: addon.id,
+          quantity: addon.quantity,
+          price: addon.price,
+        })) ?? [];
       const { data, error } = await supabase.rpc("create_complete_order", {
         p_user_id: userId,
         p_menu_id: menuId,
