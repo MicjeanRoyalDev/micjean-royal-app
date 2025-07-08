@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-//import { supabase } from './orders';
 import { Button } from '@rneui/themed';
+import CheckoutScreen from './CheckoutScreen';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+//import { supabase } from '../../../backend/supabase/clients'; // adjust if needed
 
 export default function CartScreen() {
+  const navigation = useNavigation();
   const [orders, setOrders] = useState([]);
+
   useEffect(() => {
     fetchCartItems();
   }, []);
+
   const fetchCartItems = async () => {
     const { data, error } = await supabase
-      .from('orders') 
+      .from('orders')
       .select('item_name, price, image_url');
+
     if (error) {
       console.error(error);
     } else {
@@ -35,7 +41,13 @@ export default function CartScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Your orders</Text>
+      {/* Back Button */}
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <MaterialIcons name="arrow-back" size={25} color="#ba272e" />
+      </TouchableOpacity>
+
+      <Text style={styles.heading}>Your Orders</Text>
+
       <FlatList
         data={orders}
         keyExtractor={(item, index) => `${item.item_name}-${index}`}
@@ -54,9 +66,11 @@ export default function CartScreen() {
         contentContainerStyle={{ paddingBottom: 100 }}
       />
 
+      {/* Checkout Section */}
       <View style={styles.checkoutBar}>
-        <Button title="Go to checkout" buttonStyle={styles.checkoutButton} />
-        <Text style={styles.total}>GH¢  {getTotal()}</Text>
+        <Button title="Go to checkout" buttonStyle={styles.checkoutButton} 
+        onPress={() => navigation.navigate('Checkout')} />
+        <Text style={styles.total}>GH¢ {getTotal()}</Text>
       </View>
     </View>
   );
@@ -68,14 +82,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 16,
     paddingTop: 50,
-    paddingBottom:120,
+    paddingBottom: 120,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 47,
+    left: 16,
+    zIndex: 10,
+    padding: 8,
   },
   heading: {
     fontSize: 22,
     fontWeight: '700',
     marginBottom: 20,
     textAlign: 'center',
-    color:'#AC030A'
+    color: '#AC030A',
   },
   card: {
     backgroundColor: '#fff5f5',
