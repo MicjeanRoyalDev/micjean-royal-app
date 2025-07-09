@@ -2,17 +2,12 @@ import "react-native-gesture-handler";
 import * as React from "react";
 import { AuthProvider } from "~/context/auth";
 import { HomeScreen } from "~/components/HomeScreen";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { View } from "react-native";
 
 export default function Screen() {
   return (
     <AuthProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <View style={{ flex: 1 }}>
-          <HomeScreen />
-        </View>
-      </GestureHandlerRootView>
+      {/* User will be authenticated before accessing the HomeScreen, if not will be automatically redirected to the login screen */}
+      <HomeScreen />
     </AuthProvider>
   );
 }

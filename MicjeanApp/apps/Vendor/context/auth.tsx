@@ -10,13 +10,13 @@ import { Text, View } from "react-native";
 import { ApiClient } from "~/api";
 import { Login } from "~/components/LoginScreen";
 import { me } from "~/api/dummy";
+import LoadingScreen from "~/components/LoadingScreen";
 
 const authClient = new ApiClient();
 
 type AuthContextType = {
   authClient: ApiClient;
   user: User;
-  loading: boolean;
   error: Error | null;
   clearUser: () => void;
 };
@@ -38,6 +38,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const responseInterceptor = authClient.interceptResponse((response) => {
       if (response.status === 401) {
+        // This action leads to the login screen
+        
         clearUser();
       }
       return response;
@@ -57,11 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   if (loading) {
-    return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   const afterLogin = () => {
@@ -82,7 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading: false, error: null, clearUser, authClient }}
+      value={{ user, error: null, clearUser, authClient }}
     >
       {children}
     </AuthContext.Provider>

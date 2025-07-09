@@ -15,6 +15,7 @@ import {
   LayoutDashboard,
   Users,
   ShoppingCart,
+  ChevronsRight,
 } from "lucide-react-native";
 import { Button } from "~/components/ui/button";
 import { useAuth } from "~/context/auth";
@@ -76,20 +77,20 @@ export function SidebarContent({ expanded, setExpanded }: SidebarContentProps) {
     <View
       className={`
         border-r border-border bg-card p-4 flex flex-col h-full
-        ${expanded ? "w-72" : "w-20"}
+        ${expanded ? "w-full" : "w-20"}
         transition-all duration-300 ease-in-out`}
     >
       {/* Header Section */}
-      <View className="p-4 mb-4 flex-row items-center justify-between">
+      <View className="p-4 mb-4 flex-row items-center justify-center gap-6">
         {expanded && (
           <Text className="text-3xl font-extrabold text-foreground">Micjean</Text>
         )}
         {/* The chevron is an interactive element to collapse */}
         <Pressable
-          onPress={() => setExpanded(false)}
+          onPress={() => setExpanded(prev => !prev)}
           className="p-2 rounded-full hover:bg-accent active:bg-accent/80"
         >
-          <ChevronsLeft size={28} className="text-foreground" />
+          { expanded ? (<ChevronsLeft size={28} className="text-foreground" />) : (<ChevronsRight size={28} className="text-muted-foreground" />) }
         </Pressable>
       </View>
 
