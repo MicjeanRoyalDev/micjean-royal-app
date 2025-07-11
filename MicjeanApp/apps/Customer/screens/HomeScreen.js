@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 160, // Padding for floating nav
+    paddingBottom: 90, // Padding for floating nav
     flexGrow: 1,
   },
   carouselContainer: {

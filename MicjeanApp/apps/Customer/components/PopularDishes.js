@@ -7,36 +7,35 @@ const PopularDishes = ({ dishes = [] }) => {
   const defaultDishes = [
     {
       id: 1,
+      name: 'TILAPIA OKLAODE',
+      price: 180.00,
+      image_url: 'https://example.com/tilapia.jpg', // You can replace with actual image URLs
       imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-      dishName: 'TILAPIA OKLAODE',
-      price: 'Ghc180.00'
     },
     {
       id: 2,
+      name: 'TILAPIA OKLAODE',
+      price: 180.00,
+      image_url: 'https://example.com/tilapia.jpg',
       imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-      dishName: 'TILAPIA OKLAODE',
-      price: 'Ghc180.00'
     },
     {
       id: 3,
+      name: 'TILAPIA EN SAUCE',
+      price: 180.00,
+      image_url: 'https://example.com/tilapia.jpg',
       imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-      dishName: 'TILAPIA EN SAUCE',
-      price: 'Ghc180'
     },
     {
       id: 4,
+      name: 'TILAPIA OKLAODE',
+      price: 180.00,
+      image_url: 'https://example.com/tilapia.jpg',
       imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-      dishName: 'TILAPIA OKLAODE',
-      price: 'Ghc180.00'
     }
   ];
 
   const dishesToRender = dishes.length > 0 ? dishes : defaultDishes;
-
-  const handleDishPress = (dish) => {
-    console.log('Dish pressed:', dish.dishName);
-    // Add navigation or other logic here
-  };
 
   return (
     <View style={styles.popularSection}>
@@ -45,10 +44,10 @@ const PopularDishes = ({ dishes = [] }) => {
         {dishesToRender.map((dish) => (
           <FoodCard
             key={dish.id}
-            imageSource={dish.imageSource}
-            dishName={dish.dishName}
-            price={dish.price}
-            onPress={() => handleDishPress(dish)}
+            imageSource={dish.imageSource || { uri: dish.image_url }}
+            dishName={dish.name || dish.dishName}
+            price={typeof dish.price === 'number' ? `GHC ${dish.price}` : dish.price}
+            dish={dish}
             pulseAnimation={true}
           />
         ))}

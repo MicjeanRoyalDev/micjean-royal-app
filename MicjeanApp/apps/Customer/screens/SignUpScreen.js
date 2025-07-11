@@ -1,6 +1,16 @@
 // apps/customer/screens/SignUpScreen.js
 import React, { useState } from 'react';
-import { ScrollView,View, Text, StyleSheet, TextInput, TouchableOpacity, Image, ImageBackground, Dimensions, Platform, Alert } from 'react-native';
+import {
+  ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  Alert,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../../backend/supabase/auth';
 
@@ -24,7 +34,7 @@ const SignUpScreen = () => {
     setLoading(true);
     try {
       const result = await auth.register(email, password, name, telephone);
-      
+
       if (result.error) {
         Alert.alert('Registration Failed', result.error.message);
         console.error('Registration error:', result.error);
@@ -41,233 +51,186 @@ const SignUpScreen = () => {
   };
 
   return (
-    <ScrollView>
-    <ImageBackground
-      source={require('../../../shared/assets/images/micjean photo for background.jpg')}
-      style={styles.container}
-      imageStyle={styles.bgImage}
-    >
-      {/* White overlay */}
-      <View style={styles.overlay} />
-
-      {/* Curved red overlay */}
-      <View style={styles.curveOverlay}>
-        <Text style={styles.welcome}>WELCOME</Text>
-        <Text style={styles.subtitle}>Sign up to Order</Text>
-      </View>
-
-      {/* Logo just below the curve */}
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../../../shared/assets/images/micjean royal logo.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-      </View>
-
-      <View style={styles.formContainer}>
-        {/* Name */}
-        <Text style={styles.label}>Name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder=""
-          value={name}
-          onChangeText={setName}
-          placeholderTextColor="#B80000"
-        />
-        {/* Email */}
-        <Text style={styles.label}>Email</Text>
-        <TextInput
-          style={styles.input}
-          placeholder=""
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          placeholderTextColor="#B80000"
-          autoCapitalize="none"
-        />
-        {/* Telephone */}
-        <Text style={styles.label}>Telephone</Text>
-        <TextInput
-          style={styles.input}
-          placeholder=""
-          value={telephone}
-          onChangeText={setTelephone}
-          keyboardType="phone-pad"
-          placeholderTextColor="#B80000"
-        />
-        {/* Password */}
-        <Text style={styles.label}>Password</Text>
-        <TextInput
-          style={styles.input}
-          placeholder=""
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          placeholderTextColor="#B80000"
-        />
-        {/* Social row */}
-        <View style={styles.socialRow}>
-          <View style={styles.line} />
-          <Text style={styles.orText}>or</Text>
-          <View style={styles.line} />
+    <ScrollView contentContainerStyle={styles.container}>
+      <Image
+        source={require('../../../shared/assets/images/micjean photo for background.jpg')}
+        style={styles.backgroundImage}
+      />
+      <View style={styles.boxContainer}>
+        {/* Header Section */}
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerTitle}>Create Account</Text>
+          <Text style={styles.headerSubtitle}>Sign up to order delicious meals</Text>
         </View>
-        {/* Social buttons */}
-        <View style={styles.socialButtons}>
-          <TouchableOpacity style={styles.socialButton}>
-            <Text style={styles.socialButtonText}>google</Text>
+
+        {/* Form Section */}
+        <View style={styles.formContainer}>
+          {/* Name */}
+          <TextInput
+            style={styles.input}
+            placeholder="Name"
+            value={name}
+            onChangeText={setName}
+            placeholderTextColor="#B80000"
+          />
+          {/* Email */}
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            placeholderTextColor="#B80000"
+            autoCapitalize="none"
+          />
+          {/* Telephone */}
+          <TextInput
+            style={styles.input}
+            placeholder="Telephone"
+            value={telephone}
+            onChangeText={setTelephone}
+            keyboardType="phone-pad"
+            placeholderTextColor="#B80000"
+          />
+          {/* Password */}
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            placeholderTextColor="#B80000"
+          />
+
+          {/* Register Button */}
+          <TouchableOpacity
+            style={styles.registerButton}
+            onPress={handleSignUp}
+            disabled={loading}
+          >
+            <Text style={styles.registerButtonText}>{loading ? 'Registering...' : 'Register'}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.socialButton}>
-            <Text style={styles.socialButtonText}>facebook</Text>
-          </TouchableOpacity>
+
+          {/* Social Login Section */}
+          <View style={styles.socialContainer}>
+            <Text style={styles.socialText}>Or sign up with</Text>
+            <View style={styles.socialButtonsContainer}>
+              <TouchableOpacity style={styles.socialButton}>
+                <Text style={styles.socialButtonText}>Google</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.socialButton}>
+                <Text style={styles.socialButtonText}>Facebook</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-        {/* Register button */}
-        <TouchableOpacity style={styles.registerButton} onPress={handleSignUp} disabled={loading}>
-          <Text style={styles.registerButtonText}>{loading ? 'Registering...' : 'Register'}</Text>
-        </TouchableOpacity>
       </View>
-    </ImageBackground>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    resizeMode: 'cover',
+    flexGrow: 1,
     backgroundColor: '#fff',
-  },
-  bgImage: {
-    width: '100%',
-    height: '100%',
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255,255,255,0.75)',
-    zIndex: 1,
-  },
-  curveOverlay: {
-    position: 'absolute',
-    top: 0,
-    width: width,
-    height: CURVE_HEIGHT,
-    backgroundColor: '#B80000',
-    borderBottomLeftRadius: width * 1.1,
-    borderBottomRightRadius: width * 1.1,
-    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 30,
     justifyContent: 'center',
-    zIndex: 2,
-    paddingTop: Platform.OS === 'ios' ? 60 : 40,
   },
-  welcome: {
-    color: '#fff',
-    fontSize: 32,
-    fontWeight: 'bold',
-    letterSpacing: 1,
-    marginBottom: 5,
-    marginTop: 0,
-    textAlign: 'center',
+  boxContainer: {
+    width: '105%',
+    height: '95%', // Increased height to make the box larger
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+    elevation: 3,
+    alignSelf: 'center',
+    opacity: 0.9, // Increased opacity for better visibility
   },
-  subtitle: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
-    textAlign: 'center',
-  },
-  logoContainer: {
-    zIndex: 3,
+  headerContainer: {
     alignItems: 'center',
-    marginTop: CURVE_HEIGHT - 70,
-    marginBottom: 10,
+    marginBottom: 15, // Increased margin to bring the header down
   },
-  logo: {
-    width: 120,
-    height: 80,
-    color:'#fff',
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#B80000',
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#888',
+    marginTop: 5,
   },
   formContainer: {
     flex: 1,
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    zIndex: 3,
-  },
-  label: {
-    alignSelf: 'flex-start',
-    marginLeft: 10,
-    color: '#B80000',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 2,
-    marginTop: 8,
+    justifyContent: 'center',
+    marginTop: 5, // Added margin to bring the form down
   },
   input: {
-    width: '100%',
-    backgroundColor: 'rgba(255,255,255,0.85)',
-    borderRadius: 24,
-    borderWidth: 1.5,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 20,
+    borderWidth: 0.8,
     borderColor: '#B80000',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    marginBottom: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 25,
+    marginBottom: 30,
     fontSize: 16,
-    color: '#B80000',
-  },
-  socialRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 12,
-    width: '100%',
-  },
-  line: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#222',
-    opacity: 0.3,
-  },
-  orText: {
-    marginHorizontal: 10,
-    color: '#222',
-    fontWeight: 'bold',
-    fontSize: 14,
-    opacity: 0.7,
-  },
-  socialButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 18,
-  },
-  socialButton: {
-    flex: 1,
-    borderWidth: 1.5,
-    borderColor: '#B80000',
-    borderRadius: 24,
-    paddingVertical: 10,
-    marginHorizontal: 8,
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.85)',
-  },
-  socialButtonText: {
-    color: '#B80000',
-    fontWeight: 'bold',
-    fontSize: 15,
-    textTransform: 'lowercase',
+    color: '#333',
   },
   registerButton: {
     backgroundColor: '#B80000',
-    borderRadius: 24,
-    paddingVertical: 16,
+    borderRadius: 10,
+    paddingVertical: 15,
     alignItems: 'center',
-    width: '100%',
-    marginTop: 10,
-    marginBottom: 50,
+    marginTop: 25, // Increased margin to bring the button down
+    marginLeft: 70,
+    marginRight:70,
+    shadowColor: '#333',
+    shadowOffset: { width: 5, height: 2 },
   },
   registerButtonText: {
     color: '#fff',
-    fontWeight: 'bold',
     fontSize: 18,
-    letterSpacing: 1,
+    fontWeight: 'bold',
+  },
+  socialContainer: {
+    alignItems: 'center',
+    marginTop: 25,
+  },
+  socialText: {
+    fontSize: 14,
+    color: '#888',
+    marginBottom: 10,
+  },
+  socialButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  socialButton: {
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#B80000',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginHorizontal: 10,
+  },
+  socialButtonText: {
+    color: '#B80000',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  backgroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '113%',
+    height: '113%',
+    opacity: 0.9, // Increased opacity for better visibility
   },
 });
 

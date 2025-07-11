@@ -1,44 +1,114 @@
 // MicjeanApp/apps/Customer/screens/SplashScreen.js
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image, ImageBackground, Dimensions } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Image, Animated, Dimensions, Easing } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
-const CURVE_HEIGHT = height * 0.43; // Deeper curve for bottom image
 
 const SplashScreen = () => {
   const navigation = useNavigation();
+  
+  // Animation references
+  const circleScale = useRef(new Animated.Value(0)).current;
+  const logoScale = useRef(new Animated.Value(0)).current;
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+  const slideUp = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.replace('Welcome');
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [navigation]);
+    // Start animation sequence
+    const startAnimations = () => {
+      // 1. White circle animation (starts after 500ms)
+      setTimeout(() => {
+        Animated.timing(circleScale, {
+          toValue: 1,
+          duration: 800,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }).start();
+      }, 800);
+
+      // 2. Logo animation (starts after circle animation begins)
+      setTimeout(() => {
+        Animated.parallel([
+          Animated.timing(logoScale, {
+            toValue: 1,
+            duration: 800,
+            easing: Easing.out(Easing.back(1.2)),
+            useNativeDriver: true,
+          }),
+          Animated.timing(logoOpacity, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }, 1200);
+
+      // 3. Slide up animation and navigation (starts after logo animation)
+      setTimeout(() => {
+        Animated.timing(slideUp, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        }).start(() => {
+          // Navigate to next screen after slide animation
+          navigation.replace('Welcome');
+        });
+      }, 2500);
+    };
+
+    startAnimations();
+  }, [navigation, circleScale, logoScale, logoOpacity, slideUp]);
 
   return (
     <View style={styles.container}>
-      {/* Top curved white background */}
-      <View style={styles.topContainer}>
-        <View style={styles.logoContainer}>
-          <Image
-            source={require('../../../shared/assets/images/micjean royal logo.png')}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-          <Text style={styles.slogan}>Enjoy African meals</Text>
-        </View>
-      </View>
-      {/* Bottom image background with red overlay and oval curve */}
-      <View style={styles.bottomContainer}>
-        <ImageBackground
-          source={require('../../../shared/assets/images/micjean photo for background.jpg')}
-          style={styles.bgImage}
-          imageStyle={styles.bgImageStyle}
-        >
-          <View style={styles.overlay} />
-        </ImageBackground>
-      </View>
+      {/* Red background */}
+      <View style={styles.redBackground} />
+      
+      {/* Animated white circle */}
+      <Animated.View
+        style={[
+          styles.circle,
+          {
+            transform: [{ scale: circleScale }],
+          },
+        ]}
+      />
+      
+      {/* Animated logo */}
+      <Animated.View
+        style={[
+          styles.logoContainer,
+          {
+            opacity: logoOpacity,
+            transform: [{ scale: logoScale }],
+          },
+        ]}
+      >
+        <Image
+          source={require('../../../shared/assets/images/micjean royal logo.png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+      </Animated.View>
+      
+      {/* Slide up overlay */}
+      <Animated.View
+        style={[
+          styles.slideOverlay,
+          {
+            transform: [
+              {
+                translateY: slideUp.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [height, 0],
+                }),
+              },
+            ],
+          },
+        ]}
+      />
     </View>
   );
 };
@@ -46,57 +116,51 @@ const SplashScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  topContainer: {
-    height: height - CURVE_HEIGHT / 1.6, // More oval
-    backgroundColor: '#fff',
-    borderBottomLeftRadius: width * 1.1, // Large radius for oval
-    borderBottomRightRadius: width * 1.1,
-    alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 2,
-    overflow: 'hidden',
+    alignItems: 'center',
+  },
+  redBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#B71C1C', // Deep red background
+  },
+  circle: {
+    position: 'absolute',
+    width: width * 0.7, // Circle size
+    height: width * 0.7,
+    borderRadius: (width * 0.7) / 2,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 15,
   },
   logoContainer: {
-    alignItems: 'center',
+    position: 'absolute',
     justifyContent: 'center',
-    marginTop: 0,
+    alignItems: 'center',
   },
   logo: {
-    width: 170,
+    width: 200,
     height: 80,
-    marginBottom: 10,
   },
-  slogan: {
-    color: '#B80000',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginTop: 8,
-    textAlign: 'center',
-  },
-  bottomContainer: {
+  slideOverlay: {
     position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     bottom: 0,
-    width: width,
-    height: CURVE_HEIGHT,
-    overflow: 'hidden',
-    zIndex: 1,
-  },
-  bgImage: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'flex-end',
-  },
-  bgImageStyle: {
-    width: '100%',
-    height: '100%',
-    borderTopLeftRadius: width * 1.1, // Match top curve
-    borderTopRightRadius: width * 1.1,
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(184, 0, 0, 0.35)', // Red overlay with transparency
+    backgroundColor: 'white',
+    zIndex: 10,
   },
 });
 
