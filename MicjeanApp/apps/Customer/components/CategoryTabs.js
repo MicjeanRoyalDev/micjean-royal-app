@@ -15,7 +15,7 @@ const CategoryTabs = ({ categories, activeCategory, onCategoryPress }) => {
           onPress={() => handlePress(cat.id)}
         >
           <Text style={[styles.tabText, activeCategory === cat.id && styles.activeTabText]}>
-            {cat.label}
+            {cat.name}
           </Text>
           {activeCategory === cat.id && (
             <View style={[styles.activeLine, { width: '100%' }]} />

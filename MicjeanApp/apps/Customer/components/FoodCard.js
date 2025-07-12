@@ -1,5 +1,7 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { TouchableOpacity, Image, Text, StyleSheet, Animated, Dimensions } from 'react-native';
+import FoodModal from './FoodModal';
+import { menu } from '../../../backend/supabase/menu';
 
 const { width } = Dimensions.get('window');
 
@@ -7,10 +9,41 @@ const FoodCard = ({
   imageSource, 
   dishName, 
   price, 
+  dish,
   onPress,
   pulseAnimation = true 
 }) => {
   const pulseAnim = useRef(new Animated.Value(1)).current;
+  const [selectedDish, setSelectedDish] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleCardPress = async () => {
+    if (dish) {
+      try {
+        // Fetch full dish details including addons
+        const result = await menu.getMenuById(dish.id);
+        if (result.error) {
+          console.error('Error fetching dish details:', result.error);
+          setSelectedDish(dish); // Fallback to basic dish data
+        } else {
+          setSelectedDish(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching dish details:', error);
+        setSelectedDish(dish); // Fallback to basic dish data
+      }
+      setModalVisible(true);
+    }
+    
+    // Call the optional onPress callback if provided
+    if (onPress) {
+      onPress(dish);
+    }
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
 
   useEffect(() => {
     if (pulseAnimation) {
@@ -35,7 +68,7 @@ const FoodCard = ({
   }, [pulseAnimation, pulseAnim]);
 
   const CardContent = (
-    <TouchableOpacity style={styles.dishCard} onPress={onPress}>
+    <TouchableOpacity style={styles.dishCard} onPress={handleCardPress}>
       <Image 
         source={imageSource} 
         style={styles.dishImage} 
@@ -45,12 +78,19 @@ const FoodCard = ({
     </TouchableOpacity>
   );
 
-  return pulseAnimation ? (
-    <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
-      {CardContent}
-    </Animated.View>
-  ) : (
-    CardContent
+  return (
+    <>
+      {pulseAnimation ? (
+        <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+          {CardContent}
+        </Animated.View>
+      ) : (
+        CardContent
+      )}
+      
+      {/* FoodModal Component */}
+      <FoodModal visible={modalVisible} dish={selectedDish} onClose={closeModal} />
+    </>
   );
 };
 

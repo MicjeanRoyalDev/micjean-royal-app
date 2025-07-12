@@ -11,19 +11,14 @@ import {
 import { Button } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons'; 
+import { useCart } from '../../context/CartContext'; 
 
 export default function CheckoutScreen() {
   const navigation = useNavigation();
+  const { cart, getCartTotal, clearCart } = useCart();
   const [fullName, setFullName] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
-
-  const dummyItems = [
-    { id: 1, name: 'Jollof Rice', quantity: 2, price: 25 },
-    { id: 2, name: 'Chicken Wings', quantity: 1, price: 18 },
-  ];
-
-  const total = dummyItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
   const placeOrder = () => {
     if (!fullName || !address || !phone) {
@@ -31,8 +26,16 @@ export default function CheckoutScreen() {
       return;
     }
 
+    if (cart.items.length === 0) {
+      Alert.alert('Empty Cart', 'Your cart is empty. Add some items before placing an order.');
+      return;
+    }
+
     Alert.alert('Order Placed', 'Thank you! Your food is on the way.', [
-      { text: 'OK', onPress: () => navigation.navigate('Home') },
+      { text: 'OK', onPress: () => {
+        clearCart(); // Clear cart after successful order
+        navigation.navigate('Home');
+      }},
     ]);
   };
 
@@ -44,20 +47,40 @@ export default function CheckoutScreen() {
       </TouchableOpacity>
 
       <Text style={styles.sectionTitle}>Order Summary</Text>
-      {dummyItems.map((item) => (
-        <View key={item.id} style={styles.itemRow}>
-          <Text style={styles.itemName}>
-            {item.name} x{item.quantity}
-          </Text>
-          <Text style={styles.itemPrice}>
-            GH¢ {(item.price * item.quantity).toFixed(2)}
-          </Text>
+      {cart.items.length > 0 ? (
+        <>
+          {cart.items.map((item) => (
+            <View key={item.cartId} style={styles.itemRow}>
+              <View style={styles.itemDetails}>
+                <Text style={styles.itemName}>
+                  {item.name} x{item.quantity}
+                </Text>
+                {item.selectedAddons.length > 0 && (
+                  <Text style={styles.addonsText}>
+                    + {item.selectedAddons.map(addon => addon.name).join(', ')}
+                  </Text>
+                )}
+              </View>
+              <Text style={styles.itemPrice}>
+                GHC {(item.totalPrice * item.quantity).toFixed(2)}
+              </Text>
+            </View>
+          ))}
+          <View style={styles.totalRow}>
+            <Text style={styles.totalLabel}>Total:</Text>
+            <Text style={styles.totalAmount}>GHC {getCartTotal()}</Text>
+          </View>
+        </>
+      ) : (
+        <View style={styles.emptyCart}>
+          <Text style={styles.emptyCartText}>No items in cart</Text>
+          <Button 
+            title="Go to Menu" 
+            buttonStyle={styles.menuButton}
+            onPress={() => navigation.navigate('Menu')}
+          />
         </View>
-      ))}
-      <View style={styles.totalRow}>
-        <Text style={styles.totalLabel}>Total:</Text>
-        <Text style={styles.totalAmount}>GH¢ {total.toFixed(2)}</Text>
-      </View>
+      )}
 
       <Text style={styles.sectionTitle}>Delivery Information</Text>
       <TextInput
@@ -83,8 +106,9 @@ export default function CheckoutScreen() {
 
       <Button
         title="Place Order"
-        buttonStyle={styles.orderButton}
+        buttonStyle={[styles.orderButton, cart.items.length === 0 && styles.disabledButton]}
         onPress={placeOrder}
+        disabled={cart.items.length === 0}
       />
     </ScrollView>
   );
@@ -113,15 +137,31 @@ const styles = StyleSheet.create({
   itemRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    alignItems: 'flex-start',
+    marginBottom: 12,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  itemDetails: {
+    flex: 1,
+    marginRight: 10,
   },
   itemName: {
     fontSize: 16,
     fontWeight: '500',
+    color: '#333',
+  },
+  addonsText: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 2,
+    fontStyle: 'italic',
   },
   itemPrice: {
     fontSize: 16,
-    color: '#444',
+    color: '#B71C1C',
+    fontWeight: '600',
   },
   totalRow: {
     flexDirection: 'row',
@@ -140,6 +180,20 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#ba272e',
   },
+  emptyCart: {
+    alignItems: 'center',
+    paddingVertical: 30,
+  },
+  emptyCartText: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 20,
+  },
+  menuButton: {
+    backgroundColor: '#B71C1C',
+    borderRadius: 20,
+    paddingHorizontal: 30,
+  },
   input: {
     backgroundColor: '#f9f9f9',
     padding: 12,
@@ -155,5 +209,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     width: 150,
     alignSelf: 'center',
+  },
+  disabledButton: {
+    backgroundColor: '#ccc',
   },
 });
