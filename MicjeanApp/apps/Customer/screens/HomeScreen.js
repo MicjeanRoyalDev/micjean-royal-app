@@ -15,8 +15,8 @@ const HomeScreen = () => {
 
   const carouselImages = [
     require('../../../shared/assets/images/micjean photo for background.jpg'),
-    require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-    require('../../../shared/assets/images/micjean photo for background.jpg'),
+    require('../../../shared/assets/images/Egg Fried Rice.jpeg'),
+    require('../../../shared/assets/images/Waakye.jpeg'),
   ];
 
   useEffect(() => {

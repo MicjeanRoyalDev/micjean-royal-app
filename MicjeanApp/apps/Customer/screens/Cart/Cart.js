@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Button } from '@rneui/themed';
+import EmptyCartScreen from './EmptyCart';
 import CheckoutScreen from './CheckoutScreen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -31,25 +32,10 @@ export default function CartScreen() {
       </TouchableOpacity>
     </View>
   );
-
-  if (cart.items.length === 0) {
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <MaterialIcons name="arrow-back" size={25} color="#ba272e" />
-        </TouchableOpacity>
-        <Text style={styles.heading}>Your Cart</Text>
-        <View style={styles.emptyCart}>
-          <Text style={styles.emptyCartText}>Your cart is empty</Text>
-          <Button 
-            title="Start Shopping" 
-            buttonStyle={styles.startShoppingButton}
-            onPress={() => navigation.navigate('Menu')}
-          />
-        </View>
-      </View>
-    );
-  }
+{/*logic for when the cart is empty*/}
+if (cart.items.length === 0) {
+  return <EmptyCartScreen />;
+}
 
   return (
     <View style={styles.container}>

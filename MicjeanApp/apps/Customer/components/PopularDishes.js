@@ -7,32 +7,47 @@ const PopularDishes = ({ dishes = [] }) => {
   const defaultDishes = [
     {
       id: 1,
-      name: 'TILAPIA OKLAODE',
-      price: 180.00,
-      image_url: 'https://example.com/tilapia.jpg', // You can replace with actual image URLs
-      imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
+      name: 'JOLLOF RICE',
+      price: 40.00,
+      image_url: 'https://example.com/tilapia.jpg',
+      imageSource: require('../../../shared/assets/images/jollof.jpeg'),
     },
     {
       id: 2,
-      name: 'TILAPIA OKLAODE',
-      price: 180.00,
+      name: 'FRIED RICE',
+      price: 45.00,
       image_url: 'https://example.com/tilapia.jpg',
-      imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
+      imageSource: require('../../../shared/assets/images/Egg Fried Rice.jpeg'),
     },
     {
       id: 3,
-      name: 'TILAPIA EN SAUCE',
-      price: 180.00,
+      name: 'FUFU AND PALMNUT',
+      price: 100.00,
       image_url: 'https://example.com/tilapia.jpg',
-      imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
+      imageSource: require('../../../shared/assets/images/fufu.jpeg'),
     },
     {
       id: 4,
+      name: 'WAAKYE',
+      price: 40.00,
+      image_url: 'https://example.com/tilapia.jpg',
+      imageSource: require('../../../shared/assets/images/Waakye.jpeg'),
+    },
+    {
+      id: 5,
+      name: 'PLAIN RICE & STEW',
+      price: 30.00,
+      image_url: 'https://example.com/tilapia.jpg',
+      imageSource: require('../../../shared/assets/images/Rice & Stew 🍲🍛.jpeg'),
+    },
+    {
+      id: 6,
       name: 'TILAPIA OKLAODE',
       price: 180.00,
       image_url: 'https://example.com/tilapia.jpg',
       imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-    }
+    },
+   
   ];
 
   const dishesToRender = dishes.length > 0 ? dishes : defaultDishes;

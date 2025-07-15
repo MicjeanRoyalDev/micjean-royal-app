@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import ProfileScreen from '../ProfileScreen';
 import OrdersScreen from '../../Cart/Cart';
 import EmptyCartScreen from '../../Cart/EmptyCart.js'
+import OrderHistory from '../../Cart/OrderHistory.js';
 import ContactScreen from './ContactScreen.js';
 import PolicyScreen from './PolicyScreen.js';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
@@ -28,8 +29,8 @@ export default function ProfileStack({ navigation }) {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Orders"
-        component={EmptyCartScreen}
+        name="OrderHistory"
+        component={OrderHistory}
         options={({ navigation }) => ({
           header: () => <CustomHeader navigation={navigation} title="My Orders" />,
         })}
