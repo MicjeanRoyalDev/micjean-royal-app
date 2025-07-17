@@ -1,7 +1,7 @@
 // apps/customer/screens/SignUpScreen.js
 import React, { useState } from 'react';
 import {
-  ScrollView,
+ScrollView,
   View,
   Text,
   StyleSheet,
@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../../backend/supabase/auth';
-
+import { LinearGradient } from 'expo-linear-gradient';
 const { width } = Dimensions.get('window');
 const CURVE_HEIGHT = width * 0.65; // Make the curve much taller
 
@@ -53,7 +53,7 @@ const SignUpScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image
-        source={require('../../../shared/assets/images/micjean photo for background.jpg')}
+        source={require('../../../shared/assets/images/leavesglow.jpg')}
         style={styles.backgroundImage}
       />
       <View style={styles.boxContainer}>
@@ -71,7 +71,7 @@ const SignUpScreen = () => {
             placeholder="Name"
             value={name}
             onChangeText={setName}
-            placeholderTextColor="#B80000"
+            placeholderTextColor='#04860dff'
           />
           {/* Email */}
           <TextInput
@@ -80,7 +80,7 @@ const SignUpScreen = () => {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
-            placeholderTextColor="#B80000"
+            placeholderTextColor='#04860dff'
             autoCapitalize="none"
           />
           {/* Telephone */}
@@ -90,7 +90,7 @@ const SignUpScreen = () => {
             value={telephone}
             onChangeText={setTelephone}
             keyboardType="phone-pad"
-            placeholderTextColor="#B80000"
+            placeholderTextColor='#04860dff'
           />
           {/* Password */}
           <TextInput
@@ -99,17 +99,26 @@ const SignUpScreen = () => {
             value={password}
             onChangeText={setPassword}
             secureTextEntry
-            placeholderTextColor="#B80000"
+            placeholderTextColor='#04860dff'
           />
-
-          {/* Register Button */}
-          <TouchableOpacity
-            style={styles.registerButton}
-            onPress={handleSignUp}
-            disabled={loading}
+          {/* Register Button with Gradient to make it look shiny */}
+          <LinearGradient
+            colors={['#0d5c12ff', '#18971eff', '#0d5c12ff']} 
+             start={{ x: 0.1, y: 0.1 }}
+            end={{ x: 0.9, y: 1 }}
+            style={styles.registerButtonWrapper}
           >
-            <Text style={styles.registerButtonText}>{loading ? 'Registering...' : 'Register'}</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.registerButton}
+          onPress={handleSignUp}
+        disabled={loading}
+        activeOpacity={0.85}
+        >
+    <Text style={styles.registerButtonText}>
+      {loading ? 'Registering...' : 'Register'}
+    </Text>
+    </TouchableOpacity>
+      </LinearGradient>
 
           {/* Social Login Section */}
           <View style={styles.socialContainer}>
@@ -139,17 +148,17 @@ const styles = StyleSheet.create({
   },
   boxContainer: {
     width: '105%',
-    height: '95%', // Increased height to make the box larger
-    backgroundColor: '#fff',
+    height: '95%', 
+    backgroundColor: '#eff7f0ff',
     borderRadius: 20,
     padding: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 5,
+    shadowOpacity: 1,
+    shadowRadius: 9,
     elevation: 3,
     alignSelf: 'center',
-    opacity: 0.9, // Increased opacity for better visibility
+    opacity: 0.8, // Increased opacity for better visibility
   },
   headerContainer: {
     alignItems: 'center',
@@ -158,11 +167,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#B80000',
+    color: '#04860dff',
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#888',
+    color: '#022b04ff',
     marginTop: 5,
   },
   formContainer: {
@@ -171,27 +180,39 @@ const styles = StyleSheet.create({
     marginTop: 5, // Added margin to bring the form down
   },
   input: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#f9f9f9ff',
     borderRadius: 20,
     borderWidth: 0.8,
-    borderColor: '#B80000',
+    borderColor: '#04860dff',
     paddingVertical: 14,
     paddingHorizontal: 25,
     marginBottom: 30,
     fontSize: 16,
     color: '#333',
   },
-  registerButton: {
-    backgroundColor: '#B80000',
-    borderRadius: 10,
-    paddingVertical: 15,
-    alignItems: 'center',
-    marginTop: 25, // Increased margin to bring the button down
-    marginLeft: 70,
-    marginRight:70,
-    shadowColor: '#333',
-    shadowOffset: { width: 5, height: 2 },
-  },
+ registerButtonWrapper: {
+  borderRadius: 10,
+  marginHorizontal: 70,
+  marginTop: 25,
+},
+
+registerButton: {
+  borderRadius: 10,
+  paddingVertical: 15,
+  alignItems: 'center',
+  overflow: 'hidden', 
+  position: 'relative',
+},
+
+shineOverlay: {
+  position: 'absolute',
+  top: 20,
+  left: 0,
+  height: '30%',
+  width: '100%',
+  backgroundColor: '#04860dff', 
+  transform: [{ rotate: '-20deg' }],
+},
   registerButtonText: {
     color: '#fff',
     fontSize: 18,
@@ -203,7 +224,7 @@ const styles = StyleSheet.create({
   },
   socialText: {
     fontSize: 14,
-    color: '#888',
+    color: '#022b04ff',
     marginBottom: 10,
   },
   socialButtonsContainer: {
@@ -214,13 +235,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#f9f9f9',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#B80000',
+    borderColor: '#04860dff',
     paddingVertical: 10,
     paddingHorizontal: 20,
     marginHorizontal: 10,
   },
   socialButtonText: {
-    color: '#B80000',
+    color: '#079910ff',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -230,7 +251,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: '113%',
     height: '113%',
-    opacity: 0.9, // Increased opacity for better visibility
+    opacity: 1, 
   },
 });
 

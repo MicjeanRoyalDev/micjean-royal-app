@@ -14,9 +14,9 @@ const HomeScreen = () => {
   const [activeTab, setActiveTab] = useState('home');
 
   const carouselImages = [
-    require('../../../shared/assets/images/micjean photo for background.jpg'),
+    require('../../../shared/assets/images/jollof.jpeg'),
     require('../../../shared/assets/images/Egg Fried Rice.jpeg'),
-    require('../../../shared/assets/images/Waakye.jpeg'),
+    require('../../../shared/assets/images/Watermelon Berry Salad.jpeg'),
   ];
 
   useEffect(() => {
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   activeIndicator: {
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#1b9623ff',
   },
 });
 

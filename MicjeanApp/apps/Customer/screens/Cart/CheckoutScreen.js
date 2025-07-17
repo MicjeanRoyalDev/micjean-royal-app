@@ -43,7 +43,7 @@ export default function CheckoutScreen() {
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
       {/* Back Button */}
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <MaterialIcons name="arrow-back" size={24} color="#ba272e" />
+        <MaterialIcons name="arrow-back" size={24} color="#0f9902ff" />
       </TouchableOpacity>
 
       <Text style={styles.sectionTitle}>Order Summary</Text>
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     left:50,
     marginTop: 30, 
-    color: '#ba272e',
+    color: '#1b5e20',
   },
   itemRow: {
     flexDirection: 'row',
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: '#f0f0f0ff',
   },
   itemDetails: {
     flex: 1,
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   },
   itemPrice: {
     fontSize: 16,
-    color: '#B71C1C',
+    color: '#02850aff',
     fontWeight: '600',
   },
   totalRow: {
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   totalAmount: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#ba272e',
+    color: '#006e07ff',
   },
   emptyCart: {
     alignItems: 'center',
@@ -190,12 +190,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   menuButton: {
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#319138ff',
     borderRadius: 20,
     paddingHorizontal: 30,
   },
   input: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fdfffcff',
     padding: 12,
     borderRadius: 10,
     borderWidth: 1,
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   orderButton: {
-    backgroundColor: '#ba272e',
+    backgroundColor: '#1b5e20',
     borderRadius: 25,
     marginTop: 20,
     paddingVertical: 12,

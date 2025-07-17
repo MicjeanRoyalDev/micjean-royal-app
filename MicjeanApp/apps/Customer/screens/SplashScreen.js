@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: '#B71C1C', // Deep red background
+    backgroundColor: '#079c11ff', 
   },
   circle: {
     position: 'absolute',

@@ -41,7 +41,7 @@ if (cart.items.length === 0) {
     <View style={styles.container}>
       {/* Back Button */}
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <MaterialIcons name="arrow-back" size={25} color="#ba272e" />
+        <MaterialIcons name="arrow-back" size={25} color='#03940dff' />
       </TouchableOpacity>
 
       <Text style={styles.heading}>Your Cart</Text>
@@ -86,10 +86,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 20,
     textAlign: 'center',
-    color: '#AC030A',
+    color: '#1b5e20',
   },
   card: {
-    backgroundColor: '#fff5f5',
+    backgroundColor: '#f5fff6ff',
     borderRadius: 16,
     padding: 10,
     marginBottom: 12,
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   price: {
-    color: '#B71C1C',
+    color: '#1b5e20',
     marginTop: 4,
   },
   checkoutBar: {
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   checkoutButton: {
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#1b5e20',
     paddingHorizontal: 20,
     borderRadius: 20,
   },
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   startShoppingButton: {
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#1b5e20',
     paddingHorizontal: 30,
     borderRadius: 20,
   },

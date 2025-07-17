@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   dishPrice: {
     fontSize: 14,
-    color: '#B71C1C',
+    color: '#06b312ff',
     fontWeight: 'bold',
   },
 });

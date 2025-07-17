@@ -181,13 +181,13 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#B71C1C',
+    color: '#028a0bff',
     textAlign: 'center',
     marginBottom: 2,
   },
   modalPrice: {
     fontSize: 18,
-    color: '#B71C1C',
+    color: '#02880bff',
     fontWeight: 'bold',
     marginBottom: 20,
     left:110,
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 15,
-    backgroundColor: 'rgba(236, 178, 178, 0.2)',
+    backgroundColor: '#bfecb233',
     borderRadius: 20,
     marginBottom: 8,
   },
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   },
   addonPrice: {
     fontSize: 16,
-    color: '#B71C1C',
+    color: '#0c6812ff',
     fontWeight: 'bold',
     marginRight: 10,
     
@@ -236,11 +236,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   checkboxSelected: {
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#20bb2aff',
   },
   checkboxText: {
     fontSize: 16,
-    color: '#B71C1C',
+    color: '#068a0fff',
   },
   checkboxTextSelected: {
     color: 'white',
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 8,
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#17851eff',
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: 10,
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     top:45,
   },
   addToCartButton: {
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#068a0fff',
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 25,

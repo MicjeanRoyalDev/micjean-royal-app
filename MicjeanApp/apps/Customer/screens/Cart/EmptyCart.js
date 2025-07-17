@@ -12,14 +12,14 @@ export default function EmptyCartScreen() {
         {/* Back Button */}
         <View style={styles.backButton}>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-              <MaterialIcons name="arrow-back" size={28} color="#ba272e" />
+              <MaterialIcons name="arrow-back" size={28} color='#03940dff' />
             </TouchableOpacity>
             <Text style={styles.heading}>Your Cart</Text>
       </View>
      <MaterialIcons
     name="remove-shopping-cart"
     size={120}
-    color="#AC030A"
+    color='#009b0aff'
     style={{ marginBottom: 24 }}
   />
       {/* Main Message */}
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     marginTop:27,
     textAlign: 'center',
     marginLeft: 110,
-    color: '#AC030A',
+    color: '#03940dff',
   },
   title: {
     fontSize: 22,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   button: {
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#03940dff',
     borderRadius: 25,
     paddingHorizontal: 30,
     paddingVertical: 12,

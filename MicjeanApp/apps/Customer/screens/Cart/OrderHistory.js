@@ -55,10 +55,10 @@ export default function OrderHistory() {
   return (
     <View style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#ba272e" style={{ marginTop: 50 }} />
+        <ActivityIndicator size="large" color='#03940dff' style={{ marginTop: 50 }} />
       ) : orderHistory.length === 0 ? (
         <View>
-          <MaterialIcons name="no-food" size={100} color="#ba272e" style={{ alignSelf: 'center', marginTop: 150 }} /> 
+          <MaterialIcons name="no-food" size={100} color='#02810bff' style={{ alignSelf: 'center', marginTop: 150 }} /> 
           <Text style={styles.noOrders}>You haven't placed any orders yet.</Text>
         </View>
       ) : (
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '700',
     textAlign: 'center',
-    color: '#ba272e',
+    color: '#03940dff',
     marginBottom: 20,
   },
   card: {
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
   },
   total: {
     fontWeight: '600',
-    color: '#ba272e',
+    color:'#03940dff',
     marginTop: 10,
   },
   noOrders: {

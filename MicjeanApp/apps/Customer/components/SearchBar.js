@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   },
   searchIcon: {
     fontSize: 18,
-    color: '#B71C1C',
+    color: '#068a0fff',
     marginLeft: 8,
   },
 });

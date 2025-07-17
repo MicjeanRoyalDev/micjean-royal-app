@@ -89,7 +89,7 @@ const MenuScreen = () => {
       )}
       <ScrollView contentContainerStyle={styles.dishesGrid} showsVerticalScrollIndicator={false}>
         {loading ? (
-          <ActivityIndicator size="large" color="#B71C1C" style={styles.spinner} />
+          <ActivityIndicator size="large" color='#069910ff' style={styles.spinner} />
         ) : filteredDishes.length > 0 ? (
           <DishGrid 
             dishes={filteredDishes} 

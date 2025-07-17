@@ -47,7 +47,13 @@ const PopularDishes = ({ dishes = [] }) => {
       image_url: 'https://example.com/tilapia.jpg',
       imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
     },
-   
+    {
+      id: 7,
+      name: 'FRUIT SALAD',
+      price: 20.00,
+      image_url: 'https://example.com/tilapia.jpg',
+      imageSource: require('../../../shared/assets/images/Watermelon Berry Salad.jpeg'),
+    },
   ];
 
   const dishesToRender = dishes.length > 0 ? dishes : defaultDishes;

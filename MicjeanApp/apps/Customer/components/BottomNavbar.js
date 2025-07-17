@@ -14,10 +14,10 @@ const theme = createTheme({
   lightColors: {
     primary: '#ffff',
     secondary: '#000000',
-    background: '#B71C1C',
+    background: '#068a0fff',
   },
   darkColors: {
-    primary: '#710707',
+    primary: '#03940dff',
     secondary: '#d2dae2',
     background: '#1e272e',
   },
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: -6,
     top: -3,
-    backgroundColor: '#FF4444',
+    backgroundColor: '#f3c807ff',
     borderRadius: 10,
     width: 18,
     height: 18,

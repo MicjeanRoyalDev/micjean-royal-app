@@ -12,7 +12,7 @@ const Stack = createStackNavigator();
 const CustomHeader = ({ navigation, title }) => (
   <View style={styles.headerContainer}>
     <TouchableOpacity onPress={() => navigation.goBack()}>
-      <MaterialIcons name="arrow-back" size={24} color="#ba272e" />
+      <MaterialIcons name="arrow-back" size={24} color='#1b5e20' />
     </TouchableOpacity>
     <Text style={styles.headerTitle}>{title}</Text>
   </View>
@@ -65,6 +65,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 16,
-    color: '#ba272e',
+    color: '#068a0fff',
   },
 });
