@@ -98,13 +98,14 @@ export const auth = {
   },
 
   resetPassword: async (email) => {
-    // Reset password
     const { error, data } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: "https://micjeanroyal.com/reset-password",
     });
     return {
-      success: true,
-      message: "Password reset email sent successfully",
+      success: !error,
+      message: error
+        ? "Failed to send password reset email"
+        : "Password reset email sent successfully",
       error: error
         ? {
             message: error.message,
