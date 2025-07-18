@@ -24,9 +24,7 @@ export const auth = {
     return {
       user: session?.user?.user_metadata || null,
       session: session || null,
-      error: error
-        ? { message: error.message, code: error.code }
-        : null,
+      error: error ? { message: error.message, code: error.code } : null,
     };
   },
 
@@ -121,8 +119,10 @@ export const auth = {
       password: newPassword,
     });
     return {
-      success: true,
-      message: "Password updated successfully",
+      success: !error,
+      message: error
+        ? "Failed to update password"
+        : "Password updated successfully",
       error: error
         ? {
             message: error.message,
