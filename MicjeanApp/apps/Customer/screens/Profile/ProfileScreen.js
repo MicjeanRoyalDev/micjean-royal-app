@@ -2,7 +2,6 @@ import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Options from './parts/OptionCard.js'
 import ProfileHeader from './parts/ProfileHeader.js'
-import LogoutBtn from './parts/LogoutBtn.js'
 //the function 
 export default function ProfileScreen(){
     //the return function
@@ -13,8 +12,6 @@ export default function ProfileScreen(){
             <ProfileHeader />
             {/*The various cards displayed*/}
             <Options/>
-            {/*The logout button*/}
-            <LogoutBtn></LogoutBtn>
             {/*The bottom navbar*/}
         </SafeAreaView>
     )

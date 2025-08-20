@@ -1,4 +1,4 @@
-//logic for sending the info hasn't been implemneted yet
+//logic for sending the info hasn't been implemented yet
 import React, { useState } from 'react';
 import {ScrollView, SafeAreaView,TextInput,Text, TouchableOpacity, StyleSheet,LayoutAnimation,UIManager, Platform} from 'react-native';
 import { Button, CheckBox } from '@rneui/themed';
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 22,
     fontWeight: '700',
-    marginTop:30,
+    marginTop:10,
     marginBottom: 15,
     color: '#1b5e20',
   },
