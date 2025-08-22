@@ -134,7 +134,7 @@ export default function Settings() {
           text: 'Delete', 
           style: 'destructive',
           onPress: () => {
-            Alert.alert('Not Implemented', 'Account deletion feature is not yet available.');
+            Alert.alert('Account deletion feature is not yet available.');
           }
         }
       ]
