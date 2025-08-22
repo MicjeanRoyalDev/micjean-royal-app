@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Alert, LayoutAnimation } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Card } from '@rneui/themed';
+import Card from '../../../components/ui/Card';
 import { auth } from '../../../../../backend/supabase/auth';
 import { useIsFocused } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';

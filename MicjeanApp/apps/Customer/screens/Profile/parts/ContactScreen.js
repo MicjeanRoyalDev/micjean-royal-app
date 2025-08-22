@@ -1,7 +1,8 @@
 //logic for sending the info hasn't been implemented yet
 import React, { useState } from 'react';
 import {ScrollView, SafeAreaView,TextInput,Text, TouchableOpacity, StyleSheet,LayoutAnimation,UIManager, Platform} from 'react-native';
-import { Button, CheckBox } from '@rneui/themed';
+import Button from '../../../components/ui/Button';
+import CheckBox from '../../../components/ui/CheckBox';
 import { MaterialIcons } from '@expo/vector-icons';
 //handling animations on androids
 if (Platform.OS === 'android') {

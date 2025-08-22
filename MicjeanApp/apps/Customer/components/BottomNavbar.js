@@ -7,22 +7,16 @@ import HomeScreen from '../screens/HomeScreen';
 import MenuScreen from '../screens/MenuScreen';
 import CartStack from '../screens/Cart/CartStack';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-import { ThemeProvider, createTheme } from '@rneui/themed';
+// Removed RNEUI ThemeProvider and createTheme
 import { useCart } from '../context/CartContext';
 
-const theme = createTheme({
+const theme = {
   lightColors: {
     primary: '#ffff',
     secondary: '#000000',
     background: '#068a0fff',
   },
-  darkColors: {
-    primary: '#03940dff',
-    secondary: '#d2dae2',
-    background: '#1e272e',
-  },
-  mode: 'light', 
-});
+};
 
 export default function BottomNavbar() {
   const { getCartItemCount } = useCart();
@@ -48,7 +42,6 @@ export default function BottomNavbar() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
         <Tab.Navigator
         //making the home the initial route
          initialRouteName='Home'
@@ -165,7 +158,6 @@ export default function BottomNavbar() {
 
 
         </Tab.Navigator>
-    </ThemeProvider>
   );
 }
 
