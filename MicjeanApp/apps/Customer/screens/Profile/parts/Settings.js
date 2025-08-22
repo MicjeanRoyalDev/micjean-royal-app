@@ -215,7 +215,7 @@ export default function Settings() {
         )}
       </Card>
 
-      {/* Area of Concern Section */}
+      {/* Area of Concern Section 
       <Card containerStyle={styles.sectionCard}>
         <Text style={styles.sectionTitle}>Area of Concern</Text>
         <TouchableOpacity 
@@ -253,13 +253,13 @@ export default function Settings() {
         )}
       </Card>
 
-      {/* Communication Preferences Section */}
+      {/* Communication Preferences Section 
       <Card containerStyle={styles.sectionCard}>
         <Text style={styles.sectionTitle}>Communication Preferences</Text>
         <Text style={styles.communicationText}>
           You will receive notifications about orders, promotions, and important updates.
         </Text>
-      </Card>
+      </Card>*/}
 
       {/* Action Buttons */}
       <View style={styles.actionButtons}>
@@ -293,12 +293,12 @@ const styles = StyleSheet.create({
   // Section card styles
   sectionCard: {
     margin: 16,
-    marginTop: 8,
+    marginTop: 30,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#e2e8f0',
     padding: 20,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -419,8 +419,8 @@ const styles = StyleSheet.create({
 
   // Action buttons
   actionButtons: {
-    padding: 16,
-    gap: 12,
+    padding: 20,
+    gap: 15,
   },
   logoutButton: {
     backgroundColor: '#04860dff',
