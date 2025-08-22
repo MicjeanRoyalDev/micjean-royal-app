@@ -1,8 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import ProfileScreen from '../ProfileScreen';
-import OrdersScreen from '../../Cart/Cart';
-import EmptyCartScreen from '../../Cart/EmptyCart.js'
+import OrderHistory from '../../Cart/OrderHistory.js';
 import ContactScreen from './ContactScreen.js';
 import PolicyScreen from './PolicyScreen.js';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
@@ -13,7 +12,7 @@ const Stack = createStackNavigator();
 const CustomHeader = ({ navigation, title }) => (
   <View style={styles.headerContainer}>
     <TouchableOpacity onPress={() => navigation.goBack()}>
-      <MaterialIcons name="arrow-back" size={24} color="#ba272e" />
+      <MaterialIcons name="arrow-back" size={24} color='#1b5e20' />
     </TouchableOpacity>
     <Text style={styles.headerTitle}>{title}</Text>
   </View>
@@ -28,8 +27,8 @@ export default function ProfileStack({ navigation }) {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Orders"
-        component={EmptyCartScreen}
+        name="OrderHistory"
+        component={OrderHistory}
         options={({ navigation }) => ({
           header: () => <CustomHeader navigation={navigation} title="My Orders" />,
         })}
@@ -66,6 +65,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 16,
-    color: '#ba272e',
+    color: '#068a0fff',
   },
 });

@@ -45,7 +45,7 @@ export default function ProfileHeader() {
         size="large"
         rounded
         title={profile.initials}
-        overlayContainerStyle={{ backgroundColor: '#B71C1C' }}
+        overlayContainerStyle={{ backgroundColor: '#018d0bff' }}
         containerStyle={styles.avatar}
       />
       <Card containerStyle={styles.card}>
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#03940dff',
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 5,

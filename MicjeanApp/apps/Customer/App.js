@@ -6,6 +6,7 @@ import AuthStack from './navigation/AuthStack';
 import BottomNavbar from './components/BottomNavbar';
 import { supabase } from '../../backend/supabase/clients';
 import { NavigationContainer } from '@react-navigation/native';
+import { CartProvider } from './context/CartContext';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -33,9 +34,11 @@ const App = () => {
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer>
-      {isAuthenticated ? <BottomNavbar /> : <AuthStack />}
-      </NavigationContainer>
+      <CartProvider>
+        <NavigationContainer>
+          {isAuthenticated ? <BottomNavbar /> : <AuthStack />}
+        </NavigationContainer>
+      </CartProvider>
     </SafeAreaProvider>
   );
 };

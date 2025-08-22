@@ -36,7 +36,7 @@ export default function LogoutBtn({ onLogoutSuccess }) {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#01860aff',
     borderRadius: 25,
     paddingVertical: 12,
     width: 160,

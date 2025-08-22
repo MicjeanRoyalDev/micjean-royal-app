@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text,StyleSheet } from 'react-native';
+import { TouchableOpacity,View, Text,StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Button } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
@@ -9,16 +9,23 @@ export default function EmptyCartScreen() {
 
   return (
     <View style={styles.container}>
+        {/* Back Button */}
+        <View style={styles.backButton}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+              <MaterialIcons name="arrow-back" size={28} color='#03940dff' />
+            </TouchableOpacity>
+            <Text style={styles.heading}>Your Cart</Text>
+      </View>
      <MaterialIcons
     name="remove-shopping-cart"
     size={120}
-    color="#AC030A"
+    color='#009b0aff'
     style={{ marginBottom: 24 }}
   />
       {/* Main Message */}
       <Text style={styles.title}>Your Cart is Empty</Text>
       <Text style={styles.description}>
-        Looks like you haven’t added anything to your cart yet.
+       Go to the menu to start shopping!.
       </Text>
 
       {/* Button to go back to Menu */}
@@ -40,6 +47,15 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',  
   },
+    heading: {
+    fontSize: 22,
+    fontWeight: '700',
+    marginBottom: 20,
+    marginTop:27,
+    textAlign: 'center',
+    marginLeft: 110,
+    color: '#03940dff',
+  },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -53,8 +69,15 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     textAlign: 'center',
   },
+   backButton: {
+    position: 'absolute',
+    top: 26,
+    left: 6,
+    zIndex: 10,
+    padding: 8,
+  },
   button: {
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#03940dff',
     borderRadius: 25,
     paddingHorizontal: 30,
     paddingVertical: 12,

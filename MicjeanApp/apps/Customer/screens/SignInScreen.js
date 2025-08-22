@@ -57,7 +57,7 @@ const SignInScreen = () => {
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
-        placeholderTextColor="#B80000"
+        placeholderTextColor='#1b5e20'
         autoCapitalize="none"
       />
       {/* Password */}
@@ -68,7 +68,7 @@ const SignInScreen = () => {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        placeholderTextColor="#B80000"
+        placeholderTextColor='#1b5e20'
       />
       {/* Sign in button */}
       <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
@@ -106,13 +106,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#B80000',
+    color: '#04860dff',
     marginBottom: 24,
     marginTop: 24,
     textAlign: 'left',
   },
   label: {
-    color: '#B80000',
+    color: '#04860dff',
     fontWeight: 'bold',
     marginBottom: 4,
     marginTop: 8,
@@ -125,15 +125,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderRadius: 24,
     borderWidth: 1.5,
-    borderColor: '#B80000',
+    borderColor: '#05ac10ff',
     paddingVertical: 12,
     paddingHorizontal: 20,
     marginBottom: 8,
     fontSize: 16,
-    color: '#B80000',
+    color: '#32b33bff',
   },
   signInButton: {
-    backgroundColor: '#C1272D',
+    backgroundColor: '#04860dff',
     borderRadius: 24,
     paddingVertical: 12,
     paddingHorizontal: 36,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     width: CIRCLE_SIZE,
     height: CIRCLE_SIZE,
     borderRadius: CIRCLE_SIZE / 2,
-    backgroundColor: '#C1272D',
+    backgroundColor: '#04860dff',
     bottom: -CIRCLE_SIZE * 0.25,
     right: -CIRCLE_SIZE * 0.18,
     zIndex: 0,
