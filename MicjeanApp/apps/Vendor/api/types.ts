@@ -32,10 +32,12 @@ export type OrderItemGist = {
     toppings: string[];
 };
 
+export type OrderStatus = 'placed' | 'preparing' | 'ready' | 'completed' | 'cancelled';
+
 export type OrderListItem = {
   id: string;
   customerName: string;
-  status: 'placed' | 'preparing' | 'ready' | 'completed' | 'cancelled';
+  status: OrderStatus;
   items: OrderItemGist[]; // to be displayed like "Fried Rice with xxx"
   totalAmount: number;
   createdAt: string;
