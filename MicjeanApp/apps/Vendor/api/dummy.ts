@@ -1,5 +1,7 @@
-import { OrderListItem, User, Paginated, Menu, Category } from "./types";
+import { OrderListItem, User, Paginated, Menu, Category, OrderStatus } from "./types";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// --- AUTH SIMULATION ---
 
 export const logout = async () => {
   try {
@@ -10,7 +12,7 @@ export const logout = async () => {
 };
 
 export const login = async (email: string, password: string) => {
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await new Promise((resolve) => setTimeout(resolve, 1500));
   const now = new Date().toISOString();
   try {
     await AsyncStorage.setItem('lastLogin', now);
@@ -27,11 +29,11 @@ export const me = async () => {
   } catch (e) {
     console.error('Failed to read login time:', e);
   }
-  const expiryMs = 10 * 60 * 1000; // 10 minutes
+  const expiryMs = 10 * 60 * 1000; // 10-minute session
   if (lastLogin) {
     const lastTime = new Date(lastLogin).getTime();
     if (Date.now() - lastTime < expiryMs) {
-      const fetchedUser: User = { id: 'userId123', email: 'vendor@micjean.com', name: 'Micjean Vendor' };
+      const fetchedUser: User = { id: 'vendor-01', email: 'vendor@adepa.com', name: 'Adepa Restaurant' };
       const now = new Date().toISOString();
       try {
         await AsyncStorage.setItem('lastLogin', now);
@@ -50,28 +52,66 @@ export const me = async () => {
   throw new Error('Unauthenticated');
 };
 
+
+// --- GHANAIAN-THEMED DUMMY DATA ---
+
 const dummyCategories: Category[] = [
-  { id: 'cat1', name: 'Main Dishes' },
-  { id: 'cat2', name: 'Starters' },
-  { id: 'cat3', name: 'Drinks' },
-  { id: 'cat4', name: 'Desserts' },
+  { id: 'cat-main', name: 'Main Dishes' },
+  { id: 'cat-soups', name: 'Soups & Stews' },
+  { id: 'cat-sides', name: 'Sides & Snacks' },
+  { id: 'cat-drinks', name: 'Drinks' },
 ];
 
 const dummyMenus: Menu[] = [
-  { id: 'menu1', name: 'Tilapia', imageUrl: 'https://example.com/tilapia.jpg', categoryId: 'cat1', status: 'Available', description: 'Delicious fried tilapia.', price: 15.99 },
-  { id: 'menu2', name: 'Spicy Seafood Noodles', imageUrl: 'https://example.com/noodles.jpg', categoryId: 'cat1', status: 'Available', description: 'Noodles with a kick.', price: 12.50 },
-  { id: 'menu3', name: 'Beef Dumplings', imageUrl: 'https://example.com/dumplings.jpg', categoryId: 'cat2', status: 'Sold Out', description: 'Steamed beef dumplings.', price: 9.99 },
-  { id: 'menu4', name: 'Iced Tea', imageUrl: 'https://example.com/iced-tea.jpg', categoryId: 'cat3', status: 'Available', price: 2.50 },
-  { id: 'menu5', name: 'Mushroom Pasta', imageUrl: 'https://example.com/pasta.jpg', categoryId: 'cat1', status: 'Hidden', description: 'Creamy mushroom pasta.', price: 13.75 },
-  { id: 'menu6', name: 'Garlic Bread', imageUrl: 'https://example.com/garlic-bread.jpg', categoryId: 'cat2', status: 'Available', price: 4.25 },
-  { id: 'menu7', name: 'Coke', imageUrl: 'https://example.com/coke.jpg', categoryId: 'cat3', status: 'Available', price: 2.00 },
-  { id: 'menu8', name: 'Black Tea', imageUrl: 'https://example.com/black-tea.jpg', categoryId: 'cat3', status: 'Sold Out', price: 2.25 },
-  { id: 'menu9', name: 'Cheesecake', imageUrl: 'https://example.com/cheesecake.jpg', categoryId: 'cat4', status: 'Available', description: 'Creamy New York cheesecake.', price: 6.50 },
-  { id: 'menu10', name: 'Spring Rolls', imageUrl: 'https://example.com/spring-rolls.jpg', categoryId: 'cat2', status: 'Available', price: 5.75 },
+  // Main Dishes
+  { id: 'menu-jollof', name: 'Jollof Rice with Chicken', imageUrl: 'https://example.com/jollof.jpg', categoryId: 'cat-main', status: 'Available', description: 'Classic smoky Ghanaian Jollof, served with grilled chicken.', price: 45.00 },
+  { id: 'menu-waakye', name: 'Waakye Special', imageUrl: 'https://example.com/waakye.jpg', categoryId: 'cat-main', status: 'Available', description: 'Served with shito, gari, spaghetti, and a choice of protein.', price: 50.00 },
+  { id: 'menu-banku', name: 'Banku with Grilled Tilapia', imageUrl: 'https://example.com/banku.jpg', categoryId: 'cat-main', status: 'Available', description: 'Served with fresh pepper sauce and onions.', price: 65.00 },
+  { id: 'menu-redred', name: 'Red Red', imageUrl: 'https://example.com/redred.jpg', categoryId: 'cat-main', status: 'Sold Out', description: 'Beans stew with fried ripe plantain.', price: 35.00 },
+
+  // Soups & Stews
+  { id: 'menu-groundnut', name: 'Groundnut Soup with Fufu', imageUrl: 'https://example.com/groundnut.jpg', categoryId: 'cat-soups', status: 'Available', description: 'Rich groundnut soup with goat meat.', price: 55.00 },
+  { id: 'menu-palmnut', name: 'Palm Nut Soup with Omo Tuo', imageUrl: 'https://example.com/palmnut.jpg', categoryId: 'cat-soups', status: 'Available', description: 'Traditional palm nut soup, also known as Abenkwan.', price: 55.00 },
+
+  // Sides & Snacks
+  { id: 'menu-kelewele', name: 'Kelewele', imageUrl: 'https://example.com/kelewele.jpg', categoryId: 'cat-sides', status: 'Available', description: 'Spicy fried plantain chunks with peanuts.', price: 15.00 },
+  { id: 'menu-yamchips', name: 'Yam Chips with Kpakpo Shito', imageUrl: 'https://example.com/yamchips.jpg', categoryId: 'cat-sides', status: 'Available', description: 'Crispy fried yam chips.', price: 20.00 },
+  { id: 'menu-meatpie', name: 'Meat Pie', imageUrl: 'https://example.com/meatpie.jpg', categoryId: 'cat-sides', status: 'Hidden', description: 'Our secret recipe meat pie.', price: 12.00 },
+
+  // Drinks
+  { id: 'menu-sobolo', name: 'Sobolo (Bissap)', imageUrl: 'https://example.com/sobolo.jpg', categoryId: 'cat-drinks', status: 'Available', price: 10.00 },
+  { id: 'menu-asaana', name: 'Asaana', imageUrl: 'https://example.com/asaana.jpg', categoryId: 'cat-drinks', status: 'Sold Out', price: 10.00 },
+  { id: 'menu-malt', name: 'Malta Guinness', imageUrl: 'https://example.com/malt.jpg', categoryId: 'cat-drinks', status: 'Available', price: 8.00 },
 ];
 
+const dummyOrders: OrderListItem[] = [
+  // Active Orders (Placed, Preparing, Ready)
+  { id: 'order-001', customerName: 'Ama Serwaa', status: 'placed', items: [{ food: 'Jollof Rice with Chicken', toppings: ['Extra Coleslaw'] }, { food: 'Malta Guinness', toppings: [] }], totalAmount: 53.00, createdAt: new Date(Date.now() - 5 * 60000).toISOString() },
+  { id: 'order-002', customerName: 'Kofi Mensah', status: 'preparing', items: [{ food: 'Waakye Special', toppings: ['Beef', 'Wele'] }], totalAmount: 50.00, createdAt: new Date(Date.now() - 10 * 60000).toISOString() },
+  { id: 'order-003', customerName: 'Yaw Boateng', status: 'ready', items: [{ food: 'Kelewele', toppings: [] }], totalAmount: 15.00, createdAt: new Date(Date.now() - 15 * 60000).toISOString() },
+  { id: 'order-004', customerName: 'Adwoa Owusu', status: 'placed', items: [{ food: 'Groundnut Soup with Fufu', toppings: [] }, { food: 'Palm Nut Soup with Omo Tuo', toppings: [] }, { food: 'Sobolo (Bissap)', toppings: [] }], totalAmount: 120.00, createdAt: new Date(Date.now() - 2 * 60000).toISOString() },
+  { id: 'order-005', customerName: 'Esi Agyemang', status: 'preparing', items: [{ food: 'Banku with Grilled Tilapia', toppings: ['Extra Pepper'] }], totalAmount: 65.00, createdAt: new Date(Date.now() - 8 * 60000).toISOString() },
+
+  // Completed Orders
+  { id: 'order-006', customerName: 'Kwabena Asante', status: 'completed', items: [{ food: 'Yam Chips with Kpakpo Shito', toppings: [] }], totalAmount: 20.00, createdAt: new Date(Date.now() - 2 * 3600000).toISOString() },
+  { id: 'order-007', customerName: 'Akua Mansa', status: 'completed', items: [{ food: 'Jollof Rice with Chicken', toppings: [] }], totalAmount: 45.00, createdAt: new Date(Date.now() - 4 * 3600000).toISOString() },
+  { id: 'order-008', customerName: 'Femi Adebayo', status: 'completed', items: [{ food: 'Waakye Special', toppings: ['Fish Only'] }, { food: 'Malta Guinness', toppings: [] }], totalAmount: 58.00, createdAt: new Date(Date.now() - 24 * 3600000).toISOString() },
+  { id: 'order-009', customerName: 'Ngozi Okoro', status: 'completed', items: [{ food: 'Groundnut Soup with Fufu', toppings: [] }], totalAmount: 55.00, createdAt: new Date(Date.now() - 28 * 3600000).toISOString() },
+
+  // Cancelled Orders
+  { id: 'order-010', customerName: 'Abena Yeboah', status: 'cancelled', items: [{ food: 'Red Red', toppings: [] }], totalAmount: 35.00, createdAt: new Date(Date.now() - 6 * 3600000).toISOString() },
+  { id: 'order-011', customerName: 'Emeka Nwosu', status: 'cancelled', items: [{ food: 'Asaana', toppings: [] }], totalAmount: 10.00, createdAt: new Date(Date.now() - 30 * 3600000).toISOString() },
+  
+  // More active orders for pagination
+  { id: 'order-012', customerName: 'Binta Diallo', status: 'placed', items: [{ food: 'Sobolo (Bissap)', toppings: [] }, { food: 'Kelewele', toppings: [] }], totalAmount: 25.00, createdAt: new Date(Date.now() - 1 * 60000).toISOString() },
+  { id: 'order-013', customerName: 'Musa Traoré', status: 'ready', items: [{ food: 'Jollof Rice with Chicken', toppings: ['No chicken', 'Extra Veggies'] }], totalAmount: 45.00, createdAt: new Date(Date.now() - 25 * 60000).toISOString() },
+];
+
+
+// --- API-LIKE FUNCTIONS ---
+
 export const fetchCategories = async (): Promise<Paginated<Category>> => {
-  await new Promise(resolve => setTimeout(resolve, 500));
+  await new Promise(resolve => setTimeout(resolve, 300));
   return {
     items: dummyCategories,
     total: dummyCategories.length,
@@ -92,152 +132,22 @@ export const fetchMenus = async (params: { categoryId?: string }): Promise<Pagin
   };
 };
 
-const dummyOrders: OrderListItem[] = [
-  {
-    id: 'a1b2c3d4-e5f6-7890-1234-567890abcdef',
-    customerName: 'Eren Jaeger',
-    status: 'completed',
-    items: [
-      { food: 'Spicy Seafood Noodles', toppings: ['Extra Chili'] },
-      { food: 'Iced Tea', toppings: [] },
-    ],
-    totalAmount: 24.50,
-    createdAt: '2023-10-26T19:45:10Z',
-  },
-  {
-    id: 'b2c3d4e5-f6a7-8901-2345-67890abcdef1',
-    customerName: 'Mikasa Ackerman',
-    status: 'preparing',
-    items: [
-      { food: 'Beef Dumplings', toppings: [] },
-    ],
-    totalAmount: 12.00,
-    createdAt: '2023-10-26T20:10:25Z',
-  },
-  {
-    id: 'c3d4e5f6-a7b8-9012-3456-7890abcdef2',
-    customerName: 'Armin Arlert',
-    status: 'placed',
-    items: [
-      { food: 'Mushroom Pasta', toppings: ['Parmesan Cheese'] },
-      { food: 'Garlic Bread', toppings: [] },
-      { food: 'Coke', toppings: [] },
-    ],
-    totalAmount: 31.75,
-    createdAt: '2023-10-26T20:15:05Z',
-  },
-  {
-    id: 'd4e5f6a7-b8c9-0123-4567-890abcdef3',
-    customerName: 'Levi Ackerman',
-    status: 'ready',
-    items: [
-      { food: 'Black Tea', toppings: [] },
-    ],
-    totalAmount: 4.50,
-    createdAt: '2023-10-26T20:05:55Z',
-  },
-  {
-    id: 'e5f6a7b8-c9d0-1234-5678-90abcdef4',
-    customerName: 'Hange Zoe',
-    status: 'cancelled',
-    items: [
-      { food: 'Experimental Stew', toppings: ['Mystery Meat'] },
-    ],
-    totalAmount: 18.25,
-    createdAt: '2023-10-26T18:30:00Z',
-  },
-  {
-    id: 'f6a7b8c9-d0e1-2345-6789-0abcdef5',
-    customerName: 'Reiner Braun',
-    status: 'completed',
-    items: [
-      { food: 'Steak Dinner', toppings: ['Medium Rare'] },
-      { food: 'Red Wine', toppings: [] },
-    ],
-    totalAmount: 55.00,
-    createdAt: '2023-10-26T19:20:15Z',
-  },
-  {
-    id: 'a7b8c9d0-e1f2-3456-7890-1bcdef6',
-    customerName: 'Sasha Blouse',
-    status: 'placed',
-    items: [
-      { food: 'Large Pizza', toppings: ['Pepperoni', 'Mushrooms'] },
-      { food: 'French Fries', toppings: [] },
-      { food: 'Potato Bread', toppings: [] },
-      { food: 'Steamed Potato', toppings: ['Butter'] },
-    ],
-    totalAmount: 42.80,
-    createdAt: '2023-10-26T20:18:40Z',
-  },
-  {
-    id: 'b8c9d0e1-f2a3-4567-8901-2cdef7',
-    customerName: 'Jean Kirstein',
-    status: 'preparing',
-    items: [
-      { food: 'Chicken Omelet', toppings: ['Cheese'] },
-      { food: 'Orange Juice', toppings: [] },
-    ],
-    totalAmount: 19.99,
-    createdAt: '2023-10-26T20:12:30Z',
-  },
-  {
-    id: 'c9d0e1f2-a3b4-5678-9012-3def8',
-    customerName: 'Connie Springer',
-    status: 'ready',
-    items: [
-      { food: 'Simple Burger', toppings: [] },
-    ],
-    totalAmount: 9.50,
-    createdAt: '2023-10-26T20:08:00Z',
-  },
-  {
-    id: 'd0e1f2a3-b4c5-6789-0123-4ef9',
-    customerName: 'Historia Reiss',
-    status: 'completed',
-    items: [
-      { food: 'Royal Tea Set', toppings: ['Scones'] },
-      { food: 'Berry Tart', toppings: [] },
-    ],
-    totalAmount: 29.00,
-    createdAt: '2023-10-26T17:55:50Z',
-  },
-  {
-    id: 'e1f2a3b4-c5d6-7890-1234-5fa0',
-    customerName: 'Zeke Jaeger',
-    status: 'placed',
-    items: [
-      { food: 'Coffee', toppings: ['Black'] },
-    ],
-    totalAmount: 3.75,
-    createdAt: '2023-10-26T20:20:01Z',
-  },
-  {
-    id: 'f2a3b4c5-d6e7-8901-2345-6ab1',
-    customerName: 'Gabi Braun',
-    status: 'completed',
-    items: [
-      { food: 'Hot Dog', toppings: ['Ketchup', 'Mustard'] },
-      { food: 'Lemonade', toppings: [] },
-    ],
-    totalAmount: 8.25,
-    createdAt: '2023-10-26T19:50:00Z',
-  },
-];
+export const fetchOrders = async (params: Record<string, any>): Promise<Paginated<OrderListItem>> => {
+  await new Promise((resolve) => setTimeout(resolve, 800)); // Simulate network latency
 
-export const fetchOrders = async (params: Record<string, any>) => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  
-  // Simulate pagination
-  const page = params.page || 1;
-  const limit = params.limit || 10;
-  const startIndex = (page - 1) * limit;
-  const endIndex = startIndex + limit;
+  let filteredOrders = [...dummyOrders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // Newest first
 
-  // Filter by status if provided
-  let filteredOrders = dummyOrders;
+  // **CRITICAL FIX**: Correctly filter by status group
   if (params.status) {
-    filteredOrders = dummyOrders.filter(order => !!order.status); // backend treats params.status differently
+    const statusFilter = params.status;
+    const activeStatuses = ['placed', 'preparing', 'ready'];
+    
+    if (statusFilter === 'active') {
+      filteredOrders = filteredOrders.filter(order => activeStatuses.includes(order.status));
+    } else {
+      // Handles 'completed' and 'cancelled'
+      filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
+    }
   }
 
   // Apply search query if provided
@@ -249,23 +159,27 @@ export const fetchOrders = async (params: Record<string, any>) => {
     );
   }
 
-  // Paginate the results
+  // Simulate pagination
+  const page = params.page || 1;
+  const limit = params.limit || 10;
+  const total = filteredOrders.length;
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
   const paginatedOrders = filteredOrders.slice(startIndex, endIndex);
   
   return {
     items: paginatedOrders,
-    total: filteredOrders.length,
+    total: total,
     page,
     limit,
   };
 }
 
-export const fetchOrderById = async (id: string) => {
-  await new Promise((resolve) => setTimeout(resolve, 750));
+export const fetchOrderById = async (id: string): Promise<OrderListItem> => {
+  await new Promise((resolve) => setTimeout(resolve, 400));
   const order = dummyOrders.find((o) => o.id === id);
   if (order) {
-    // In a real API, you'd return more details here.
-    // We'll just return the list item for now.
+    // In a real API, you might return more details, but for the demo, this is perfect.
     return Promise.resolve(order);
   } else {
     return Promise.reject(new Error("Order not found"));

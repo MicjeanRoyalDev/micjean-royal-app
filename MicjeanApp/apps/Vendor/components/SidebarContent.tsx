@@ -41,26 +41,23 @@ export function SidebarContent({ expanded, setExpanded }: SidebarContentProps) {
   const { isLargeScreen } = useBreakpoint();
   const navigation = useNavigation<AppNavigationProp>();
 
-  const [screenName, setScreenName] =
-    useState<keyof HomePageParamList>("Dashboard");
+  const screenName = useNavigationState(state => {
+    const parentRoute = state.routes[state.index];
+    let name = parentRoute.name; // Default to the parent route name ('Home')
 
-  useEffect(() => {
-    const navState = navigation.getState();
-    const parentRoute = navState.routes[navState.index];
-
-    const targetRoute =
-      parentRoute?.state && parentRoute.state.index
-        ? parentRoute.state.routes[parentRoute.state.index]
-        : undefined;
-    let name: keyof HomePageParamList;
-    if (targetRoute?.name && targetRoute?.name in HomePageParams) {
-      name = targetRoute?.name as keyof HomePageParamList;
-    } else {
-      name = "Dashboard";
+    // Drill down into the nested stack navigator if it has initialized
+    if (parentRoute.state?.index !== undefined) {
+      name = parentRoute.state.routes[parentRoute.state.index].name;
     }
 
-    if (name != screenName) setScreenName(name);
-  }, [navigation.getState()]);
+    // **CRITICAL ADDITION**: If the derived name is 'Home', treat it as 'Dashboard'.
+    // This handles the initial render before the nested navigator reports its state.
+    if (name === 'Home') {
+      return 'Dashboard';
+    }
+
+    return name;
+  }) as keyof HomePageParamList;
 
   const navigate = (screenName: keyof HomePageParamList) => {
     navigation.navigate("Home", { screen: screenName });
@@ -83,14 +80,20 @@ export function SidebarContent({ expanded, setExpanded }: SidebarContentProps) {
       {/* Header Section */}
       <View className="p-4 mb-4 flex-row items-center justify-center gap-6">
         {expanded && (
-          <Text className="text-3xl font-extrabold text-foreground">Micjean</Text>
+          <Text className="text-3xl font-extrabold text-foreground">
+            Micjean
+          </Text>
         )}
         {/* The chevron is an interactive element to collapse */}
         <Pressable
-          onPress={() => setExpanded(prev => !prev)}
+          onPress={() => setExpanded((prev) => !prev)}
           className="p-2 rounded-full hover:bg-accent active:bg-accent/80"
         >
-          { expanded ? (<ChevronsLeft size={28} className="text-foreground" />) : (<ChevronsRight size={28} className="text-muted-foreground" />) }
+          {expanded ? (
+            <ChevronsLeft size={28} className="text-foreground" />
+          ) : (
+            <ChevronsRight size={28} className="text-muted-foreground" />
+          )}
         </Pressable>
       </View>
 
@@ -102,37 +105,43 @@ export function SidebarContent({ expanded, setExpanded }: SidebarContentProps) {
 
           return (
             // Use Pressable for the navigation action
-            <Pressable 
-                className={`
+            <Pressable
+              className={`
                   flex-row items-center gap-4 p-3 rounded-lg
-                  ${isActive
-                    ? 'bg-primary' // Active state: use primary background
-                    : 'bg-transparent hover:bg-accent' // Inactive: transparent, with accent on hover
+                  ${
+                    isActive
+                      ? "bg-primary" // Active state: use primary background
+                      : "bg-transparent hover:bg-accent" // Inactive: transparent, with accent on hover
                   }
-                  ${expanded ? 'justify-start' : 'justify-center'}
-                `} key={item.name} onPress={() => navigate(item.name)}>
-                <Icon
-                  size={24}
-                  className={`
-                    ${isActive
-                      ? 'text-primary-foreground' // Active icon: use primary-foreground
-                      : 'text-foreground'          // Inactive icon: use standard foreground
+                  ${expanded ? "justify-start" : "justify-center"}
+                `}
+              key={item.name}
+              onPress={() => navigate(item.name)}
+            >
+              <Icon
+                size={24}
+                className={`
+                    ${
+                      isActive
+                        ? "text-primary-foreground" // Active icon: use primary-foreground
+                        : "text-foreground" // Inactive icon: use standard foreground
                     }
                   `}
-                />
-                {expanded && (
-                  <Text
-                    className={`
+              />
+              {expanded && (
+                <Text
+                  className={`
                       font-semibold text-base
-                      ${isActive
-                        ? 'text-primary-foreground' // Active text
-                        : 'text-foreground'          // Inactive text
+                      ${
+                        isActive
+                          ? "text-primary-foreground" // Active text
+                          : "text-foreground" // Inactive text
                       }
                     `}
-                  >
-                    {item.label}
-                  </Text>
-                )}
+                >
+                  {item.label}
+                </Text>
+              )}
             </Pressable>
           );
         })}
@@ -165,7 +174,7 @@ export function SidebarContent({ expanded, setExpanded }: SidebarContentProps) {
           onPress={handleLogout}
           className={`
             flex-row items-center gap-3 px-3 py-4 rounded-lg hover:bg-destructive/20
-            ${expanded ? 'justify-start' : 'justify-center w-full'}
+            ${expanded ? "justify-start" : "justify-center w-full"}
           `}
         >
           {/* Destructive actions should use the destructive color */}
