@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useBreakpoint } from "~/hooks/useBreakpoint";
 import { SidebarContent } from "~/components/SidebarContent";
 import { Menu, User } from "lucide-react-native";
@@ -15,47 +14,24 @@ import SettingsScreen from "~/screens/settings";
 import { Button } from "./ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useAuth } from "~/context/auth";
-import { useColorScheme } from "nativewind";
+import { useColorScheme } from "~/hooks/useColorScheme";
 
 const Stack = createStackNavigator();
-
-// Define our semantic colors for both schemes to improve readability
-const colors = {
-  dark: {
-    background: '#1E2028', // --background
-    foreground: '#F7FAFC', // --foreground
-    card: '#282A36',       // --card
-    cardForeground: '#F7FAFC', // --card-foreground
-  },
-  light: {
-    background: '#FFFFFF',
-    foreground: '#09090B',
-    card: '#F8F9FA',
-    cardForeground: '#09090B',
-  },
-}
 
 function AppStackNavigator({ expanded, setExpanded }: SidebarNavigatorProps) {
   const { isLargeScreen } = useBreakpoint();
   const { user } = useAuth();
-  const { colorScheme } = useColorScheme();
-
-  const isDark = colorScheme === "dark";
-  const themeColors = isDark ? colors.dark : colors.light;
-
+  const { themeColors } = useColorScheme();
   return (
     <Stack.Navigator
       screenOptions={{
-        // Use --card for "lifted" surfaces like headers
         headerStyle: {
           backgroundColor: themeColors.card,
           shadowOpacity: 0,
           elevation: 0,
         },
-        // Use --card-foreground for text/icons on a card background
         headerTintColor: themeColors.cardForeground,
         headerTitleAlign: 'center',
-        // Use --background for the main content area of the screen
         cardStyle: { backgroundColor: themeColors.background },
         headerLeft: () =>
           !isLargeScreen ? (
@@ -65,7 +41,6 @@ function AppStackNavigator({ expanded, setExpanded }: SidebarNavigatorProps) {
               className="ml-2"
               onPress={() => setExpanded(!expanded)}
             >
-              {/* This icon color is inherited from headerTintColor */}
               <Menu size={32} color={themeColors.cardForeground} />
             </Button>
           ) : null,
@@ -92,27 +67,21 @@ function AppStackNavigator({ expanded, setExpanded }: SidebarNavigatorProps) {
 }
 
 function DrawerNavigator({ expanded, setExpanded }: SidebarNavigatorProps) {
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const themeColors = isDark ? colors.dark : colors.light;
+  const { themeColors } = useColorScheme();
 
   return (
-    // SafeAreaView should match the main app background
-    <SafeAreaView style={{ flex: 1, backgroundColor: themeColors.background }}>
-      <Drawer
-        open={expanded}
-        onOpen={() => setExpanded(true)}
-        onClose={() => setExpanded(false)}
-        drawerPosition="left"
-        renderDrawerContent={() => {
-          return <SidebarContent expanded={true} setExpanded={setExpanded} />;
-        }}
-        // The drawer panel itself is a "card"
-        drawerStyle={{ width: 288, backgroundColor: themeColors.card }}
-      >
-        <AppStackNavigator expanded={expanded} setExpanded={setExpanded} />
-      </Drawer>
-    </SafeAreaView>
+    <Drawer
+      open={expanded}
+      onOpen={() => setExpanded(true)}
+      onClose={() => setExpanded(false)}
+      drawerPosition="left"
+      renderDrawerContent={() => {
+        return <SidebarContent expanded={true} setExpanded={setExpanded} />;
+      }}
+      drawerStyle={{ width: 256, backgroundColor: themeColors.card }}
+    >
+      <AppStackNavigator expanded={expanded} setExpanded={setExpanded} />
+    </Drawer>
   );
 }
 
@@ -122,20 +91,19 @@ type SidebarNavigatorProps = {
 };
 
 function TabletNavigator({ expanded, setExpanded }: SidebarNavigatorProps) {
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const themeColors = isDark ? colors.dark : colors.light;
+  const { themeColors } = useColorScheme();
 
   return (
     <View
       style={{
         flex: 1,
         flexDirection: "row",
-        // The overall background for the tablet view
         backgroundColor: themeColors.background,
       }}
     >
-      <SidebarContent expanded={expanded} setExpanded={setExpanded} />
+      <View className="max-w-72">
+        <SidebarContent expanded={expanded} setExpanded={setExpanded} />
+      </View>
       <View style={{ flex: 1 }}>
         <AppStackNavigator expanded={expanded} setExpanded={setExpanded} />
       </View>

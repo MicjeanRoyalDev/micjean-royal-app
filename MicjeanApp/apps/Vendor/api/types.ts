@@ -40,3 +40,29 @@ export type OrderListItem = {
   totalAmount: number;
   createdAt: string;
 };
+
+export type MenuStatus = 'Available' | 'Sold Out' | 'Hidden';
+
+export type Category = {
+  id: string;
+  name: string;
+};
+
+export type Menu = {
+  id: string;
+  name: string;
+  imageUrl: string;
+  categoryId: string;
+  status: MenuStatus;
+  price: number;
+  description?: string;
+};
+
+export type NewMenu = {
+  name: string;
+  imageUrl?: string;
+  categoryId: string;
+  status: MenuStatus;
+  price?: number;
+  description?: string;
+};

@@ -4,7 +4,6 @@ import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Eye, Loader } from "lucide-react-native";
-import { useRouter } from "expo-router";
 import { login } from "~/api/dummy";
 
 interface LoginProps {
@@ -16,7 +15,6 @@ export const Login = ({ afterLogin }: LoginProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authenticating, setAuthenticating] = useState(false);
-  const router = useRouter();
   const spinValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -50,9 +48,9 @@ export const Login = ({ afterLogin }: LoginProps) => {
   };
 
   return (
-    <View className="flex-1 flex-col lg:flex-row bg-background">
+    <View className="flex-1 flex-col md:flex-row bg-background">
       {/* Top Panel on mobile, Left panel on tablet */}
-      <View className="lg:flex-1 bg-muted/40 overflow-hidden relative h-96 lg:h-full">
+      <View className={`md:flex-1 bg-muted/40 overflow-hidden relative h-96 md:h-full`}>
         <Image
           source={require("~/assets/images/micjean photo for background.jpg")}
           className="absolute w-full h-full"
@@ -62,8 +60,8 @@ export const Login = ({ afterLogin }: LoginProps) => {
       </View>
 
       {/* Bottom Panel on mobile, Right panel on tablet */}
-      <View className="flex-1 items-center justify-center p-6 lg:p-12">
-        <View className="w-full max-w-md mb-12">
+      <View className="flex-1 items-center justify-center p-6 md:p-12">
+        <View className="w-full max-w-md mb-6">
           <Image
             source={require("~/assets/images/micjean royal logo.png")}
             className="mx-auto"
