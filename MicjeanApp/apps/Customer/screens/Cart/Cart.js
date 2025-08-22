@@ -1,76 +1,66 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { Button } from '@rneui/themed';
+import EmptyCartScreen from './EmptyCart';
 import CheckoutScreen from './CheckoutScreen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-//import { supabase } from '../../../backend/supabase/clients'; // adjust if needed
+import { useCart } from '../../context/CartContext';
 
 export default function CartScreen() {
   const navigation = useNavigation();
-  const [orders, setOrders] = useState([]);
+  const { cart, removeFromCart, updateQuantity, getCartTotal } = useCart();
 
-  useEffect(() => {
-    fetchCartItems();
-  }, []);
-
-  const fetchCartItems = async () => {
-    const { data, error } = await supabase
-      .from('orders')
-      .select('item_name, price, image_url');
-
-    if (error) {
-      console.error(error);
-    } else {
-      const grouped = {};
-      data.forEach((item) => {
-        const key = `${item.item_name}-${item.price}-${item.image_url}`;
-        if (!grouped[key]) {
-          grouped[key] = { ...item, quantity: 1 };
-        } else {
-          grouped[key].quantity += 1;
-        }
-      });
-
-      setOrders(Object.values(grouped));
-    }
+  const handleRemoveItem = (cartId) => {
+    removeFromCart(cartId);
   };
 
-  const getTotal = () =>
-    orders.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
+  const renderCartItem = ({ item }) => (
+    <View style={styles.card}>
+      <Image source={{ uri: item.image_url }} style={styles.image} />
+      <View style={styles.details}>
+        <Text style={styles.itemName}>{item.name}</Text>
+        <Text style={styles.price}>GHC {item.totalPrice.toFixed(2)} x {item.quantity}</Text>
+        {item.selectedAddons.length > 0 && (
+          <Text style={styles.addons}>
+            Add-ons: {item.selectedAddons.map(addon => addon.name).join(', ')}
+          </Text>
+        )}
+      </View>
+      <TouchableOpacity onPress={() => handleRemoveItem(item.cartId)}>
+        <MaterialIcons name="close" size={20} color="#000" />
+      </TouchableOpacity>
+    </View>
+  );
+{/*logic for when the cart is empty*/}
+if (cart.items.length === 0) {
+  return <EmptyCartScreen />;
+}
 
   return (
     <View style={styles.container}>
       {/* Back Button */}
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <MaterialIcons name="arrow-back" size={25} color="#ba272e" />
+        <MaterialIcons name="arrow-back" size={25} color='#03940dff' />
       </TouchableOpacity>
 
-      <Text style={styles.heading}>Your Orders</Text>
+      <Text style={styles.heading}>Your Cart</Text>
 
       <FlatList
-        data={orders}
-        keyExtractor={(item, index) => `${item.item_name}-${index}`}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Image source={{ uri: item.image_url }} style={styles.image} />
-            <View style={styles.details}>
-              <Text style={styles.itemName}>{item.item_name}</Text>
-              <Text style={styles.price}>GH¢ {item.price.toFixed(2)} x {item.quantity}</Text>
-            </View>
-            <TouchableOpacity>
-              <MaterialIcons name="close" size={20} color="#000" />
-            </TouchableOpacity>
-          </View>
-        )}
+        data={cart.items}
+        keyExtractor={(item) => item.cartId}
+        renderItem={renderCartItem}
         contentContainerStyle={{ paddingBottom: 100 }}
       />
 
       {/* Checkout Section */}
       <View style={styles.checkoutBar}>
-        <Button title="Go to checkout" buttonStyle={styles.checkoutButton} 
-        onPress={() => navigation.navigate('Checkout')} />
-        <Text style={styles.total}>GH¢ {getTotal()}</Text>
+        <Button 
+          title="Go to checkout" 
+          buttonStyle={styles.checkoutButton} 
+          onPress={() => navigation.navigate('Checkout')} 
+        />
+        <Text style={styles.total}>GHC {getCartTotal()}</Text>
       </View>
     </View>
   );
@@ -96,10 +86,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 20,
     textAlign: 'center',
-    color: '#AC030A',
+    color: '#1b5e20',
   },
   card: {
-    backgroundColor: '#fff5f5',
+    backgroundColor: '#f5fff6ff',
     borderRadius: 16,
     padding: 10,
     marginBottom: 12,
@@ -119,7 +109,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   price: {
-    color: '#B71C1C',
+    color: '#1b5e20',
     marginTop: 4,
   },
   checkoutBar: {
@@ -134,12 +124,32 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   checkoutButton: {
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#1b5e20',
     paddingHorizontal: 20,
     borderRadius: 20,
   },
   total: {
     fontWeight: '600',
     fontSize: 16,
+  },
+  addons: {
+    color: '#666',
+    fontSize: 12,
+    marginTop: 2,
+  },
+  emptyCart: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyCartText: {
+    fontSize: 18,
+    color: '#666',
+    marginBottom: 20,
+  },
+  startShoppingButton: {
+    backgroundColor: '#1b5e20',
+    paddingHorizontal: 30,
+    borderRadius: 20,
   },
 });

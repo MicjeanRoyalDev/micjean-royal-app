@@ -1,72 +1,66 @@
-import React, { useState } from 'react';
-import {View,Text,StyleSheet,SafeAreaView,ScrollView,} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {View,Text,StyleSheet,SafeAreaView,ScrollView,ActivityIndicator} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import SearchBar from '../components/SearchBar';
 import CategoryTabs from '../components/CategoryTabs';
 import DishGrid from '../components/DishGrid';
-const MENU_CATEGORIES = [
-  { id: 'main', label: 'main dish' },
-  { id: 'soups', label: 'soups & stews' },
-  { id: 'deserts', label: 'deserts' },
-  { id: 'beverages', label: 'beverages' },
-];
-
-const MOCK_DISHES = [
-  {
-    id: 1,
-    image: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-    name: 'TILAPIA EN SAUCE',
-    price: 'Ghc 20.00',
-  },
-  {
-    id: 2,
-    image: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-    name: 'TILAPIA EN SAUCE',
-    price: 'Ghc 20.00',
-  },
-  {
-    id: 3,
-    image: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-    name: 'TILAPIA EN SAUCE',
-    price: 'Ghc 20.00',
-  },
-  {
-    id: 4,
-    image: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-    name: 'TILAPIA EN SAUCE',
-    price: 'Ghc 20.00',
-  },
-  {
-    id: 5,
-    image: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-    name: 'TILAPIA GRILLED',
-    price: 'Ghc 25.00',
-  },
-  {
-    id: 6,
-    image: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-    name: 'TILAPIA FRIED',
-    price: 'Ghc 22.00',
-  },
-  {
-    id: 7,
-    image: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-    name: 'TILAPIA SPICY',
-    price: 'Ghc 30.00',
-  },
-  {
-    id: 8,
-    image: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-    name: 'TILAPIA STEWED',
-    price: 'Ghc 28.00',
-  },
-];
+import { menu } from '../../../backend/supabase/menu';
 
 const MenuScreen = () => {
-  const [activeCategory, setActiveCategory] = useState('main');
+  const [activeCategory, setActiveCategory] = useState(null);
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('menu');
+  const [dishes, setDishes] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+
+  // Fetch categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const result = await menu.getAllCategories();
+        if (result.error) {
+          console.error('Error fetching categories:', result.error);
+        } else {
+          setCategories(result.data);
+          // Set the first category as active by default
+          if (result.data.length > 0) {
+            setActiveCategory(result.data[0].id);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Fetch dishes when category changes
+  useEffect(() => {
+    if (activeCategory) {
+      const fetchDishes = async () => {
+        setLoading(true);
+        try {
+          const result = await menu.getMenuItemsByCategory(activeCategory);
+          if (result.error) {
+            console.error('Error fetching dishes:', result.error);
+            setDishes([]);
+          } else {
+            setDishes(result.data);
+          }
+        } catch (error) {
+          console.error('Error fetching dishes:', error);
+          setDishes([]);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchDishes();
+    }
+  }, [activeCategory]);
 
   const handleTabPress = (tabId) => {
     setActiveTab(tabId);
@@ -77,19 +71,36 @@ const MenuScreen = () => {
     }
   };
 
+  // Filter dishes based on search
+  const filteredDishes = dishes.filter(dish => 
+    dish.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.menuTitle}>  </Text>
+      <Text style={styles.menuTitle}>Menu</Text>
       <SearchBar value={search} onChangeText={setSearch} />
-      <CategoryTabs 
-        categories={MENU_CATEGORIES} 
-        activeCategory={activeCategory} 
-        onCategoryPress={setActiveCategory} 
-      />
+      {categories.length > 0 && (
+        <CategoryTabs 
+          categories={categories} 
+          activeCategory={activeCategory} 
+          onCategoryPress={setActiveCategory} 
+        />
+      )}
       <ScrollView contentContainerStyle={styles.dishesGrid} showsVerticalScrollIndicator={false}>
-        <DishGrid dishes={MOCK_DISHES} />
+        {loading ? (
+          <ActivityIndicator size="large" color='#069910ff' style={styles.spinner} />
+        ) : filteredDishes.length > 0 ? (
+          <DishGrid 
+            dishes={filteredDishes} 
+          />
+        ) : (
+          <Text style={styles.noDataText}>
+            {search ? 'No dishes found matching your search' : 'No dishes available'}
+          </Text>
+        )}
       </ScrollView>
-      </SafeAreaView>
+    </SafeAreaView>
   );
 };
 
@@ -112,6 +123,15 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: 'center',
     paddingBottom: 80,
+  },
+  spinner: {
+    marginTop: 20,
+  },
+  noDataText: {
+    fontSize: 16,
+    color: '#888',
+    textAlign: 'center',
+    marginTop: 40,
   },
 });
 

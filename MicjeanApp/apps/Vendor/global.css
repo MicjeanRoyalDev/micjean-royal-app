@@ -4,92 +4,88 @@
 
 @layer base {
   :root {
-    /* Base Canvas */
-    --background: 0 0% 98%; /* A very light, near-white background */
-    --foreground: 222 47% 11%; /* The main, dark text color */
+    /* Base Canvas (Neutral) */
+    --background: 0 0% 98%;
+    --foreground: 222 47% 11%;
 
-    /* Cards & Popovers */
-    --card: 0 0% 100%; /* Pure white for cards and panels to "pop" */
-    --card-foreground: 222 47% 11%; /* Text color on cards (re-uses --foreground) */
-    --popover: 0 0% 100%; /* Assumed to be same as card */
-    --popover-foreground: 222 47% 11%; /* Assumed to be same as card-foreground */
+    /* Cards & Popovers (Neutral) */
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
 
-    /* Primary / Brand */
-    --primary: 221 83% 53%; /* A strong, accessible blue for active elements */
-    --primary-foreground: 210 40% 98%; /* Light text (off-white) on primary buttons */
+    /* Primary / Brand (NEW GREEN THEME) */
+    --primary: 124 91% 28%; /* Dark Green (#068a0f) for high contrast on light bg */
+    --primary-foreground: 0 0% 100%; /* White text on the dark green button */
 
     /* Secondary */
-    --secondary: 210 40% 96%; /* Light gray background for secondary buttons */
-    --secondary-foreground: 222 47% 11%; /* Dark text on secondary buttons */
+    --secondary: 124 30% 94%; /* A very light, subtle green for secondary buttons */
+    --secondary-foreground: 124 91% 20%; /* Dark green text on the light green button */
 
     /* Muted / De-emphasized */
-    --muted: 210 40% 96%; /* Re-uses secondary color for subtle backgrounds */
-    --muted-foreground: 215 16% 47%; /* A muted gray for less important text */
+    --muted: 210 40% 96.5%; /* Kept as a neutral light gray */
+    --muted-foreground: 215 16% 47%; /* Kept as a neutral muted gray for text */
 
-    /* Accent (Default) - Used for 'Pending' status */
-    --accent: 30 95% 94%; /* A very light orange/brown for 'Pending' background */
-    --accent-foreground: 25 95% 38%; /* A darker orange/brown text for 'Pending' */
+    /* Accent (Used for "Success" or "Ready" status) */
+    --accent: 124 70% 92%; /* A light, friendly green background */
+    --accent-foreground: 124 70% 30%; /* A darker, readable green text */
 
-    /* Destructive / Error */
-    --destructive: 0 84% 60%; /* A strong red for destructive actions/errors */
-    --destructive-foreground: 210 40% 98%; /* Light text on a destructive background */
+    /* Destructive / Error (Kept as Red) */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
 
     /* Structural */
-    --border: 214 32% 91%; /* A light, subtle border color */
-    --input: 214 32% 91%; /* Assumed to be same as border for input fields */
-    --ring: 221 83% 53%; /* Blue color for focus rings (matches primary) */
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 124 91% 35%; /* A slightly brighter green for focus rings */
 
-    /* Additional Accent Colors for Statuses & Charts */
-    --accent-2: 210 95% 94%; /* Light blue background ('Delivery') */
-    --accent-2-foreground: 210 95% 38%; /* Darker blue text */
-    --accent-3: 240 95% 94%; /* Light purple background ('Preparing') */
-    --accent-3-foreground: 240 95% 38%; /* Darker purple text */
-    --accent-4: 345 95% 94%; /* Light pink background ('Dine In') */
-    --accent-4-foreground: 345 95% 38%; /* Darker pink text */
+    /* Additional Status Colors */
+    --accent-2: 30 95% 94%;   /* Orange/Yellow for "Preparing" */
+    --accent-2-foreground: 25 95% 38%;
+    --accent-3: 210 95% 94%;  /* Blue for "Placed" or info */
+    --accent-3-foreground: 210 95% 38%;
   }
 
   .dark:root {
-    /* Base Canvas */
-    --background: 228 11% 14%; /* The darkest background color */
-    --foreground: 210 17% 98%; /* Main text color (e.g., "Dashboard") */
+    /* Base Canvas (Neutral) */
+    --background: 228 11% 14%;
+    --foreground: 210 17% 98%;
 
-    /* Cards & Popovers */
-    --card: 229 17% 18%; /* Background of cards and panels */
-    --card-foreground: 210 17% 98%; /* Text color on cards (re-uses --foreground) */
-    --popover: 229 17% 18%; /* Assumed to be same as card */
-    --popover-foreground: 210 17% 98%; /* Assumed to be same as card-foreground */
+    /* Cards & Popovers (Neutral) */
+    --card: 229 17% 18%;
+    --card-foreground: 210 17% 98%;
+    --popover: 229 17% 18%;
+    --popover-foreground: 210 17% 98%;
 
-    /* Primary / Brand */
-    --primary: 158 55% 56%; /* The main mint-green for active elements */
-    --primary-foreground: 180 38% 17%; /* Dark text on primary buttons (e.g., "Completed") */
+    /* Primary / Brand (NEW GREEN THEME) */
+    --primary: 124 70% 41%; /* Brighter Green (#20bb2a) for visibility on dark bg */
+    --primary-foreground: 124 90% 10%; /* Very dark green text on the bright green button */
 
     /* Secondary */
-    --secondary: 229 17% 18%; /* Background of secondary buttons (e.g., "Filter Order") */
-    --secondary-foreground: 210 17% 98%; /* Text on secondary buttons */
+    --secondary: 124 15% 22%; /* A dark, desaturated green for secondary buttons */
+    --secondary-foreground: 124 60% 80%; /* A light green text for contrast */
 
     /* Muted / De-emphasized */
-    --muted: 229 17% 18%; /* Re-uses card color for subtle backgrounds */
-    --muted-foreground: 203 16% 72%; /* Faded text (e.g., "Tuesday 2 Feb, 2021") */
+    --muted: 229 11% 25%; /* Kept as a dark neutral gray */
+    --muted-foreground: 203 16% 72%;
 
-    /* Accent (Default) - Used for 'Pending' status */
-    --accent: 30 100% 72%; /* Orange/brown 'Pending' status background */
-    --accent-foreground: 28 48% 25%; /* Dark text on the 'Pending' status */
+    /* Accent (Used for "Success" or "Ready" status) */
+    --accent: 124 70% 20%; /* A dark, rich green background */
+    --accent-foreground: 124 70% 75%; /* A lighter, vibrant green text */
 
-    /* Destructive / Error */
-    --destructive: 9 74% 69%; /* Red color for negative stats */
-    --destructive-foreground: 210 17% 98%; /* Light text on a destructive background */
+    /* Destructive / Error (Kept as Red) */
+    --destructive: 0 74% 50%;
+    --destructive-foreground: 210 17% 98%;
 
     /* Structural */
-    --border: 229 11% 25%; /* Borders for cards, inputs, and buttons */
-    --input: 229 11% 25%; /* Assumed to be same as border for input outlines */
-    --ring: 344 100% 74%; /* Pink color for focus rings, taken from the chart */
-
-    /* Additional Accent Colors for Statuses & Charts */
-    --accent-2: 209 89% 68%; /* Blue from the chart ('Delivery') */
-    --accent-2-foreground: 210 50% 15%; /* A suitable dark blue for text */
-    --accent-3: 241 98% 78%; /* Purple 'Preparing' status background */
-    --accent-3-foreground: 240 50% 20%; /* Dark purple text for 'Preparing' status */
-    --accent-4: 344 100% 74%; /* Pink from the chart ('Dine In') */
-    --accent-4-foreground: 345 50% 22%; /* A suitable dark pink for text */
+    --border: 229 11% 25%;
+    --input: 229 11% 25%;
+    --ring: 124 70% 45%; /* A vibrant green for focus rings */
+    
+    /* Additional Status Colors */
+    --accent-2: 30 80% 22%;   /* Dark Orange/Yellow for "Preparing" */
+    --accent-2-foreground: 30 100% 80%;
+    --accent-3: 210 89% 25%;  /* Dark Blue for "Placed" or info */
+    --accent-3-foreground: 209 89% 80%;
   }
 }

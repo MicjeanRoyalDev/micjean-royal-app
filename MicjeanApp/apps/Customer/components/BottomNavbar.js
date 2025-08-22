@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { View, Text, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialIcons } from '@expo/vector-icons';
 import ProfileStack from '../screens/Profile/parts/ProfileStack';
@@ -8,15 +8,16 @@ import MenuScreen from '../screens/MenuScreen';
 import CartStack from '../screens/Cart/CartStack';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { ThemeProvider, createTheme } from '@rneui/themed';
+import { useCart } from '../context/CartContext';
 
 const theme = createTheme({
   lightColors: {
     primary: '#ffff',
     secondary: '#000000',
-    background: '#B71C1C',
+    background: '#068a0fff',
   },
   darkColors: {
-    primary: '#710707',
+    primary: '#03940dff',
     secondary: '#d2dae2',
     background: '#1e272e',
   },
@@ -24,11 +25,27 @@ const theme = createTheme({
 });
 
 export default function BottomNavbar() {
+  const { getCartItemCount } = useCart();
+  
   function Orders() {
     return null;
   }
 
   const Tab = createBottomTabNavigator();
+
+  const CartIcon = ({ focused, color, size }) => {
+    const itemCount = getCartItemCount();
+    return (
+      <View style={styles.cartIconContainer}>
+        <MaterialIcons name="list-alt" color={color} size={size} />
+        {itemCount > 0 && (
+          <View style={styles.cartBadge}>
+            <Text style={styles.cartBadgeText}>{itemCount}</Text>
+          </View>
+        )}
+      </View>
+    );
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -44,7 +61,7 @@ export default function BottomNavbar() {
               } else if (route.name === 'Menu') {
                 iconName = 'local-dining';
               } else if (route.name === 'Orders') {
-                iconName = 'list-alt';
+                return <CartIcon focused={focused} color={color} size={size} />;
               } else if (route.name === 'Profile') {
                 iconName = 'person';
               }
@@ -151,3 +168,25 @@ export default function BottomNavbar() {
     </ThemeProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  cartIconContainer: {
+    position: 'relative',
+  },
+  cartBadge: {
+    position: 'absolute',
+    right: -6,
+    top: -3,
+    backgroundColor: '#f3c807ff',
+    borderRadius: 10,
+    width: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cartBadgeText: {
+    color: 'white',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+});

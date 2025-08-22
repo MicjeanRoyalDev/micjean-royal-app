@@ -4,7 +4,7 @@
         "slug": "customer-app",
         "version": "1.0.0",
         "orientation": "portrait",
-        "icon": "../../shared/assets/images/tilapia pic for mock data.jpeg",
+        "icon": "../../shared/assets/images/jollof.jpeg",
         "splash": {
             "image": "../../shared/assets/images/micjean photo for background.jpg",
             "resizeMode": "contain",

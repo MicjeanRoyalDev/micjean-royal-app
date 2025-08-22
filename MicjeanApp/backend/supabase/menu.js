@@ -169,4 +169,34 @@ export const menu = {
       };
     }
   },
+  getPopularDishes: async () => {
+    try {
+      const { data, error } = await supabase
+        .from("menu")
+        .select(
+          `
+          id,
+          name,
+          price,
+          image_url
+        `
+        )
+        .eq("is_available", true)
+        .order("order_count", { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+
+      return {
+        data: data || [],
+        error: null,
+      };
+    } catch (error) {
+      console.error("Error fetching popular dishes:", error);
+      return {
+        data: [],
+        error: error.message,
+      };
+    }
+  },
 };

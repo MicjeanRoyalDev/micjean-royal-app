@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 24,
     fontWeight: '700',
-    color: '#B71C1C',
+    color: '#068a0fff',
     marginBottom: 12,
     marginTop:40,
   },

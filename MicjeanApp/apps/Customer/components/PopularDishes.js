@@ -7,36 +7,56 @@ const PopularDishes = ({ dishes = [] }) => {
   const defaultDishes = [
     {
       id: 1,
-      imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-      dishName: 'TILAPIA OKLAODE',
-      price: 'Ghc180.00'
+      name: 'JOLLOF RICE',
+      price: 40.00,
+      image_url: 'https://example.com/tilapia.jpg',
+      imageSource: require('../../../shared/assets/images/jollof.jpeg'),
     },
     {
       id: 2,
-      imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-      dishName: 'TILAPIA OKLAODE',
-      price: 'Ghc180.00'
+      name: 'FRIED RICE',
+      price: 45.00,
+      image_url: 'https://example.com/tilapia.jpg',
+      imageSource: require('../../../shared/assets/images/Egg Fried Rice.jpeg'),
     },
     {
       id: 3,
-      imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-      dishName: 'TILAPIA EN SAUCE',
-      price: 'Ghc180'
+      name: 'FUFU AND PALMNUT',
+      price: 100.00,
+      image_url: 'https://example.com/tilapia.jpg',
+      imageSource: require('../../../shared/assets/images/fufu.jpeg'),
     },
     {
       id: 4,
+      name: 'WAAKYE',
+      price: 40.00,
+      image_url: 'https://example.com/tilapia.jpg',
+      imageSource: require('../../../shared/assets/images/Waakye.jpeg'),
+    },
+    {
+      id: 5,
+      name: 'PLAIN RICE & STEW',
+      price: 30.00,
+      image_url: 'https://example.com/tilapia.jpg',
+      imageSource: require('../../../shared/assets/images/Rice & Stew 🍲🍛.jpeg'),
+    },
+    {
+      id: 6,
+      name: 'TILAPIA OKLAODE',
+      price: 180.00,
+      image_url: 'https://example.com/tilapia.jpg',
       imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-      dishName: 'TILAPIA OKLAODE',
-      price: 'Ghc180.00'
-    }
+    },
+    {
+      id: 7,
+      name: 'FRUIT SALAD',
+      price: 20.00,
+      image_url: 'https://example.com/tilapia.jpg',
+      imageSource: require('../../../shared/assets/images/Watermelon Berry Salad.jpeg'),
+    },
   ];
 
   const dishesToRender = dishes.length > 0 ? dishes : defaultDishes;
-
-  const handleDishPress = (dish) => {
-    console.log('Dish pressed:', dish.dishName);
-    // Add navigation or other logic here
-  };
 
   return (
     <View style={styles.popularSection}>
@@ -45,10 +65,10 @@ const PopularDishes = ({ dishes = [] }) => {
         {dishesToRender.map((dish) => (
           <FoodCard
             key={dish.id}
-            imageSource={dish.imageSource}
-            dishName={dish.dishName}
-            price={dish.price}
-            onPress={() => handleDishPress(dish)}
+            imageSource={dish.imageSource || { uri: dish.image_url }}
+            dishName={dish.name || dish.dishName}
+            price={typeof dish.price === 'number' ? `GHC ${dish.price}` : dish.price}
+            dish={dish}
             pulseAnimation={true}
           />
         ))}

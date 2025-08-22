@@ -1,12 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
+import { auth } from '../../../backend/supabase/auth.js';
 
-const Header = ({ userName = "Eren" }) => {
+const Header = () => {
+  const [profile, setProfile] = useState({ username: '', email: '', initials: '' });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { profile, error } = await auth.getProfile();
+      if (error) {
+        console.error('Failed to fetch profile:', error.message);
+        return;
+      }
+
+      const initials = profile.username
+        ? profile.username
+            .split(' ')
+            .map(word => word[0])
+            .join('')
+            .toUpperCase()
+        : '';
+
+      setProfile({
+        username: profile.username || '',
+        email: profile.email || '',
+        initials,
+      });
+    };
+
+    fetchProfile();
+  }, []);
+
   return (
     <View style={styles.header}>
       <View style={styles.headerLeft}>
-        <Text style={styles.greeting}>Hello, {userName}</Text>
-        <Text style={styles.subGreeting}>READY FOR ANY DELICIOUS</Text>
+        <Text style={styles.greeting}>Hello, {profile.username}</Text>
+        <Text style={styles.subGreeting}>DON'T JUST EAT, ENJOY</Text>
       </View>
       <View style={styles.logoContainer}>
         <Image 
@@ -21,32 +50,33 @@ const Header = ({ userName = "Eren" }) => {
 
 const styles = StyleSheet.create({
   header: {
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#068a0fff',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 20,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    paddingVertical: 15,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
   headerLeft: {
     flex: 1,
+    width:'150%',
   },
   greeting: {
     color: 'white',
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     paddingTop: 30,
   },
   subGreeting: {
     color: 'white',
-    fontSize: 12,
+    fontSize: 10,
     opacity: 1.0,
   },
   logoContainer: {
-    width: 70,
-    height: 70,
+    width: 60,
+    height: 60,
     backgroundColor: 'white',
     borderRadius: 35,
     justifyContent: 'center',
@@ -57,9 +87,9 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.5,
     shadowRadius: 3,
-    elevation: 3,
+    elevation: 2,
   },
   logo: {
     width: 50,

@@ -9,7 +9,7 @@ export default function Options() {
   return (
     <View style={styles.container}>
       {/* Orders Card */}
-      <TouchableOpacity onPress={() => navigation.navigate('Orders')}>
+      <TouchableOpacity onPress={() => navigation.navigate('OrderHistory')}>
         <Card containerStyle={styles.card}>
           <View style={styles.cardContent}>
             <MaterialIcons name="fastfood" size={24} color="#333" />

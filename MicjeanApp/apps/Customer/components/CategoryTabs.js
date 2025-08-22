@@ -15,7 +15,7 @@ const CategoryTabs = ({ categories, activeCategory, onCategoryPress }) => {
           onPress={() => handlePress(cat.id)}
         >
           <Text style={[styles.tabText, activeCategory === cat.id && styles.activeTabText]}>
-            {cat.label}
+            {cat.name}
           </Text>
           {activeCategory === cat.id && (
             <View style={[styles.activeLine, { width: '100%' }]} />
@@ -43,12 +43,12 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   activeTabText: {
-    color: '#B71C1C',
+    color: '#068a0fff',
     fontWeight: 'bold',
   },
   activeLine: {
     height: 3,
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#08b914ff',
     marginTop: 4,
   },
 });
