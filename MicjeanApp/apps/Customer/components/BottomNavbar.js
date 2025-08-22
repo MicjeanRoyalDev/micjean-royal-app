@@ -7,7 +7,6 @@ import HomeScreen from '../screens/HomeScreen';
 import MenuScreen from '../screens/MenuScreen';
 import CartStack from '../screens/Cart/CartStack';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
-// Removed RNEUI ThemeProvider and createTheme
 import { useCart } from '../context/CartContext';
 
 const theme = {

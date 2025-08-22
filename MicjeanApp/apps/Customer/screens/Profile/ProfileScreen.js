@@ -6,7 +6,6 @@ import ProfileHeader from './parts/ProfileHeader.js'
 export default function ProfileScreen(){
     //the return function
     return(
-        /*I used rneui, so I have to wrap it in SafeAreaView instead of View*/
         <SafeAreaView style={{flex:1, padding: 10, flexDirection: 'column'}}>
             {/*The profile header*/}
             <ProfileHeader />
