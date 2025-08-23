@@ -22,6 +22,7 @@ import {
   ChevronRight,
 } from "lucide-react-native";
 import { fetchOrders } from "~/api/dummy";
+import { apiClient } from "~/api";
 
 // --- Static Data (can be replaced with API data later) ---
 const topStatsData = [
@@ -171,7 +172,6 @@ const RecentOrdersSection = ({
 // --- Main Dashboard Screen ---
 
 export default function DashboardScreen() {
-  const { authClient } = useAuth();
   const [recentOrders, setRecentOrders] = useState<OrderListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -179,10 +179,12 @@ export default function DashboardScreen() {
   useEffect(() => {
     const fetchRecentOrders = async () => {
       try {
-        // const response = await authClient.get<Paginated<OrderListItem>>('/orders', {
-        //   params: { limit: 5, page: 1, status: 'active' }, // Fetching 5 most recent active orders for a preview
+        // const data = await apiClient.fetchOrders({
+        //   limit: 5,
+        //   page: 1,
+        //   status: 'active',
         // });
-        // setRecentOrders(response.data.items);
+        // setRecentOrders(data.items);
         const recentOrders = await fetchOrders({
           limit: 5,
           page: 1,
@@ -197,7 +199,7 @@ export default function DashboardScreen() {
       }
     };
     fetchRecentOrders();
-  }, [authClient]);
+  }, []);
 
   return (
     <ScrollView className="flex-1 bg-background">

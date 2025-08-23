@@ -59,6 +59,7 @@ import {
   Menu,
   OrderListItem,
   OrderStatus,
+  NewMenu,
 } from './types';
 
 type MenuUpdatePayload = Partial<Omit<Menu, 'id' | 'description'>>;
@@ -100,6 +101,17 @@ class ApiClient {
       console.error('API Client Error: Failed to fetch orders.', error);
       throw new Error('Could not retrieve orders. Please try again later.');
     }
+    return data;
+  }
+
+  async fetchOrderById(orderId: string): Promise<OrderListItem> {
+    const { data, error } = await vendorApi.getOrderById(orderId);
+
+    if (error || !data) {
+      console.error(`API Client Error: Failed to fetch order ${orderId}.`, error);
+      throw new Error('Could not retrieve the specified order.');
+    }
+
     return data;
   }
 
@@ -164,6 +176,20 @@ class ApiClient {
     if (error || !data) {
       console.error(`API Client Error: Failed to update menu item ${menuId}.`, error);
       throw new Error('Could not update the menu item.');
+    }
+  }
+
+  /**
+   * Creates a new menu item.
+   * @param menuItemData - The data for the new menu item, conforming to the NewMenu type.
+   * @returns A promise that resolves with the newly created Menu object.
+   */
+  async createMenuItem(menuItemData: NewMenu): Promise<void> {
+    const { data, error } = await vendorApi.createMenuItem(menuItemData);
+
+    if (error || !data) {
+      console.error('API Client Error: Failed to create menu item.', error);
+      throw new Error('Could not create the menu item. Please try again.');
     }
   }
 }

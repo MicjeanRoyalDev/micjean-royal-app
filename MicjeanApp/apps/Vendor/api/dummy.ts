@@ -120,3 +120,19 @@ export const fetchOrders = async (params: { status?: string, page?: number, limi
 
   return { items: paginatedOrders, total, page, limit };
 };
+
+export const fetchOrderById = async (id: string): Promise<OrderListItem> => {
+  console.log(`[DUMMY API] Fetching order with ID: ${id}`);
+  
+  // Simulate network latency
+  await new Promise((resolve) => setTimeout(resolve, 400));
+
+  const order = dummyOrders.find((o) => o.id === id);
+
+  if (order) {
+    // Return a copy to prevent accidental mutation of the dummy data source
+    return Promise.resolve({ ...order });
+  } else {
+    return Promise.reject(new Error(`Order with ID "${id}" not found.`));
+  }
+};

@@ -11,14 +11,12 @@ import { Badge } from '~/components/ui/badge';
 
 const statusColors: Record<MenuStatus, string> = {
     'Available': 'bg-green-200 border-green-600',
-    'Sold Out': 'bg-red-200 border-red-600',
-    'Hidden': 'bg-gray-200 border-gray-600',
+    'Unavailable': 'bg-gray-200 border-gray-600',
 };
 
 const statusTextColors: Record<MenuStatus, string> = {
     'Available': 'text-green-800',
-    'Sold Out': 'text-red-800',
-    'Hidden': 'text-gray-800',
+    'Unavailable': 'text-gray-800',
 };
 
 interface MenuCardProps {

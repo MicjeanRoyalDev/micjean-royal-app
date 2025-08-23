@@ -16,7 +16,7 @@ interface MenuEditSidebarProps {
   onSave: (menu: Menu | NewMenu) => void;
 }
 
-const MENU_STATUSES: MenuStatus[] = ['Available', 'Sold Out', 'Hidden'];
+const MENU_STATUSES: MenuStatus[] = ['Available', 'Unavailable'];
 
 export function MenuEditSidebar({
   menu,
