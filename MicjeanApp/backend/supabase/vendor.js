@@ -119,6 +119,50 @@ export const vendorApi = {
     }
   },
 
+  /**
+   * Creates a new menu item in the database.
+   * @param {object} newMenuItem - The data for the new menu item.
+   * @returns {Promise<{data: object, error: string|null}>} The newly created menu item.
+   */
+  createMenuItem: async (newMenuItem) => {
+    try {
+      const { name, categoryId, price, imageUrl, status } = newMenuItem;
+
+      // Map frontend data to the database schema
+      const newItemForDb = {
+        name,
+        category_id: parseInt(categoryId, 10),
+        price: price || 0,
+        image_url: imageUrl || 'https://default-image-url.com/placeholder.png', // Provide a default
+        is_available: fromMenuStatus(status),
+      };
+
+      const { data, error } = await supabase
+        .from("menu")
+        .insert([newItemForDb])
+        .select() // Use select() to return the newly created row
+        .single(); // Ensure we get a single object back, not an array
+
+      if (error) throw error;
+
+      // Shape the returned data to match the frontend 'Menu' type
+      const shapedData = {
+        id: data.id.toString(),
+        name: data.name,
+        imageUrl: data.image_url,
+        categoryId: data.category_id.toString(),
+        price: data.price,
+        status: toMenuStatus(data.is_available),
+        description: "", // As per our rule
+      };
+
+      return { data: shapedData, error: null };
+    } catch (error) {
+      console.error("Error creating menu item:", error);
+      return { data: null, error: error.message };
+    }
+  },
+
   // --- Order Management ---
 
   /**
@@ -181,6 +225,53 @@ export const vendorApi = {
       };
     } catch (error) {
       console.error("Error fetching all orders for vendor:", error);
+      return { data: null, error: error.message };
+    }
+  },
+
+  getOrderById: async (orderNumber) => {
+    try {
+      const { data: order, error } = await supabase
+        .from("orders")
+        .select(`
+          id,
+          order_number,
+          total_amount,
+          created_at,
+          status,
+          user:user_id( raw_user_meta_data ),
+          order_items(
+            menu:menuid( name ),
+            addons:order_item_addons( addon:addons( name ) )
+          )
+        `)
+        .eq('order_number', orderNumber)
+        .single(); // .single() is key here to get one object instead of an array
+
+      if (error) throw error;
+      
+      // Handle the case where the order isn't found
+      if (!order) {
+        return { data: null, error: 'Order not found' };
+      }
+
+      // Shape the data to match the frontend OrderListItem type
+      const shapedData = {
+        id: order.order_number,
+        internalId: order.id,
+        customerName: order.user?.raw_user_meta_data?.name || "Guest Customer",
+        status: order.status,
+        items: order.order_items.map(item => ({
+          food: item.menu.name,
+          toppings: item.addons.map(a => a.addon.name),
+        })),
+        totalAmount: order.total_amount,
+        createdAt: order.created_at,
+      };
+
+      return { data: shapedData, error: null };
+    } catch (error) {
+      console.error(`Error fetching order by ID (${orderNumber}):`, error);
       return { data: null, error: error.message };
     }
   },
