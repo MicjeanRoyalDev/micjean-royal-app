@@ -1,0 +1,208 @@
+import { supabase } from "./clients";
+
+// --- Internal Helper Functions ---
+
+/**
+ * Maps the database boolean `is_available` to the frontend's MenuStatus type.
+ * Note: The schema cannot differentiate "Sold Out" from "Hidden".
+ * We'll simplify to "Available" vs. "Unavailable" for data accuracy.
+ * @param {boolean} is_available - The value from the database.
+ * @returns {'Available' | 'Unavailable'}
+ */
+const toMenuStatus = (is_available) => (is_available ? 'Available' : 'Unavailable');
+
+/**
+ * Maps the frontend's MenuStatus type back to the database boolean `is_available`.
+ * @param {'Available' | 'Unavailable'} status - The status from the frontend.
+ * @returns {boolean}
+ */
+const fromMenuStatus = (status) => status === 'Available';
+
+
+// --- Main API Object ---
+
+export const vendorApi = {
+
+  // --- Menu and Category Management ---
+
+  /**
+   * Fetches all categories.
+   * @returns {Promise<{data: Array, error: string|null}>}
+   */
+  getCategories: async () => {
+    try {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("id, name")
+        .order("display_order");
+
+      if (error) throw error;
+
+      // Convert integer IDs to strings for frontend consistency
+      const shapedData = data.map(c => ({ ...c, id: c.id.toString() }));
+
+      return { data: shapedData || [], error: null };
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      return { data: [], error: error.message };
+    }
+  },
+
+  /**
+   * Fetches all menu items for the vendor, including unavailable ones.
+   * @returns {Promise<{data: Array, error: string|null}>}
+   */
+  getMenuItems: async () => {
+    try {
+      const { data, error } = await supabase
+        .from("menu")
+        .select(`id, name, image_url, category_id, price, is_available`)
+        .order("name", { ascending: true });
+
+      if (error) throw error;
+
+      const shapedData = data.map(item => ({
+        id: item.id.toString(),
+        name: item.name,
+        imageUrl: item.image_url,
+        categoryId: item.category_id.toString(),
+        price: item.price,
+        status: toMenuStatus(item.is_available),
+        description: "", // Return empty string as requested
+      }));
+
+      return { data: shapedData || [], error: null };
+    } catch (error) {
+      console.error("Error fetching vendor menu items:", error);
+      return { data: [], error: error.message };
+    }
+  },
+
+  /**
+   * Updates a specific menu item.
+   * @param {string} menuId - The ID of the menu item to update.
+   * @param {object} updates - An object containing the fields to update (e.g., name, price, status).
+   * @returns {Promise<{data: object, error: string|null}>}
+   */
+  updateMenuItem: async (menuId, updates) => {
+    try {
+      const dbUpdates = { ...updates };
+
+      // Convert frontend types to database types
+      if (dbUpdates.status) {
+        dbUpdates.is_available = fromMenuStatus(dbUpdates.status);
+        delete dbUpdates.status;
+      }
+      if (dbUpdates.categoryId) {
+        dbUpdates.category_id = parseInt(dbUpdates.categoryId, 10);
+        delete dbUpdates.categoryId;
+      }
+      if (dbUpdates.imageUrl) {
+        dbUpdates.image_url = dbUpdates.imageUrl;
+        delete dbUpdates.imageUrl;
+      }
+
+
+      const { data, error } = await supabase
+        .from("menu")
+        .update(dbUpdates)
+        .eq("id", parseInt(menuId, 10))
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return { data, error: null };
+    } catch (error) {
+      console.error("Error updating menu item:", error);
+      return { data: null, error: error.message };
+    }
+  },
+
+  // --- Order Management ---
+
+  /**
+   * Fetches a paginated list of all orders, with filtering capabilities.
+   * @param {object} params - Parameters for filtering and pagination.
+   * @returns {Promise<{data: {items: Array, total: number, page: number, limit: number}, error: string|null}>}
+   */
+  getOrders: async ({ status, page = 1, limit = 10 }) => {
+    try {
+      let query = supabase
+        .from("orders")
+        .select(
+          `
+          id,
+          order_number,
+          total_amount,
+          created_at,
+          status,
+          user:user_id( raw_user_meta_data ),
+          order_items(
+            menu:menuid( name ),
+            addons:order_item_addons( addon:addons( name ) )
+          )
+        `,
+          { count: "exact" }
+        )
+        .order("created_at", { ascending: false });
+
+      // Apply status filter
+      if (status && status !== "active") {
+        query = query.eq("status", status);
+      } else if (status === "active") {
+        query = query.in("status", ["placed", "preparing", "ready"]);
+      }
+
+      // Apply pagination
+      const startIndex = (page - 1) * limit;
+      query = query.range(startIndex, startIndex + limit - 1);
+
+      const { data, error, count } = await query;
+
+      if (error) throw error;
+
+      const shapedData = data.map(order => ({
+        id: order.order_number,
+        internalId: order.id, // Keep the real ID for update operations
+        customerName: order.user?.raw_user_meta_data?.name || "Guest Customer",
+        status: order.status,
+        items: order.order_items.map(item => ({
+          food: item.menu.name,
+          toppings: item.addons.map(a => a.addon.name),
+        })),
+        totalAmount: order.total_amount,
+        createdAt: order.created_at,
+      }));
+
+      return {
+        data: { items: shapedData, total: count || 0, page, limit },
+        error: null,
+      };
+    } catch (error) {
+      console.error("Error fetching all orders for vendor:", error);
+      return { data: null, error: error.message };
+    }
+  },
+
+  /**
+   * Updates the status of a specific order using its internal integer ID.
+   * @param {number} orderId - The integer `id` of the order to update.
+   * @param {string} newStatus - The new status to set.
+   * @returns {Promise<{success: boolean, error: string|null}>}
+   */
+  updateOrderStatus: async (orderId, newStatus) => {
+    try {
+      const { error } = await supabase
+        .from("orders")
+        .update({ status: newStatus, updated_at: new Date().toISOString() })
+        .eq("id", orderId);
+
+      if (error) throw error;
+      return { success: true, error: null };
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      return { success: false, error: error.message };
+    }
+  },
+};
