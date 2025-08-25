@@ -4,6 +4,7 @@ import ProfileScreen from '../ProfileScreen';
 import OrderHistory from '../../Cart/OrderHistory.js';
 import ContactScreen from './ContactScreen.js';
 import PolicyScreen from './PolicyScreen.js';
+import Settings from './Settings.js'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -25,6 +26,13 @@ export default function ProfileStack({ navigation }) {
         name="ProfileMain"
         component={ProfileScreen}
         options={{ headerShown: false }}
+      />
+       <Stack.Screen
+        name="Settings"
+        component={Settings}
+        options={({ navigation }) => ({
+          header: () => <CustomHeader navigation={navigation} title="Account Settings" />,
+        })}
       />
       <Stack.Screen
         name="OrderHistory"

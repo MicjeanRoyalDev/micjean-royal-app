@@ -7,17 +7,17 @@ const PopularDishes = ({ dishes = [] }) => {
   const defaultDishes = [
     {
       id: 1,
-      name: 'JOLLOF RICE',
+      name: 'FRUIT SALAD',
       price: 40.00,
       image_url: 'https://example.com/tilapia.jpg',
-      imageSource: require('../../../shared/assets/images/jollof.jpeg'),
+      imageSource: require('../../../shared/assets/images/Watermelon Berry Salad.jpeg'),
     },
     {
       id: 2,
-      name: 'FRIED RICE',
+      name: 'TILAPIA OKLAODE',
       price: 45.00,
       image_url: 'https://example.com/tilapia.jpg',
-      imageSource: require('../../../shared/assets/images/Egg Fried Rice.jpeg'),
+      imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
     },
     {
       id: 3,
@@ -38,21 +38,14 @@ const PopularDishes = ({ dishes = [] }) => {
       name: 'PLAIN RICE & STEW',
       price: 30.00,
       image_url: 'https://example.com/tilapia.jpg',
-      imageSource: require('../../../shared/assets/images/Rice & Stew 🍲🍛.jpeg'),
+      imageSource: require('../../../shared/assets/images/Rice & Stew.jpeg'),
     },
     {
       id: 6,
-      name: 'TILAPIA OKLAODE',
+      name: 'FRIEDRICE',
       price: 180.00,
       image_url: 'https://example.com/tilapia.jpg',
-      imageSource: require('../../../shared/assets/images/tilapia pic for mock data.jpeg'),
-    },
-    {
-      id: 7,
-      name: 'FRUIT SALAD',
-      price: 20.00,
-      image_url: 'https://example.com/tilapia.jpg',
-      imageSource: require('../../../shared/assets/images/Watermelon Berry Salad.jpeg'),
+      imageSource: require('../../../shared/assets/images/Egg Fried Rice.jpeg'),
     },
   ];
 

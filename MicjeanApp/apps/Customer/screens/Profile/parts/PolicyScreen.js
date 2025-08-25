@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#068a0fff',
     marginBottom: 12,
-    marginTop:40,
+    marginTop:10,
   },
   sectionTitle: {
     fontSize: 18,

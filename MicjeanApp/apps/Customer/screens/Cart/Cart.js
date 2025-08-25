@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-import { Button } from '@rneui/themed';
+import Button from '../../components/ui/Button';
 import EmptyCartScreen from './EmptyCart';
-import CheckoutScreen from './CheckoutScreen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useCart } from '../../context/CartContext';
