@@ -33,7 +33,6 @@ interface OrderDetailsSidebarProps {
 const formatCurrency = (amount: number) => `GHS¢ ${amount.toFixed(2)}`;
 
 export function OrderDetailsSidebar({ orderId, onClose }: OrderDetailsSidebarProps) {
-    const { authClient } = useAuth();
     const { themeColors } = useColorScheme();
 
     const [order, setOrder] = useState<OrderListItem | null>(null);

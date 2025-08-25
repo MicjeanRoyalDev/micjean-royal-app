@@ -28,7 +28,6 @@ import { showSuccessToast } from "./toasts/SuccessToast";
 const formatCurrency = (amount: number) => `GHS¢ ${amount.toFixed(2)}`;
 
 export default function OrderDetails({ orderId, onClose }: { orderId: string, onClose: () => void }) {
-    const { authClient } = useAuth();
     const { themeColors } = useColorScheme();
 
     const [order, setOrder] = useState<OrderListItem | null>(null);
@@ -66,7 +65,7 @@ export default function OrderDetails({ orderId, onClose }: { orderId: string, on
         };
 
         loadOrderDetails();
-    }, [orderId, authClient]);
+    }, [orderId]);
 
     const handleAcceptOrder = async () => {
         if (!order) return;
