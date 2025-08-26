@@ -8,7 +8,7 @@ import {
   Alert,
   TouchableOpacity,
 } from 'react-native';
-import { Button } from '@rneui/themed';
+import Button from '../../components/ui/Button';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { useCart } from '../../context/CartContext'; 

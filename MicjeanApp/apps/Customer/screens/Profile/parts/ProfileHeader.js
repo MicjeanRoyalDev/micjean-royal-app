@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Avatar, Text, Card } from '@rneui/themed';
+import Avatar from '../../../components/ui/Avatar';
+import Text from '../../../components/ui/Text';
+import Card from '../../../components/ui/Card';
 import { auth } from '../../../../../backend/supabase/auth.js';
 import { useIsFocused } from '@react-navigation/native';
 
