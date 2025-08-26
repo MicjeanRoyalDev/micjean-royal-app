@@ -21,9 +21,19 @@ const FoodModal = ({ visible, dish, onClose }) => {
       if (exists) {
         return prev.filter(item => item.name !== addon.name);
       } else {
-        return [...prev, addon];
+        return [...prev, { ...addon, quantity: 1 }];
       }
     });
+  };
+
+  const changeAddonQuantity = (addon, delta) => {
+    setSelectedAddons(prev =>
+      prev.map(item =>
+        item.name === addon.name
+          ? { ...item, quantity: Math.max(1, (item.quantity || 1) + delta) }
+          : item
+      )
+    );
   };
 
   const getBasePrice = () => {
@@ -37,7 +47,7 @@ const FoodModal = ({ visible, dish, onClose }) => {
 
   const calculateTotal = () => {
     const basePrice = getBasePrice();
-    const addonsPrice = selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
+    const addonsPrice = selectedAddons.reduce((sum, addon) => sum + (addon.price * (addon.quantity || 1)), 0);
     return (basePrice + addonsPrice) * quantity;
   };
 
@@ -102,19 +112,31 @@ const FoodModal = ({ visible, dish, onClose }) => {
             
             <View style={styles.addonsContainer}>
               {(dish?.addons || defaultAddons).map((addon, index) => {
-                const isSelected = selectedAddons.find(item => item.name === addon.name);
+                const selected = selectedAddons.find(item => item.name === addon.name);
                 return (
                   <View key={index} style={styles.addonItem}>
                     <Text style={styles.addonName}>{addon.name}</Text>
                     <Text style={styles.addonPrice}>GHC {addon.price}</Text>
                     <TouchableOpacity 
-                      style={[styles.checkbox, isSelected && styles.checkboxSelected]} 
+                      style={[styles.checkbox, selected && styles.checkboxSelected]} 
                       onPress={() => toggleAddon(addon)}
                     >
-                      <Text style={[styles.checkboxText, isSelected && styles.checkboxTextSelected]}>
-                        {isSelected ? '☑' : '☐'}
+                      <Text style={[styles.checkboxText, selected && styles.checkboxTextSelected]}>
+                        {selected ? '☑' : '☐'}
                       </Text>
                     </TouchableOpacity>
+                    {/* Quantity selector for selected addon */}
+                    {selected && (
+                      <View style={styles.addonQtyControls}>
+                        <TouchableOpacity style={styles.addonQtyBtn} onPress={() => changeAddonQuantity(addon, -1)}>
+                          <Text style={styles.addonQtyBtnText}>-</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.addonQtyNumber}>{selected.quantity || 1}</Text>
+                        <TouchableOpacity style={styles.addonQtyBtn} onPress={() => changeAddonQuantity(addon, 1)}>
+                          <Text style={styles.addonQtyBtnText}>+</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
                   </View>
                 );
               })}
@@ -212,6 +234,38 @@ const styles = StyleSheet.create({
     backgroundColor: '#bfecb233',
     borderRadius: 20,
     marginBottom: 8,
+    gap: 8,
+  },
+  addonQtyControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 8,
+    backgroundColor: '#e6fbe6',
+    borderRadius: 8,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+  },
+  addonQtyBtn: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    backgroundColor: '#20bb2aff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 2,
+  },
+  addonQtyBtnText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+    lineHeight: 18,
+  },
+  addonQtyNumber: {
+    minWidth: 18,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#333',
+    fontSize: 15,
   },
   addonName: {
     fontSize: 16,

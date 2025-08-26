@@ -3,40 +3,54 @@ import {View,Text,StyleSheet,SafeAreaView,ScrollView, Image,TouchableOpacity,Dim
 import Header from '../components/Header';
 import PopularDishes from '../components/PopularDishes';
 import { supabase } from '../../../backend/supabase/clients';
+import menuApi from '../utils/menu';
 
 const { width } = Dimensions.get('window');
 
 const HomeScreen = () => {
   const scrollViewRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  // Maintain fetched username
   const [userName, setUserName] = useState('');
   const [activeTab, setActiveTab] = useState('home');
-
-  const carouselImages = [
-    require('../../../shared/assets/images/jollof.jpeg'),
-    require('../../../shared/assets/images/Egg Fried Rice.jpeg'),
-    require('../../../shared/assets/images/Watermelon Berry Salad.jpeg'),
-  ];
+  const [menuData, setMenuData] = useState([]);
+  const [carouselImages, setCarouselImages] = useState([]);
+  const [popularDishes, setPopularDishes] = useState([]);
+  // Fetch menu data for carousel and popular dishes
+  useEffect(() => {
+    const fetchMenu = async () => {
+      const { data, error } = await menuApi.getFullMenu();
+      if (!error && Array.isArray(data)) {
+        setMenuData(data);
+        // For carousel, pick first image from each category if available
+        const images = data
+          .map(cat => cat.items && cat.items[0] && cat.items[0].image_url ? { uri: cat.items[0].image_url } : null)
+          .filter(Boolean)
+          .slice(0, 3); // limit to 3 for carousel
+        setCarouselImages(images);
+        // For popular dishes, flatten all items and pick top 6 by some criteria (e.g., price or just first 6)
+        const allDishes = data.flatMap(cat => cat.items || []);
+        setPopularDishes(allDishes.slice(0, 4));
+      }
+    };
+    fetchMenu();
+  }, []);
 
   useEffect(() => {
+    if (carouselImages.length === 0) return;
     const timer = setInterval(() => {
       setCurrentIndex((prevIndex) => {
         const nextIndex = (prevIndex + 1) % carouselImages.length;
-
         if (scrollViewRef.current) {
           scrollViewRef.current.scrollTo({
             x: nextIndex * width,
             animated: true,
           });
         }
-
         return nextIndex;
       });
     }, 5000);
-
     return () => clearInterval(timer);
-  }, []);
+  }, [carouselImages]);
 
   // Fetch the current user’s profile username on mount
   useEffect(() => {
@@ -85,16 +99,21 @@ const HomeScreen = () => {
             showsHorizontalScrollIndicator={false}
             style={styles.carousel}
           >
-            {carouselImages.map((image, index) => (
-              <View key={index} style={styles.carouselItem}>
-                <Image
-                  source={image}
-                  style={styles.carouselImage}
-                />
+            {carouselImages.length > 0 ? (
+              carouselImages.map((image, index) => (
+                <View key={index} style={styles.carouselItem}>
+                  <Image
+                    source={image}
+                    style={styles.carouselImage}
+                  />
+                </View>
+              ))
+            ) : (
+              <View style={styles.carouselItem}>
+                <Text>Loading...</Text>
               </View>
-            ))}
+            )}
           </ScrollView>
-
           {/* Carousel indicators */}
           <View style={styles.indicators}>
             {carouselImages.map((_, index) => (
@@ -110,7 +129,7 @@ const HomeScreen = () => {
         </View>
 
         {/* Popular Dishes Component */}
-        <PopularDishes />
+        <PopularDishes dishes={popularDishes} />
       </ScrollView>
 
       {/* Bottom Navigation Component */}
