@@ -21,6 +21,7 @@ export default function CheckoutScreen() {
   const [fullName, setFullName] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
+  const [instructions, setInstructions] = useState('');
 
   const placeOrder = async () => {
     if (!fullName || !address || !phone) {
@@ -55,7 +56,7 @@ export default function CheckoutScreen() {
           locationId: null, // You can add location logic if needed
           total: item.totalPrice * item.quantity,
           quantity: item.quantity,
-          instructions: '',
+          instructions: instructions,
           packageId: null, // Add if you support packages
           deliveryInfo: {
             fullName,
@@ -108,6 +109,13 @@ export default function CheckoutScreen() {
               </Text>
             </View>
           ))}
+          {/* Show instructions if present */}
+          {instructions ? (
+            <View style={{ marginVertical: 10 }}>
+              <Text style={{ fontWeight: 'bold', color: '#333' }}>Order Instructions:</Text>
+              <Text style={{ color: '#444', marginTop: 2 }}>{instructions}</Text>
+            </View>
+          ) : null}
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Total:</Text>
             <Text style={styles.totalAmount}>GHC {getCartTotal()}</Text>
@@ -125,6 +133,13 @@ export default function CheckoutScreen() {
       )}
 
       <Text style={styles.sectionTitle}>Delivery Information</Text>
+      <TextInput
+        placeholder="Order Instructions (optional)"
+        value={instructions}
+        onChangeText={setInstructions}
+        style={[styles.input, { minHeight: 40, marginBottom: 10 }]}
+        multiline
+      />
       <TextInput
         placeholder="Full Name"
         value={fullName}
