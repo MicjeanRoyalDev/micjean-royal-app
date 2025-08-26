@@ -12,6 +12,8 @@ import Button from '../../components/ui/Button';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { useCart } from '../../context/CartContext'; 
+import { orders } from '../../../../backend/supabase/orders';
+import { auth } from '../../../../backend/supabase/auth';
 
 export default function CheckoutScreen() {
   const navigation = useNavigation();
@@ -20,7 +22,7 @@ export default function CheckoutScreen() {
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
 
-  const placeOrder = () => {
+  const placeOrder = async () => {
     if (!fullName || !address || !phone) {
       Alert.alert('Missing Information', 'Please fill in all the fields.');
       return;
@@ -31,12 +33,52 @@ export default function CheckoutScreen() {
       return;
     }
 
-    Alert.alert('Order Placed', 'Thank you! Your food is on the way.', [
-      { text: 'OK', onPress: () => {
-        clearCart(); // Clear cart after successful order
-        navigation.navigate('Home');
-      }},
-    ]);
+    try {
+      // Get user profile for userId
+      const { profile, error: authError } = await auth.getProfile();
+      if (authError || !profile?.sub) {
+        Alert.alert('Error', 'User not authenticated.');
+        return;
+      }
+
+      // Place an order for each cart item (or adapt to your backend's batch order API)
+      for (const item of cart.items) {
+        // Ensure each addon has a quantity (default to 1 if missing)
+        const safeAddons = (item.selectedAddons || []).map(addon => ({
+          ...addon,
+          quantity: addon.quantity != null ? addon.quantity : 1,
+        }));
+        const orderPayload = {
+          userId: profile.sub,
+          menuId: item.id,
+          addons: safeAddons,
+          locationId: null, // You can add location logic if needed
+          total: item.totalPrice * item.quantity,
+          quantity: item.quantity,
+          instructions: '',
+          packageId: null, // Add if you support packages
+          deliveryInfo: {
+            fullName,
+            address,
+            phone,
+          },
+        };
+        const { success, error } = await orders.createOrder(orderPayload);
+        if (!success) {
+          Alert.alert('Order Error', error || 'Could not place order.');
+          return;
+        }
+      }
+
+      Alert.alert('Order Placed', 'Thank you! Your food is on the way.', [
+        { text: 'OK', onPress: () => {
+          clearCart();
+          navigation.navigate('Home');
+        }},
+      ]);
+    } catch (err) {
+      Alert.alert('Order Error', err.message || 'Could not place order.');
+    }
   };
 
   return (

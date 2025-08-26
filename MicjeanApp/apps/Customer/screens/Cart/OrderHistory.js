@@ -22,7 +22,8 @@ export default function OrderHistory() {
         if (error) {
           console.error(error);
         } else {
-          setOrderHistory(data);
+          // Take last 5 orders (already sorted by backend)
+          setOrderHistory(Array.isArray(data) ? data.slice(0, 5) : []);
         }
       } catch (err) {
         console.error('Error fetching order history:', err.message);
