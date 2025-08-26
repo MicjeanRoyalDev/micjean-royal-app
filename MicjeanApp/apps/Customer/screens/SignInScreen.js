@@ -39,6 +39,23 @@ const SignInScreen = () => {
 
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      Alert.alert('Forgot Password', 'Please enter your email above first.');
+      return;
+    }
+    try {
+      const { error, message } = await auth.resetPassword(email);
+      if (error) {
+        Alert.alert('Reset Failed', error.message || 'Could not send reset email.');
+      } else {
+        Alert.alert('Reset Email Sent', message || 'Check your email for a reset link.');
+      }
+    } catch (err) {
+      Alert.alert('Reset Failed', err.message || 'Could not send reset email.');
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Logo at top right */}
@@ -70,15 +87,20 @@ const SignInScreen = () => {
         secureTextEntry
         placeholderTextColor='#1b5e20'
       />
+      {/* Forgot Password link */}
+      <TouchableOpacity style={styles.forgotPasswordBtn} onPress={handleForgotPassword}>
+        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+      </TouchableOpacity>
       {/* Sign in button */}
       <TouchableOpacity style={styles.signInButton} onPress={handleSignIn} disabled={loading}>
         <Text style={styles.signInButtonText}>{loading ? 'Signing in...' : 'Sign in'}</Text>
       </TouchableOpacity>
       {/* Bottom right red circle */}
-      {/*Okay I will be replacing this big circle with an animation*/}
       <View style={styles.redCircle} />
     </View>
   );
+
+
 };
 
 const CIRCLE_SIZE = width * 0.7;
@@ -156,6 +178,18 @@ const styles = StyleSheet.create({
     bottom: -CIRCLE_SIZE * 0.25,
     right: -CIRCLE_SIZE * 0.18,
     zIndex: 0,
+  },
+    forgotPasswordBtn: {
+    alignSelf: 'flex-end',
+    marginTop: 2,
+    marginBottom: 2,
+    padding: 4,
+  },
+  forgotPasswordText: {
+    color: '#04860dff',
+    fontSize: 14,
+    textDecorationLine: 'underline',
+    fontWeight: 'bold',
   },
 });
 
