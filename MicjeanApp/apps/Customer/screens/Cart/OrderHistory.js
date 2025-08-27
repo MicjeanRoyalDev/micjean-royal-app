@@ -17,11 +17,12 @@ export default function OrderHistory() {
       if (authError || !profile?.sub) {
         throw new Error('User not authenticated');
       }
-      const { data, error } = await orders.getUserOrders(profile.sub);
+      const { data, error } = await orders.getLastFiveOrders(profile.sub);
       if (error) {
-        console.error(error);
+        console.error('Error fetching last five orders:', error);
+        setOrderHistory([]);
       } else {
-        setOrderHistory(Array.isArray(data) ? data.slice(0, 5) : []);
+        setOrderHistory(Array.isArray(data) ? data : []);
       }
     } catch (err) {
       console.error('Error fetching order history:', err.message);
@@ -57,6 +58,9 @@ export default function OrderHistory() {
     <View style={styles.card}>
       <Text style={styles.orderNumber}>Order #{item.order_number}</Text>
       <Text style={styles.date}>{new Date(item.created_at).toLocaleDateString()}</Text>
+      {item.package && (
+        <Text style={styles.packageText}>Packaging: {item.package.name} {item.package.price ? `- GHC ${item.package.price.toFixed(2)}` : ''}</Text>
+      )}
       <FlatList
         data={item.order_items}
         keyExtractor={(orderItem, index) => index.toString()}
@@ -182,5 +186,11 @@ const styles = StyleSheet.create({
     color: '#888',
     fontSize: 17,
     marginTop: 20,
+  },
+  packageText: {
+    fontSize: 14,
+    color: '#555',
+    marginTop: 6,
+    fontWeight: '600',
   },
 });
