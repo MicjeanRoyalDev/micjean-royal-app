@@ -6,16 +6,12 @@ import {
   ReactNode,
 } from "react";
 import { User } from "~/api/types";
-import { Text, View } from "react-native";
-import { ApiClient } from "~/api";
+import { apiClient } from "~/api";
 import { Login } from "~/components/LoginScreen";
 import { me } from "~/api/dummy";
 import LoadingScreen from "~/components/LoadingScreen";
 
-const authClient = new ApiClient();
-
 type AuthContextType = {
-  authClient: ApiClient;
   user: User;
   error: Error | null;
   clearUser: () => void;
@@ -35,26 +31,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const responseInterceptor = authClient.interceptResponse((response) => {
-      if (response.status === 401) {
-        // This action leads to the login screen
+  // TODO automatic redirect to login on 401 error
+  // useEffect(() => {
+  //   const responseInterceptor = apiClient.interceptResponse((response) => {
+  //     if (response.status === 401) {
+  //       // This action leads to the login screen
         
-        clearUser();
-      }
-      return response;
-    });
+  //       clearUser();
+  //     }
+  //     return response;
+  //   });
 
-    return () => {
-      authClient.ejectResponseInterceptor(responseInterceptor);
-    };
-  }, []);
+  //   return () => {
+  //     apiClient.ejectResponseInterceptor(responseInterceptor);
+  //   };
+  // }, []);
 
   useEffect(() => {
     setLoading(true);
     me()
       .then(setUser)
-      .catch((err) => setUser(null))
+      .catch((error) => setUser(null))
       .finally(() => setLoading(false));
   }, []);
 
@@ -80,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, error: null, clearUser, authClient }}
+      value={{ user, error: null, clearUser }}
     >
       {children}
     </AuthContext.Provider>

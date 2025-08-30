@@ -66,6 +66,34 @@ export const orders = {
   },
 
   /**
+   * Cancel a user's order
+   * @param {number} orderId - The ID of the order
+   * @returns {Promise<{data: Array, error: string|null}>}
+   */
+  cancelOrder: async (orderId) => {
+    try {
+      const { data, error } = await supabase
+        .from("orders")
+        .update({ status: "cancelled" })
+        .eq("id", orderId);
+
+      return {
+        success: !error,
+        error: error
+          ? "Failed to cancel order: " + error.message
+          : "Order has successfully been cancelled",
+        data,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        error: "An unexpected error occurred while cancelling the order",
+        data: null,
+      };
+    }
+  },
+
+  /**
    * Get all orders for a user
    * @param {string} userId - The ID of the user
    * @returns {Promise<{data: Array, error: string|null}>}

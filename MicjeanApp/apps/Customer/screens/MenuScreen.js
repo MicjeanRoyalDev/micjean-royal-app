@@ -5,12 +5,14 @@ import SearchBar from '../components/SearchBar';
 import CategoryTabs from '../components/CategoryTabs';
 import DishGrid from '../components/DishGrid';
 import { menu } from '../../../backend/supabase/menu';
+import menuApi from '../utils/menu';
 
 const MenuScreen = () => {
   const [activeCategory, setActiveCategory] = useState(null);
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('menu');
   const [dishes, setDishes] = useState([]);
+  const [allDishes, setAllDishes] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
@@ -37,30 +39,42 @@ const MenuScreen = () => {
     fetchCategories();
   }, []);
 
-  // Fetch dishes when category changes
+  // Fetch all dishes on mount
   useEffect(() => {
-    if (activeCategory) {
-      const fetchDishes = async () => {
-        setLoading(true);
-        try {
-          const result = await menu.getMenuItemsByCategory(activeCategory);
-          if (result.error) {
-            console.error('Error fetching dishes:', result.error);
-            setDishes([]);
-          } else {
-            setDishes(result.data);
-          }
-        } catch (error) {
-          console.error('Error fetching dishes:', error);
-          setDishes([]);
-        } finally {
-          setLoading(false);
+    const fetchAllDishes = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await menuApi.getFullMenu();
+        if (error) {
+          console.error('Error fetching all menu items:', error);
+          setAllDishes([]);
+        } else {
+          // Flatten all items from all categories
+          const flatDishes = (data || []).flatMap(cat => cat.items || []);
+          setAllDishes(flatDishes);
         }
-      };
+      } catch (error) {
+        console.error('Error fetching all menu items:', error);
+        setAllDishes([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAllDishes();
+  }, []);
 
-      fetchDishes();
+  // Update dishes when category or search changes
+  useEffect(() => {
+    let filtered = allDishes;
+    if (activeCategory) {
+      filtered = filtered.filter(dish => dish.category_id === activeCategory);
     }
-  }, [activeCategory]);
+    if (search && search.trim() !== '') {
+      const searchTerm = search.trim().toLowerCase();
+      filtered = filtered.filter(dish => (dish.name || '').toString().toLowerCase().includes(searchTerm));
+    }
+    setDishes(filtered);
+  }, [allDishes, activeCategory, search]);
 
   const handleTabPress = (tabId) => {
     setActiveTab(tabId);
@@ -71,10 +85,7 @@ const MenuScreen = () => {
     }
   };
 
-  // Filter dishes based on search
-  const filteredDishes = dishes.filter(dish => 
-    dish.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // No need for filteredDishes, use dishes directly
 
   return (
     <SafeAreaView style={styles.container}>
@@ -90,9 +101,9 @@ const MenuScreen = () => {
       <ScrollView contentContainerStyle={styles.dishesGrid} showsVerticalScrollIndicator={false}>
         {loading ? (
           <ActivityIndicator size="large" color='#069910ff' style={styles.spinner} />
-        ) : filteredDishes.length > 0 ? (
+        ) : dishes.length > 0 ? (
           <DishGrid 
-            dishes={filteredDishes} 
+            dishes={dishes} 
           />
         ) : (
           <Text style={styles.noDataText}>

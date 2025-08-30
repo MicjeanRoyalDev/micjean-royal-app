@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity,View, Text,StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Button } from '@rneui/themed';
+import  Button  from '../../components/ui/Button';
 import { useNavigation } from '@react-navigation/native';
 
 export default function EmptyCartScreen() {

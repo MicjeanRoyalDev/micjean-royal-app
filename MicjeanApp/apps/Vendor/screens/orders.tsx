@@ -37,7 +37,6 @@ const FOOD_CATEGORIES = [
 // --- MAIN SCREEN COMPONENT ---
 
 export default function OrdersScreen() {
-  const { authClient } = useAuth();
   const { themeColors } = useColorScheme();
   const { isLargeScreen } = useBreakpoint();
 

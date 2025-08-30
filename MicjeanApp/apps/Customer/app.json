@@ -4,7 +4,7 @@
         "slug": "customer-app",
         "version": "1.0.0",
         "orientation": "portrait",
-        "icon": "../../shared/assets/images/jollof.jpeg",
+        "icon": "../../shared/assets/images/micjean royal logo.png",
         "splash": {
             "image": "../../shared/assets/images/micjean photo for background.jpg",
             "resizeMode": "contain",

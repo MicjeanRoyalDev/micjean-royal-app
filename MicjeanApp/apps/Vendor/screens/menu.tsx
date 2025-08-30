@@ -24,11 +24,11 @@ import { useLoaderState } from '~/hooks/useLoaderState';
 import { MenuDetailView } from '~/components/MenuDetailView';
 import { MenuScreenHeader } from '~/components/MenuScreenHeader';
 import { MenuCard } from '~/components/MenuCard';
+import { apiClient } from '~/api';
 
 // --- HELPER COMPONENTS & CONFIG ---
 
 export default function MenuScreen() {
-  const { authClient } = useAuth();
   const { isLargeScreen } = useBreakpoint();
 
   const { data: categories, isLoading: isLoadingCategories } = useLoaderState<Paginated<Category>>(true, async () => {
@@ -71,7 +71,7 @@ export default function MenuScreen() {
     setActiveMenu({
       name: '',
       categoryId: selectedCategory?.id || '',
-      status: 'Hidden',
+      status: 'Unavailable',
       description: '',
       price: 15,
       imageUrl: 'https://via.placeholder.com/150',
@@ -82,12 +82,9 @@ export default function MenuScreen() {
     try {
       let response;
       if ("id" in menuToSave) {
-        response = await authClient.post(`/menus/${menuToSave.id}`, menuToSave);
+        response = await apiClient.updateMenuItem(menuToSave.id, menuToSave);
       } else {
-        response = await authClient.post(`/menus`, menuToSave);
-      }
-      if (response.status < 200 || response.status >= 300) {
-        throw new Error("Failed to save menu");
+        response = await apiClient.createMenuItem(menuToSave);
       }
 
       showSuccessToast("Menu saved successfully!");

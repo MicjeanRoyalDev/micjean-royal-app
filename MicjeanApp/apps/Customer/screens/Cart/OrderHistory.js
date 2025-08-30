@@ -9,30 +9,49 @@ export default function OrderHistory() {
   const navigation = useNavigation();
   const [orderHistory, setOrderHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cancellingOrder, setCancellingOrder] = useState(null);
+
+  const fetchOrders = async () => {
+    try {
+      const { profile, error: authError } = await auth.getProfile();
+      if (authError || !profile?.sub) {
+        throw new Error('User not authenticated');
+      }
+      const { data, error } = await orders.getUserOrders(profile.sub);
+      if (error) {
+        console.error(error);
+      } else {
+        setOrderHistory(Array.isArray(data) ? data.slice(0, 5) : []);
+      }
+    } catch (err) {
+      console.error('Error fetching order history:', err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const { profile, error: authError } = await auth.getProfile();
-        if (authError || !profile?.sub) {
-          throw new Error('User not authenticated');
-        }
-
-        const { data, error } = await orders.getUserOrders(profile.sub);
-        if (error) {
-          console.error(error);
-        } else {
-          setOrderHistory(data);
-        }
-      } catch (err) {
-        console.error('Error fetching order history:', err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchOrders();
   }, []);
+
+  const handleCancelOrder = async (orderId) => {
+    setCancellingOrder(orderId);
+    try {
+      const { profile } = await auth.getProfile();
+      const userId = profile?.sub;
+      if (!userId) throw new Error('User not authenticated');
+      const result = await orders.cancelOrder(orderId, userId);
+      if (!result.success) {
+        alert(result.error || 'Failed to cancel order');
+      } else {
+        await fetchOrders();
+      }
+    } catch (err) {
+      alert(err.message || 'Failed to cancel order');
+    } finally {
+      setCancellingOrder(null);
+    }
+  };
 
   const renderOrder = ({ item }) => (
     <View style={styles.card}>
@@ -40,15 +59,29 @@ export default function OrderHistory() {
       <Text style={styles.date}>{new Date(item.created_at).toLocaleDateString()}</Text>
       <FlatList
         data={item.order_items}
-  keyExtractor={(orderItem, index) => index.toString()}
-  renderItem={({ item: orderItem }) => (
-    <View style={styles.itemRow}>
-      <Image source={{ uri: orderItem.menu.image_url }} style={styles.image} />
-     <Text style={styles.itemName}>{orderItem.menu.name} x{orderItem.quantity}</Text>
-    </View>
-  )}
-/>
+        keyExtractor={(orderItem, index) => index.toString()}
+        renderItem={({ item: orderItem }) => (
+          <View style={styles.itemRow}>
+            <Image source={{ uri: orderItem.menu.image_url }} style={styles.image} />
+            <Text style={styles.itemName}>{orderItem.menu.name} x{orderItem.quantity}</Text>
+          </View>
+        )}
+      />
       <Text style={styles.total}>Total: GHC {item.total_amount.toFixed(2)}</Text>
+      <Text style={{ color: item.status === 'cancelled' ? 'red' : '#03940dff', fontWeight: 'bold', marginTop: 5 }}>
+        Status: {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+      </Text>
+      {item.status !== 'completed' && item.status !== 'cancelled' && (
+        <TouchableOpacity
+          style={[styles.cancelButton, cancellingOrder === item.id && { opacity: 0.6 }]}
+          onPress={() => handleCancelOrder(item.id)}
+          disabled={cancellingOrder === item.id}
+        >
+          <Text style={styles.cancelButtonText}>
+            {cancellingOrder === item.id ? 'Cancelling...' : 'Cancel Order'}
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 
@@ -74,6 +107,19 @@ export default function OrderHistory() {
 }
 
 const styles = StyleSheet.create({
+  cancelButton: {
+    backgroundColor: '#44a81cff',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

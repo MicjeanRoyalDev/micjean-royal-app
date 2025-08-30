@@ -5,6 +5,7 @@ import { useCart } from '../context/CartContext';
 const FoodModal = ({ visible, dish, onClose }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedAddons, setSelectedAddons] = useState([]);
+  const [packaging, setPackaging] = useState({ type: 'Rubber', price: 0 });
   const { addToCart } = useCart();
 
   const increaseQuantity = () => {
@@ -21,9 +22,19 @@ const FoodModal = ({ visible, dish, onClose }) => {
       if (exists) {
         return prev.filter(item => item.name !== addon.name);
       } else {
-        return [...prev, addon];
+        return [...prev, { ...addon, quantity: 1 }];
       }
     });
+  };
+
+  const changeAddonQuantity = (addon, delta) => {
+    setSelectedAddons(prev =>
+      prev.map(item =>
+        item.name === addon.name
+          ? { ...item, quantity: Math.max(1, (item.quantity || 1) + delta) }
+          : item
+      )
+    );
   };
 
   const getBasePrice = () => {
@@ -37,8 +48,9 @@ const FoodModal = ({ visible, dish, onClose }) => {
 
   const calculateTotal = () => {
     const basePrice = getBasePrice();
-    const addonsPrice = selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
-    return (basePrice + addonsPrice) * quantity;
+    const addonsPrice = selectedAddons.reduce((sum, addon) => sum + (addon.price * (addon.quantity || 1)), 0);
+  const packagingPrice = packaging.price || 0;
+  return (basePrice + addonsPrice + packagingPrice) * quantity;
   };
 
   const defaultAddons = [
@@ -59,6 +71,7 @@ const FoodModal = ({ visible, dish, onClose }) => {
       image_url: dish.image_url,
       basePrice: getBasePrice(),
       selectedAddons: selectedAddons,
+      packaging: packaging,
       quantity: quantity,
       totalPrice: totalPrice / quantity, // Price per item including addons
       totalAmount: totalPrice // Total amount for this cart item
@@ -76,6 +89,7 @@ const FoodModal = ({ visible, dish, onClose }) => {
     // Reset modal state
     setQuantity(1);
     setSelectedAddons([]);
+    setPackaging({ type: 'Rubber', price: 0 });
   };
   return (
     <Modal
@@ -98,26 +112,59 @@ const FoodModal = ({ visible, dish, onClose }) => {
             <Text style={styles.modalPrice}>GHC {dish?.price}</Text>
             
             {/* Add-ons Section */}
+            <Text style={styles.modalSubtitle}>Packaging:</Text>
+            <View style={styles.packagingContainer}>
+              <TouchableOpacity
+                style={[styles.packagingOption, packaging.type === 'Rubber' && styles.packagingSelected]}
+                onPress={() => setPackaging({ type: 'Rubber', price: 0 })}
+              >
+                <Text style={styles.packagingText}>Rubber</Text>
+                <Text style={styles.packagingPrice}>0 GHC</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.packagingOption, packaging.type === 'Pack' && styles.packagingSelected]}
+                onPress={() => setPackaging({ type: 'Pack', price: 3 })}
+              >
+                <Text style={styles.packagingText}>Pack</Text>
+                <Text style={styles.packagingPrice}>3 GHC</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Add-ons Section */}
             <Text style={styles.modalSubtitle}>Add-ons:</Text>
+            <View style={styles.addonsContainer}>
             
             <View style={styles.addonsContainer}>
               {(dish?.addons || defaultAddons).map((addon, index) => {
-                const isSelected = selectedAddons.find(item => item.name === addon.name);
+                const selected = selectedAddons.find(item => item.name === addon.name);
                 return (
                   <View key={index} style={styles.addonItem}>
                     <Text style={styles.addonName}>{addon.name}</Text>
                     <Text style={styles.addonPrice}>GHC {addon.price}</Text>
                     <TouchableOpacity 
-                      style={[styles.checkbox, isSelected && styles.checkboxSelected]} 
+                      style={[styles.checkbox, selected && styles.checkboxSelected]} 
                       onPress={() => toggleAddon(addon)}
                     >
-                      <Text style={[styles.checkboxText, isSelected && styles.checkboxTextSelected]}>
-                        {isSelected ? '☑' : '☐'}
+                      <Text style={[styles.checkboxText, selected && styles.checkboxTextSelected]}>
+                        {selected ? '☑' : '☐'}
                       </Text>
                     </TouchableOpacity>
+                    {/* Quantity selector for selected addon */}
+                    {selected && (
+                      <View style={styles.addonQtyControls}>
+                        <TouchableOpacity style={styles.addonQtyBtn} onPress={() => changeAddonQuantity(addon, -1)}>
+                          <Text style={styles.addonQtyBtnText}>-</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.addonQtyNumber}>{selected.quantity || 1}</Text>
+                        <TouchableOpacity style={styles.addonQtyBtn} onPress={() => changeAddonQuantity(addon, 1)}>
+                          <Text style={styles.addonQtyBtnText}>+</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
                   </View>
                 );
               })}
+            </View>
             </View>
             
             {/* Quantity Section */}
@@ -152,6 +199,37 @@ const FoodModal = ({ visible, dish, onClose }) => {
 };
 
 const styles = StyleSheet.create({
+  packagingContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+    gap: 10,
+  },
+  packagingOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e6fbe6',
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: '#20bb2aff',
+  },
+  packagingSelected: {
+    backgroundColor: '#20bb2aff',
+  },
+  packagingText: {
+    fontSize: 15,
+    color: '#333',
+    fontWeight: 'bold',
+    marginRight: 8,
+  },
+  packagingPrice: {
+    fontSize: 15,
+    color: '#0c6812ff',
+    fontWeight: 'bold',
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.43)',
@@ -212,6 +290,38 @@ const styles = StyleSheet.create({
     backgroundColor: '#bfecb233',
     borderRadius: 20,
     marginBottom: 8,
+    gap: 8,
+  },
+  addonQtyControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 8,
+    backgroundColor: '#e6fbe6',
+    borderRadius: 8,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+  },
+  addonQtyBtn: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    backgroundColor: '#20bb2aff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 2,
+  },
+  addonQtyBtnText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+    lineHeight: 18,
+  },
+  addonQtyNumber: {
+    minWidth: 18,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: '#333',
+    fontSize: 15,
   },
   addonName: {
     fontSize: 16,

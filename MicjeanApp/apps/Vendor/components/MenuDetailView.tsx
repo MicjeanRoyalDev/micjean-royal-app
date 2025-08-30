@@ -1,20 +1,16 @@
 import React from "react";
 import { View, Text, Image, ScrollView } from "react-native";
-import { Image as ImageIcon } from "lucide-react-native";
-import { Button } from "~/components/ui/button";
 import { Badge } from "~/components/ui/badge";
 import { Menu, MenuStatus, Category } from "~/api/types";
 
 const statusColors: Record<MenuStatus, string> = {
   Available: "bg-green-200 border-green-600",
-  "Sold Out": "bg-red-200 border-red-600",
-  Hidden: "bg-gray-200 border-gray-600",
+  Unavailable: "bg-gray-200 border-gray-600",
 };
 
 const statusTextColors: Record<MenuStatus, string> = {
   Available: "text-green-800",
-  "Sold Out": "text-red-800",
-  Hidden: "text-gray-800",
+  Unavailable: "text-gray-800",
 };
 
 const DetailRow = ({
@@ -54,7 +50,7 @@ export const MenuDetailView = ({
         source={
           menu.imageUrl
             ? { uri: menu.imageUrl }
-            : requireCa("~/assets/images/no-image.svg")
+            : require("~/assets/images/no-image.svg")
         }
         className="w-full h-60 mb-6 rounded-lg bg-muted"
       />

@@ -53,7 +53,7 @@ const SignUpScreen = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image
-        source={require('../../../shared/assets/images/leavesglow.jpg')}
+        source={require('../../../shared/assets/images/micjean photo for background.jpg')}
         style={styles.backgroundImage}
       />
       <View style={styles.boxContainer}>
