@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {View,Text,StyleSheet,SafeAreaView,ScrollView,ActivityIndicator} from 'react-native';
+import Toast from '../components/Toast';
 import { useNavigation } from '@react-navigation/native';
 import SearchBar from '../components/SearchBar';
 import CategoryTabs from '../components/CategoryTabs';
@@ -16,6 +17,11 @@ const MenuScreen = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
+  const showToast = (message, type = 'info') => {
+    setToast({ visible: true, message, type });
+    setTimeout(() => setToast(t => ({ ...t, visible: false })), 2500);
+  };
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -23,7 +29,7 @@ const MenuScreen = () => {
       try {
         const result = await menu.getAllCategories();
         if (result.error) {
-          console.error('Error fetching categories:', result.error);
+          showToast('Error fetching categories', 'error');
         } else {
           setCategories(result.data);
           // Set the first category as active by default
@@ -32,10 +38,9 @@ const MenuScreen = () => {
           }
         }
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        showToast('Error fetching categories', 'error');
       }
     };
-
     fetchCategories();
   }, []);
 
@@ -46,7 +51,7 @@ const MenuScreen = () => {
       try {
         const { data, error } = await menuApi.getFullMenu();
         if (error) {
-          console.error('Error fetching all menu items:', error);
+          showToast('Error fetching menu items', 'error');
           setAllDishes([]);
         } else {
           // Flatten all items from all categories
@@ -54,7 +59,7 @@ const MenuScreen = () => {
           setAllDishes(flatDishes);
         }
       } catch (error) {
-        console.error('Error fetching all menu items:', error);
+        showToast('Error fetching menu items', 'error');
         setAllDishes([]);
       } finally {
         setLoading(false);
@@ -89,6 +94,7 @@ const MenuScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Toast message={toast.message} type={toast.type} visible={toast.visible} />
       <Text style={styles.menuTitle}>Menu</Text>
       <SearchBar value={search} onChangeText={setSearch} />
       {categories.length > 0 && (
@@ -134,6 +140,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: 'center',
     paddingBottom: 80,
+    letterSpacing: 0.5,
   },
   spinner: {
     marginTop: 20,

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import Toast from '../../components/Toast';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { orders } from '../../../../backend/supabase/orders';
@@ -10,6 +11,7 @@ export default function OrderHistory() {
   const [orderHistory, setOrderHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cancellingOrder, setCancellingOrder] = useState(null);
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
 
   const fetchOrders = async () => {
     try {
@@ -21,7 +23,9 @@ export default function OrderHistory() {
       if (error) {
         console.error(error);
       } else {
-        setOrderHistory(Array.isArray(data) ? data.slice(0, 5) : []);
+  // Hide cancelled orders
+  const filtered = Array.isArray(data) ? data.filter(o => o.status !== 'cancelled').slice(0, 5) : [];
+  setOrderHistory(filtered);
       }
     } catch (err) {
       console.error('Error fetching order history:', err.message);
@@ -42,14 +46,16 @@ export default function OrderHistory() {
       if (!userId) throw new Error('User not authenticated');
       const result = await orders.cancelOrder(orderId, userId);
       if (!result.success) {
-        alert(result.error || 'Failed to cancel order');
+        setToast({ visible: true, message: result.error || 'Failed to cancel order', type: 'error' });
       } else {
+        setToast({ visible: true, message: 'Order cancelled successfully!', type: 'success' });
         await fetchOrders();
       }
     } catch (err) {
-      alert(err.message || 'Failed to cancel order');
+      setToast({ visible: true, message: err.message || 'Failed to cancel order', type: 'error' });
     } finally {
       setCancellingOrder(null);
+      setTimeout(() => setToast({ ...toast, visible: false }), 2500);
     }
   };
 
@@ -87,6 +93,7 @@ export default function OrderHistory() {
 
   return (
     <View style={styles.container}>
+      <Toast message={toast.message} type={toast.type} visible={toast.visible} />
       {loading ? (
         <ActivityIndicator size="large" color='#03940dff' style={{ marginTop: 50 }} />
       ) : orderHistory.length === 0 ? (

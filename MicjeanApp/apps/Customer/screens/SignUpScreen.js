@@ -1,7 +1,7 @@
 // apps/customer/screens/SignUpScreen.js
 import React, { useState } from 'react';
 import {
-ScrollView,
+  ScrollView,
   View,
   Text,
   StyleSheet,
@@ -9,8 +9,8 @@ ScrollView,
   TouchableOpacity,
   Image,
   Dimensions,
-  Alert,
 } from 'react-native';
+import Toast from '../components/Toast';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../../backend/supabase/auth';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -24,10 +24,12 @@ const SignUpScreen = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
 
   const handleSignUp = async () => {
     if (!email || !password || !name || !telephone) {
-      Alert.alert('Error', 'Please fill in all fields');
+      setToast({ visible: true, message: 'Please fill in all fields', type: 'error' });
+      setTimeout(() => setToast({ ...toast, visible: false }), 2500);
       return;
     }
 
@@ -36,14 +38,17 @@ const SignUpScreen = () => {
       const result = await auth.register(email, password, name, telephone);
 
       if (result.error) {
-        Alert.alert('Registration Failed', result.error.message);
+        setToast({ visible: true, message: result.error.message, type: 'error' });
+        setTimeout(() => setToast({ ...toast, visible: false }), 2500);
         console.error('Registration error:', result.error);
       } else {
-        console.log('Registration successful:', result.user);
-        navigation.navigate('Success', { message: 'Sign up successful!' });
+        setToast({ visible: true, message: 'Sign up successful!', type: 'success' });
+        setTimeout(() => setToast({ ...toast, visible: false }), 2000);
+        setTimeout(() => navigation.navigate('Success', { message: 'Sign up successful!' }), 2000);
       }
     } catch (error) {
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+      setToast({ visible: true, message: 'Something went wrong. Please try again.', type: 'error' });
+      setTimeout(() => setToast({ ...toast, visible: false }), 2500);
       console.error('Sign up error:', error);
     } finally {
       setLoading(false);
@@ -51,7 +56,9 @@ const SignUpScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <>
+      <Toast message={toast.message} type={toast.type} visible={toast.visible} />
+      <ScrollView contentContainerStyle={styles.container}>
       <Image
         source={require('../../../shared/assets/images/micjean photo for background.jpg')}
         style={styles.backgroundImage}
@@ -134,7 +141,8 @@ const SignUpScreen = () => {
           </View>
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 };
 

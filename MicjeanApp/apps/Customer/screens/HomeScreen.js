@@ -4,10 +4,16 @@ import Header from '../components/Header';
 import PopularDishes from '../components/PopularDishes';
 import { supabase } from '../../../backend/supabase/clients';
 import menuApi from '../utils/menu';
+import Toast from '../components/Toast';
 
 const { width } = Dimensions.get('window');
 
 const HomeScreen = () => {
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
+  const showToast = (message, type = 'info') => {
+    setToast({ visible: true, message, type });
+    setTimeout(() => setToast(t => ({ ...t, visible: false })), 2500);
+  };
   const scrollViewRef = useRef(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userName, setUserName] = useState('');
@@ -30,6 +36,8 @@ const HomeScreen = () => {
         // For popular dishes, flatten all items and pick top 6 by some criteria (e.g., price or just first 6)
         const allDishes = data.flatMap(cat => cat.items || []);
         setPopularDishes(allDishes.slice(0, 4));
+      } else if (error) {
+        showToast('Error fetching menu data', 'error');
       }
     };
     fetchMenu();
@@ -80,6 +88,7 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Toast message={toast.message} type={toast.type} visible={toast.visible} />
       {/* Header Component */}
       <Header userName={userName} />
 

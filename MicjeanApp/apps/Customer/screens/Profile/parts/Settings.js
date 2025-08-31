@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, Alert, LayoutAnimation } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, ScrollView, LayoutAnimation } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Card from '../../../components/ui/Card';
 import { auth } from '../../../../../backend/supabase/auth';
+import Toast from '../../../components/Toast';
 import { useIsFocused } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 
 export default function Settings() {
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
+  const showToast = (message, type = 'info') => {
+    setToast({ visible: true, message, type });
+    setTimeout(() => setToast({ ...toast, visible: false }), 2500);
+  };
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   
@@ -70,7 +76,7 @@ export default function Settings() {
   // Handle save changes
   const handleSave = async () => {
     if (!username.trim()) {
-      Alert.alert('Error', 'Username is required');
+      showToast('Username is required', 'error');
       return;
     }
 
@@ -79,7 +85,7 @@ export default function Settings() {
       const { user, error } = await auth.updateProfile(phone, username);
       
       if (error) {
-        Alert.alert('Update Failed', error.message);
+        showToast(error.message || 'Update Failed', 'error');
         return;
       }
 
@@ -90,10 +96,10 @@ export default function Settings() {
         phone: phone.trim(),
       });
       
-      setIsEditing(false);
-      Alert.alert('Success', 'Profile updated successfully!');
+  setIsEditing(false);
+  showToast('Profile updated successfully!', 'success');
     } catch (error) {
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+      showToast('Something went wrong. Please try again.', 'error');
       console.error('Update error:', error);
     } finally {
       setLoading(false);
@@ -102,47 +108,29 @@ export default function Settings() {
 
   // Handle logout
   const handleLogout = async () => {
-    Alert.alert(
-      'Sign Out',
-      'Are you sure you want to sign out?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Sign Out', 
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await auth.logout();
-              navigation.navigate('SignIn');
-            } catch (error) {
-              console.error('Logout error:', error);
-            }
-          }
-        }
-      ]
-    );
+    setLoading(true);
+    try {
+      await auth.logout();
+      showToast('Signed out successfully!', 'success');
+      setTimeout(() => {
+        navigation.reset({ index: 0, routes: [{ name: 'WelcomeScreen' }] });
+      }, 1200);
+    } catch (error) {
+      showToast('Logout failed. Please try again.', 'error');
+      console.error('Logout error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Handle delete account
   const handleDeleteAccount = () => {
-    Alert.alert(
-      'Delete Account',
-      'This action cannot be undone. Are you sure you want to delete your account?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Delete', 
-          style: 'destructive',
-          onPress: () => {
-            Alert.alert('Account deletion feature is not yet available.');
-          }
-        }
-      ]
-    );
+    showToast('Account deletion feature is not yet available.', 'warning');
   };
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
+      <Toast message={toast.message} type={toast.type} visible={toast.visible} />
       {/* Personal Info Section */}
       <Card containerStyle={styles.sectionCard}>
         <View style={styles.sectionHeader}>
