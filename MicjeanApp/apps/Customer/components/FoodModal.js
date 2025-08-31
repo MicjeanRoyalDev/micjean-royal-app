@@ -1,12 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import { useCart } from '../context/CartContext';
 
+import { orders } from '../../backend/supabase/orders';
 const FoodModal = ({ visible, dish, onClose }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedAddons, setSelectedAddons] = useState([]);
-  const [packaging, setPackaging] = useState({ type: 'Rubber', price: 0 });
+  const [packaging, setPackaging] = useState(null);
+  const [packages, setPackages] = useState([]);
   const { addToCart } = useCart();
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      const { data, error } = await orders.getPackages();
+      if (!error && Array.isArray(data) && data.length > 0) {
+        setPackages(data);
+        setPackaging(data[0]);
+      } else {
+        setPackages([]);
+        setPackaging({ type: 'Rubber', price: 0 }); // fallback
+      }
+    };
+    fetchPackages();
+  }, [visible]);
 
   const increaseQuantity = () => {
     setQuantity(prev => prev + 1);
@@ -49,8 +65,8 @@ const FoodModal = ({ visible, dish, onClose }) => {
   const calculateTotal = () => {
     const basePrice = getBasePrice();
     const addonsPrice = selectedAddons.reduce((sum, addon) => sum + (addon.price * (addon.quantity || 1)), 0);
-  const packagingPrice = packaging.price || 0;
-  return (basePrice + addonsPrice + packagingPrice) * quantity;
+    const packagingPrice = packaging?.price || 0;
+    return (basePrice + addonsPrice + packagingPrice) * quantity;
   };
 
   const defaultAddons = [
@@ -114,20 +130,20 @@ const FoodModal = ({ visible, dish, onClose }) => {
             {/* Add-ons Section */}
             <Text style={styles.modalSubtitle}>Packaging:</Text>
             <View style={styles.packagingContainer}>
-              <TouchableOpacity
-                style={[styles.packagingOption, packaging.type === 'Rubber' && styles.packagingSelected]}
-                onPress={() => setPackaging({ type: 'Rubber', price: 0 })}
-              >
-                <Text style={styles.packagingText}>Rubber</Text>
-                <Text style={styles.packagingPrice}>0 GHC</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.packagingOption, packaging.type === 'Pack' && styles.packagingSelected]}
-                onPress={() => setPackaging({ type: 'Pack', price: 3 })}
-              >
-                <Text style={styles.packagingText}>Pack</Text>
-                <Text style={styles.packagingPrice}>3 GHC</Text>
-              </TouchableOpacity>
+              {packages.length > 0 ? (
+                packages.map((pkg, idx) => (
+                  <TouchableOpacity
+                    key={pkg.id || idx}
+                    style={[styles.packagingOption, packaging && packaging.id === pkg.id && styles.packagingSelected]}
+                    onPress={() => setPackaging(pkg)}
+                  >
+                    <Text style={styles.packagingText}>{pkg.type || pkg.name || 'Package'}</Text>
+                    <Text style={styles.packagingPrice}>{pkg.price} GHC</Text>
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <Text style={{ color: '#888' }}>No packaging options available</Text>
+              )}
             </View>
 
             {/* Add-ons Section */}

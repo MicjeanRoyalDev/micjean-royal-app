@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  ScrollView,
-  StyleSheet,
-  Alert,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import Toast from '../../components/Toast';
+import LoadingOverlay from '../../components/LoadingOverlay';
 import Button from '../../components/ui/Button';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons'; 
@@ -23,14 +17,22 @@ export default function CheckoutScreen() {
   const [phone, setPhone] = useState('');
   const [instructions, setInstructions] = useState('');
 
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
+  const [loading, setLoading] = useState(false);
   const placeOrder = async () => {
+    if (loading) return;
+    setLoading(true);
     if (!fullName || !address || !phone) {
-      Alert.alert('Missing Information', 'Please fill in all the fields.');
+      setLoading(false);
+      setToast({ visible: true, message: 'Please fill in all the fields.', type: 'error' });
+      setTimeout(() => setToast({ ...toast, visible: false }), 2500);
       return;
     }
 
     if (cart.items.length === 0) {
-      Alert.alert('Empty Cart', 'Your cart is empty. Add some items before placing an order.');
+      setLoading(false);
+      setToast({ visible: true, message: 'Your cart is empty. Add some items before placing an order.', type: 'error' });
+      setTimeout(() => setToast({ ...toast, visible: false }), 2500);
       return;
     }
 
@@ -38,7 +40,9 @@ export default function CheckoutScreen() {
       // Get user profile for userId
       const { profile, error: authError } = await auth.getProfile();
       if (authError || !profile?.sub) {
-        Alert.alert('Error', 'User not authenticated.');
+        setLoading(false);
+        setToast({ visible: true, message: 'User not authenticated.', type: 'error' });
+        setTimeout(() => setToast({ ...toast, visible: false }), 2500);
         return;
       }
 
@@ -66,108 +70,119 @@ export default function CheckoutScreen() {
         };
         const { success, error } = await orders.createOrder(orderPayload);
         if (!success) {
-          Alert.alert('Order Error', error || 'Could not place order.');
+          setLoading(false);
+          setToast({ visible: true, message: error || 'Could not place order.', type: 'error' });
+          setTimeout(() => setToast({ ...toast, visible: false }), 2500);
           return;
         }
       }
 
-      Alert.alert('Order Placed', 'Thank you! Your food is on the way.', [
-        { text: 'OK', onPress: () => {
-          clearCart();
-          navigation.navigate('Home');
-        }},
-      ]);
+      setToast({ visible: true, message: 'Thank you! Your food is on the way.', type: 'success' });
+      setTimeout(() => {
+        setToast({ ...toast, visible: false });
+        clearCart();
+        navigation.navigate('Home');
+        setLoading(false);
+      }, 2000);
     } catch (err) {
-      Alert.alert('Order Error', err.message || 'Could not place order.');
+      setToast({ visible: true, message: err.message || 'Could not place order.', type: 'error' });
+      setTimeout(() => setToast({ ...toast, visible: false }), 2500);
+      setLoading(false);
     }
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
-      {/* Back Button */}
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <MaterialIcons name="arrow-back" size={24} color="#0f9902ff" />
-      </TouchableOpacity>
+    <>
+  <LoadingOverlay visible={loading} message="Placing your order..." />
+  <ScrollView>
+      <Toast message={toast.message} type={toast.type} visible={toast.visible} />
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
+        {/* Back Button */}
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <MaterialIcons name="arrow-back" size={24} color="#0f9902ff" />
+        </TouchableOpacity>
 
-      <Text style={styles.sectionTitle}>Order Summary</Text>
-      {cart.items.length > 0 ? (
-        <>
-          {cart.items.map((item) => (
-            <View key={item.cartId} style={styles.itemRow}>
-              <View style={styles.itemDetails}>
-                <Text style={styles.itemName}>
-                  {item.name} x{item.quantity}
-                </Text>
-                {item.selectedAddons.length > 0 && (
-                  <Text style={styles.addonsText}>
-                    + {item.selectedAddons.map(addon => addon.name).join(', ')}
+        <Text style={styles.sectionTitle}>Order Summary</Text>
+        {cart.items.length > 0 ? (
+          <>
+            {cart.items.map((item) => (
+              <View key={item.cartId} style={styles.itemRow}>
+                <View style={styles.itemDetails}>
+                  <Text style={styles.itemName}>
+                    {item.name} x{item.quantity}
                   </Text>
-                )}
+                  {item.selectedAddons.length > 0 && (
+                    <Text style={styles.addonsText}>
+                      + {item.selectedAddons.map(addon => addon.name).join(', ')}
+                    </Text>
+                  )}
+                </View>
+                <Text style={styles.itemPrice}>
+                  GHC {(item.totalPrice * item.quantity).toFixed(2)}
+                </Text>
               </View>
-              <Text style={styles.itemPrice}>
-                GHC {(item.totalPrice * item.quantity).toFixed(2)}
-              </Text>
+            ))}
+            {/* Show instructions if present */}
+            {instructions ? (
+              <View style={{ marginVertical: 10 }}>
+                <Text style={{ fontWeight: 'bold', color: '#333' }}>Order Instructions:</Text>
+                <Text style={{ color: '#444', marginTop: 2 }}>{instructions}</Text>
+              </View>
+            ) : null}
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Total:</Text>
+              <Text style={styles.totalAmount}>GHC {getCartTotal()}</Text>
             </View>
-          ))}
-          {/* Show instructions if present */}
-          {instructions ? (
-            <View style={{ marginVertical: 10 }}>
-              <Text style={{ fontWeight: 'bold', color: '#333' }}>Order Instructions:</Text>
-              <Text style={{ color: '#444', marginTop: 2 }}>{instructions}</Text>
-            </View>
-          ) : null}
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total:</Text>
-            <Text style={styles.totalAmount}>GHC {getCartTotal()}</Text>
+          </>
+        ) : (
+          <View style={styles.emptyCart}>
+            <Text style={styles.emptyCartText}>No items in cart</Text>
+            <Button 
+              title="Go to Menu" 
+              buttonStyle={styles.menuButton}
+              onPress={() => navigation.navigate('Menu')}
+            />
           </View>
-        </>
-      ) : (
-        <View style={styles.emptyCart}>
-          <Text style={styles.emptyCartText}>No items in cart</Text>
-          <Button 
-            title="Go to Menu" 
-            buttonStyle={styles.menuButton}
-            onPress={() => navigation.navigate('Menu')}
-          />
-        </View>
-      )}
+        )}
 
-      <Text style={styles.sectionTitle}>Delivery Information</Text>
-      <TextInput
-        placeholder="Order Instructions (optional)"
-        value={instructions}
-        onChangeText={setInstructions}
-        style={[styles.input, { minHeight: 40, marginBottom: 10 }]}
-        multiline
-      />
-      <TextInput
-        placeholder="Full Name"
-        value={fullName}
-        onChangeText={setFullName}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Delivery Address"
-        value={address}
-        onChangeText={setAddress}
-        style={styles.input}
-        multiline
-      />
-      <TextInput
-        placeholder="Phone Number"
-        value={phone}
-        onChangeText={setPhone}
-        style={styles.input}
-        keyboardType="phone-pad"
-      />
+        <Text style={styles.sectionTitle}>Delivery Information</Text>
+        <TextInput
+          placeholder="Order Instructions (optional)"
+          value={instructions}
+          onChangeText={setInstructions}
+          style={[styles.input, { minHeight: 40, marginBottom: 10 }]}
+          multiline
+        />
+        <TextInput
+          placeholder="Full Name"
+          value={fullName}
+          onChangeText={setFullName}
+          style={styles.input}
+        />
+        <TextInput
+          placeholder="Delivery Address"
+          value={address}
+          onChangeText={setAddress}
+          style={styles.input}
+          multiline
+        />
+        <TextInput
+          placeholder="Phone Number"
+          value={phone}
+          onChangeText={setPhone}
+          style={styles.input}
+          keyboardType="phone-pad"
+        />
 
-      <Button
-        title="Place Order"
-        buttonStyle={[styles.orderButton, cart.items.length === 0 && styles.disabledButton]}
-        onPress={placeOrder}
-        disabled={cart.items.length === 0}
-      />
-    </ScrollView>
+        <Button
+          title={loading ? "Placing Order..." : "Place Order"}
+          buttonStyle={[styles.orderButton, (cart.items.length === 0 || loading) && styles.disabledButton]}
+          onPress={placeOrder}
+          disabled={cart.items.length === 0 || loading}
+        />
+      </ScrollView>
+      </ScrollView>
+    </>
   );
 }
 
