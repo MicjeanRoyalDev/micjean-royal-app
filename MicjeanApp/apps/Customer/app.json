@@ -1,29 +1,34 @@
 {
-    "expo": {
-        "name": "CustomerApp",
-        "slug": "customer-app",
-        "version": "1.0.0",
-        "orientation": "portrait",
-        "icon": "../../shared/assets/images/micjean royal logo.png",
-        "splash": {
-            "image": "../../shared/assets/images/micjean photo for background.jpg",
-            "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
-        },
-        "assetBundlePatterns": [
-            "../../shared/assets/**/*"
-        ],
-        "ios": {
-            "supportsTablet": true
-        },
-        "android": {
-            "adaptiveIcon": {
-                "foregroundImage": "../../shared/assets/images/micjean royal logo.png",
-                "backgroundColor": "#ffffff"
-            }
-        },
-        "web": {
-            "favicon": "../../shared/assets/images/micjean royal logo.png"
-        }
+  "expo": {
+    "name": "CustomerApp",
+    "slug": "customer-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "../../shared/assets/images/micjean royal logo.png",
+    "splash": {
+      "image": "../../shared/assets/images/micjean photo for background.jpg",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "../../shared/assets/**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "../../shared/assets/images/micjean royal logo.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "../../shared/assets/images/micjean royal logo.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8c30b4b8-3be4-4752-b8b0-560bb527f142"
+      }
     }
+  }
 }
