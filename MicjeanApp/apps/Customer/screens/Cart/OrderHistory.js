@@ -3,8 +3,8 @@ import { View, Text, FlatList, Image, StyleSheet, ActivityIndicator, TouchableOp
 import Toast from '../../components/Toast';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { orders } from '../../../../backend/supabase/orders';
-import { auth } from '../../../../backend/supabase/auth';
+import { orders } from '../../utils/orders';
+import { auth } from '../../utils/auth';
 
 export default function OrderHistory() {
   const navigation = useNavigation();

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, Alert } from 'react-native';
 import { useCart } from '../context/CartContext';
 
-import { orders } from '../../backend/supabase/orders';
+import { orders } from '../utils/orders';
 const FoodModal = ({ visible, dish, onClose }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedAddons, setSelectedAddons] = useState([]);
