@@ -127,7 +127,7 @@ export default function OrderDetails({ orderId, onClose }: { orderId: string, on
     }
 
     const statusStyles = getStatusStyles(order.status);
-    const canAccept = order.status === "placed" && unavailableItems.length === 0;
+    const canAccept = order.status === "confirmed" && unavailableItems.length === 0;
 
     return (
         <ScrollView className="flex-1 bg-background">
@@ -179,7 +179,7 @@ export default function OrderDetails({ orderId, onClose }: { orderId: string, on
                 </Card>
 
                 {/* Action Buttons */}
-                {order.status === 'placed' && (
+                {order.status === 'confirmed' && (
                     <View className="flex-row gap-x-3 mt-2">
                         <View className="flex-1">
                             <Button
@@ -204,7 +204,7 @@ export default function OrderDetails({ orderId, onClose }: { orderId: string, on
                         </View>
                     </View>
                 )}
-                {unavailableItems.length > 0 && order.status === 'placed' && (
+                {unavailableItems.length > 0 && order.status === 'confirmed' && (
                     <Text className="text-center text-sm text-destructive mt-2">
                         Cannot accept order because some items are unavailable.
                     </Text>
