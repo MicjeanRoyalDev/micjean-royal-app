@@ -1,5 +1,5 @@
-import axios, { InternalAxiosRequestConfig } from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios, { InternalAxiosRequestConfig } from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // const API_URL = process.env.API_URL || 'http://localhost:3000';
 
@@ -52,7 +52,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //   }
 // }
 
-import { vendorApi } from '../../../backend/supabase/vendor';
+import { vendorApi } from "@backend/supabase/vendor";
 import {
   Paginated,
   Category,
@@ -60,9 +60,9 @@ import {
   OrderListItem,
   OrderStatus,
   NewMenu,
-} from './types';
+} from "./types";
 
-type MenuUpdatePayload = Partial<Omit<Menu, 'id' | 'description'>>;
+type MenuUpdatePayload = Partial<Omit<Menu, "id" | "description">>;
 
 /**
  * ApiClient is a singleton class that serves as the data layer for the vendor app.
@@ -92,14 +92,14 @@ class ApiClient {
    * @returns A promise that resolves to a paginated list of orders.
    */
   async fetchOrders(params: {
-    status?: string;
+    status?: OrderStatus;
     page?: number;
     limit?: number;
   }): Promise<Paginated<OrderListItem>> {
     const { data, error } = await vendorApi.getOrders(params);
     if (error || !data) {
-      console.error('API Client Error: Failed to fetch orders.', error);
-      throw new Error('Could not retrieve orders. Please try again later.');
+      console.error("API Client Error: Failed to fetch orders.", error);
+      throw new Error("Could not retrieve orders. Please try again later.");
     }
     return data;
   }
@@ -108,8 +108,11 @@ class ApiClient {
     const { data, error } = await vendorApi.getOrderById(orderId);
 
     if (error || !data) {
-      console.error(`API Client Error: Failed to fetch order ${orderId}.`, error);
-      throw new Error('Could not retrieve the specified order.');
+      console.error(
+        `API Client Error: Failed to fetch order ${orderId}.`,
+        error
+      );
+      throw new Error("Could not retrieve the specified order.");
     }
 
     return data;
@@ -122,8 +125,8 @@ class ApiClient {
   async fetchCategories(): Promise<Paginated<Category>> {
     const { data, error } = await vendorApi.getCategories();
     if (error || !data) {
-      console.error('API Client Error: Failed to fetch categories.', error);
-      throw new Error('Could not retrieve categories.');
+      console.error("API Client Error: Failed to fetch categories.", error);
+      throw new Error("Could not retrieve categories.");
     }
     // For consistency, we wrap the result in a Paginated object, just like the dummy data.
     return {
@@ -138,11 +141,11 @@ class ApiClient {
    * Fetches all menu items.
    * @returns A promise that resolves to a paginated list of menu items.
    */
-  async fetchMenus(): Promise<Paginated<Menu>> {
-    const { data, error } = await vendorApi.getMenuItems();
+  async fetchMenus(options: { categoryId?: string }): Promise<Paginated<Menu>> {
+    const { data, error } = await vendorApi.getMenuItems(options);
     if (error || !data) {
-      console.error('API Client Error: Failed to fetch menus.', error);
-      throw new Error('Could not retrieve menu items.');
+      console.error("API Client Error: Failed to fetch menus.", error);
+      throw new Error("Could not retrieve menu items.");
     }
     // Wrap in a Paginated object for UI consistency.
     return {
@@ -159,10 +162,16 @@ class ApiClient {
    * @param status - The new status to set for the order.
    */
   async updateOrderStatus(orderId: number, status: OrderStatus): Promise<void> {
-    const { success, error } = await vendorApi.updateOrderStatus(orderId, status);
+    const { success, error } = await vendorApi.updateOrderStatus(
+      orderId,
+      status
+    );
     if (error || !success) {
-      console.error(`API Client Error: Failed to update order ${orderId}.`, error);
-      throw new Error('Could not update the order status.');
+      console.error(
+        `API Client Error: Failed to update order ${orderId}.`,
+        error
+      );
+      throw new Error("Could not update the order status.");
     }
   }
 
@@ -171,11 +180,17 @@ class ApiClient {
    * @param menuId - The ID of the menu item to update.
    * @param updates - An object containing the fields of the menu item to update.
    */
-  async updateMenuItem(menuId: string, updates: MenuUpdatePayload): Promise<void> {
+  async updateMenuItem(
+    menuId: string,
+    updates: MenuUpdatePayload
+  ): Promise<void> {
     const { data, error } = await vendorApi.updateMenuItem(menuId, updates);
     if (error || !data) {
-      console.error(`API Client Error: Failed to update menu item ${menuId}.`, error);
-      throw new Error('Could not update the menu item.');
+      console.error(
+        `API Client Error: Failed to update menu item ${menuId}.`,
+        error
+      );
+      throw new Error("Could not update the menu item.");
     }
   }
 
@@ -188,8 +203,8 @@ class ApiClient {
     const { data, error } = await vendorApi.createMenuItem(menuItemData);
 
     if (error || !data) {
-      console.error('API Client Error: Failed to create menu item.', error);
-      throw new Error('Could not create the menu item. Please try again.');
+      console.error("API Client Error: Failed to create menu item.", error);
+      throw new Error("Could not create the menu item. Please try again.");
     }
   }
 }

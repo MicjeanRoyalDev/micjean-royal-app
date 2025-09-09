@@ -9,20 +9,19 @@ import { supabase } from "./clients";
  * @param {boolean} is_available - The value from the database.
  * @returns {'Available' | 'Unavailable'}
  */
-const toMenuStatus = (is_available) => (is_available ? 'Available' : 'Unavailable');
+const toMenuStatus = (is_available) =>
+  is_available ? "Available" : "Unavailable";
 
 /**
  * Maps the frontend's MenuStatus type back to the database boolean `is_available`.
  * @param {'Available' | 'Unavailable'} status - The status from the frontend.
  * @returns {boolean}
  */
-const fromMenuStatus = (status) => status === 'Available';
-
+const fromMenuStatus = (status) => status === "Available";
 
 // --- Main API Object ---
 
 export const vendorApi = {
-
   // --- Menu and Category Management ---
 
   /**
@@ -39,7 +38,7 @@ export const vendorApi = {
       if (error) throw error;
 
       // Convert integer IDs to strings for frontend consistency
-      const shapedData = data.map(c => ({ ...c, id: c.id.toString() }));
+      const shapedData = data.map((c) => ({ ...c, id: c.id.toString() }));
 
       return { data: shapedData || [], error: null };
     } catch (error) {
@@ -48,20 +47,23 @@ export const vendorApi = {
     }
   },
 
-  /**
-   * Fetches all menu items for the vendor, including unavailable ones.
-   * @returns {Promise<{data: Array, error: string|null}>}
-   */
-  getMenuItems: async () => {
+  getMenuItems: async ({ categoryId } = {}) => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from("menu")
         .select(`id, name, image_url, category_id, price, is_available`)
         .order("name", { ascending: true });
 
+      // If a categoryId is provided, add a filter to the query
+      if (categoryId) {
+        query = query.eq("category_id", parseInt(categoryId, 10));
+      }
+
+      const { data, error } = await query;
+
       if (error) throw error;
 
-      const shapedData = data.map(item => ({
+      const shapedData = data.map((item) => ({
         id: item.id.toString(),
         name: item.name,
         imageUrl: item.image_url,
@@ -102,7 +104,6 @@ export const vendorApi = {
         delete dbUpdates.imageUrl;
       }
 
-
       const { data, error } = await supabase
         .from("menu")
         .update(dbUpdates)
@@ -133,7 +134,7 @@ export const vendorApi = {
         name,
         category_id: parseInt(categoryId, 10),
         price: price || 0,
-        image_url: imageUrl || 'https://default-image-url.com/placeholder.png', // Provide a default
+        image_url: imageUrl || "https://default-image-url.com/placeholder.png", // Provide a default
         is_available: fromMenuStatus(status),
       };
 
@@ -181,7 +182,7 @@ export const vendorApi = {
           total_amount,
           created_at,
           status,
-          user:user_id( raw_user_meta_data ),
+          user:user_profiles( * ),
           order_items(
             menu:menuid( name ),
             addons:order_item_addons( addon:addons( name ) )
@@ -206,14 +207,14 @@ export const vendorApi = {
 
       if (error) throw error;
 
-      const shapedData = data.map(order => ({
+      const shapedData = data.map((order) => ({
         id: order.order_number,
         internalId: order.id, // Keep the real ID for update operations
         customerName: order.user?.raw_user_meta_data?.name || "Guest Customer",
         status: order.status,
-        items: order.order_items.map(item => ({
+        items: order.order_items.map((item) => ({
           food: item.menu.name,
-          toppings: item.addons.map(a => a.addon.name),
+          toppings: item.addons.map((a) => a.addon.name),
         })),
         totalAmount: order.total_amount,
         createdAt: order.created_at,
@@ -233,7 +234,8 @@ export const vendorApi = {
     try {
       const { data: order, error } = await supabase
         .from("orders")
-        .select(`
+        .select(
+          `
           id,
           order_number,
           total_amount,
@@ -244,15 +246,16 @@ export const vendorApi = {
             menu:menuid( name ),
             addons:order_item_addons( addon:addons( name ) )
           )
-        `)
-        .eq('order_number', orderNumber)
+        `
+        )
+        .eq("order_number", orderNumber)
         .single(); // .single() is key here to get one object instead of an array
 
       if (error) throw error;
-      
+
       // Handle the case where the order isn't found
       if (!order) {
-        return { data: null, error: 'Order not found' };
+        return { data: null, error: "Order not found" };
       }
 
       // Shape the data to match the frontend OrderListItem type
@@ -261,9 +264,9 @@ export const vendorApi = {
         internalId: order.id,
         customerName: order.user?.raw_user_meta_data?.name || "Guest Customer",
         status: order.status,
-        items: order.order_items.map(item => ({
+        items: order.order_items.map((item) => ({
           food: item.menu.name,
-          toppings: item.addons.map(a => a.addon.name),
+          toppings: item.addons.map((a) => a.addon.name),
         })),
         totalAmount: order.total_amount,
         createdAt: order.created_at,

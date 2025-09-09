@@ -5,19 +5,11 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
-  Image,
-  Pressable,
-  BackHandler, // Import BackHandler
+  BackHandler,
 } from 'react-native';
-import { PlusCircle } from 'lucide-react-native';
-
-import { useAuth } from '~/context/auth';
-import { fetchCategories, fetchMenus } from '~/api/dummy';
-import { Category, Menu, MenuStatus, NewMenu, Paginated } from '~/api/types';
+// import { fetchCategories, fetchMenus } from '~/api/dummy';
+import { Category, Menu, NewMenu, Paginated } from '~/api/types';
 import { useBreakpoint } from '~/hooks/useBreakpoint';
-import { Button } from '~/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
-import { Badge } from '~/components/ui/badge';
 import { MenuEditSidebar } from '~/components/MenuEditSidebar';
 import { showSuccessToast } from '~/components/toasts/SuccessToast';
 import { useLoaderState } from '~/hooks/useLoaderState';
@@ -32,12 +24,13 @@ export default function MenuScreen() {
   const { isLargeScreen } = useBreakpoint();
 
   const { data: categories, isLoading: isLoadingCategories } = useLoaderState<Paginated<Category>>(true, async () => {
-    const result = await fetchCategories();
+    const result = await apiClient.fetchCategories();
+    console.log(result);
     return result;
   });
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const { data: menus, isLoading: isLoadingMenus, reset: resetMenus } = useLoaderState<Paginated<Menu>>(!!selectedCategory, async () => {
-    const result = await fetchMenus({ categoryId: selectedCategory?.id! });
+    const result = await apiClient.fetchMenus({ categoryId: selectedCategory?.id! });
     return result;
   });
   const [activeMenu, setActiveMenu] = useState<Menu | NewMenu | null>(null); // For mobile detail view
