@@ -4,11 +4,9 @@ import {
   Text,
   FlatList,
   ActivityIndicator,
-  Alert,
   BackHandler,
 } from "react-native";
 
-import { useAuth } from "~/context/auth";
 import { useDebounce } from "~/hooks/useDebounce";
 import { OrderListItem, Paginated } from "~/api/types";
 
@@ -18,11 +16,11 @@ import {
 } from "~/components/OrdersScreenHeader";
 import { OrderCard } from "~/components/OrderCard";
 import { ListPagination } from "~/components/ListPagination";
-import { fetchOrders } from "~/api/dummy";
 import { useColorScheme } from "~/hooks/useColorScheme";
 import { useBreakpoint } from "~/hooks/useBreakpoint";
 import { OrderDetailsSidebar } from "~/components/OrderDetailsSidebar";
 import OrderDetails from "~/components/OrderDetails";
+import { apiClient } from "~/api";
 
 const FOOD_CATEGORIES = [
   "Pizza",
@@ -81,7 +79,7 @@ export default function OrdersScreen() {
         // const response = await authClient.get<Paginated<OrderListItem>>('/orders', { params });
         // setOrders(response.data.items);
         // setTotalItems(response.data.total);
-        const orders = await fetchOrders(params); // Simulated API call
+        const orders = await apiClient.fetchOrders(params);
         setOrders(orders.items);
         setTotalItems(orders.total);
       } catch (e) {

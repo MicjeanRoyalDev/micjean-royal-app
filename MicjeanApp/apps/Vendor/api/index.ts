@@ -52,7 +52,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //   }
 // }
 
-import { vendorApi } from '../../../backend/supabase/vendor';
+import { vendorApi } from '@backend/supabase/vendor';
 import {
   Paginated,
   Category,
@@ -138,8 +138,8 @@ class ApiClient {
    * Fetches all menu items.
    * @returns A promise that resolves to a paginated list of menu items.
    */
-  async fetchMenus(): Promise<Paginated<Menu>> {
-    const { data, error } = await vendorApi.getMenuItems();
+  async fetchMenus(options: { categoryId?: string }): Promise<Paginated<Menu>> {
+    const { data, error } = await vendorApi.getMenuItems(options);
     if (error || !data) {
       console.error('API Client Error: Failed to fetch menus.', error);
       throw new Error('Could not retrieve menu items.');
