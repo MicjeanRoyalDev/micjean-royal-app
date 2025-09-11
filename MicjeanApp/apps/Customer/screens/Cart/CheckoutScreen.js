@@ -7,11 +7,14 @@ import {
   StyleSheet,
   Alert,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import Button from '../../components/ui/Button';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons'; 
-import { useCart } from '../../context/CartContext'; 
+import { useCart } from '../../context/CartContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context'; 
 
 export default function CheckoutScreen() {
   const navigation = useNavigation();
@@ -19,6 +22,7 @@ export default function CheckoutScreen() {
   const [fullName, setFullName] = useState('');
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
+  const insets = useSafeAreaInsets();
 
   const placeOrder = () => {
     if (!fullName || !address || !phone) {
@@ -40,88 +44,107 @@ export default function CheckoutScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
-      {/* Back Button */}
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-        <MaterialIcons name="arrow-back" size={24} color="#0f9902ff" />
-      </TouchableOpacity>
+    <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+    >
+      <ScrollView 
+        style={styles.scrollView} 
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 56 + insets.bottom }]}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Back Button */}
+        <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.backButton, { top: insets.top + 20 }]}>
+          <MaterialIcons name="arrow-back" size={24} color="#0f9902ff" />
+        </TouchableOpacity>
 
-      <Text style={styles.sectionTitle}>Order Summary</Text>
-      {cart.items.length > 0 ? (
-        <>
-          {cart.items.map((item) => (
-            <View key={item.cartId} style={styles.itemRow}>
-              <View style={styles.itemDetails}>
-                <Text style={styles.itemName}>
-                  {item.name} x{item.quantity}
-                </Text>
-                {item.selectedAddons.length > 0 && (
-                  <Text style={styles.addonsText}>
-                    + {item.selectedAddons.map(addon => addon.name).join(', ')}
+        <Text style={[styles.sectionTitle, { marginTop: insets.top + 60 }]}>Order Summary</Text>
+        {cart.items.length > 0 ? (
+          <>
+            {cart.items.map((item) => (
+              <View key={item.cartId} style={styles.itemRow}>
+                <View style={styles.itemDetails}>
+                  <Text style={styles.itemName}>
+                    {item.name} x{item.quantity}
                   </Text>
-                )}
+                  {item.selectedAddons.length > 0 && (
+                    <Text style={styles.addonsText}>
+                      + {item.selectedAddons.map(addon => addon.name).join(', ')}
+                    </Text>
+                  )}
+                </View>
+                <Text style={styles.itemPrice}>
+                  GHC {(item.totalPrice * item.quantity).toFixed(2)}
+                </Text>
               </View>
-              <Text style={styles.itemPrice}>
-                GHC {(item.totalPrice * item.quantity).toFixed(2)}
-              </Text>
+            ))}
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Total:</Text>
+              <Text style={styles.totalAmount}>GHC {getCartTotal()}</Text>
             </View>
-          ))}
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total:</Text>
-            <Text style={styles.totalAmount}>GHC {getCartTotal()}</Text>
+          </>
+        ) : (
+          <View style={styles.emptyCart}>
+            <Text style={styles.emptyCartText}>No items in cart</Text>
+            <Button 
+              title="Go to Menu" 
+              buttonStyle={styles.menuButton}
+              onPress={() => navigation.navigate('Menu')}
+            />
           </View>
-        </>
-      ) : (
-        <View style={styles.emptyCart}>
-          <Text style={styles.emptyCartText}>No items in cart</Text>
-          <Button 
-            title="Go to Menu" 
-            buttonStyle={styles.menuButton}
-            onPress={() => navigation.navigate('Menu')}
-          />
-        </View>
-      )}
+        )}
 
-      <Text style={styles.sectionTitle}>Delivery Information</Text>
-      <TextInput
-        placeholder="Full Name"
-        value={fullName}
-        onChangeText={setFullName}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Delivery Address"
-        value={address}
-        onChangeText={setAddress}
-        style={styles.input}
-        multiline
-      />
-      <TextInput
-        placeholder="Phone Number"
-        value={phone}
-        onChangeText={setPhone}
-        style={styles.input}
-        keyboardType="phone-pad"
-      />
+        <Text style={styles.sectionTitle}>Delivery Information</Text>
+        <TextInput
+          placeholder="Full Name"
+          value={fullName}
+          onChangeText={setFullName}
+          style={styles.input}
+          returnKeyType="next"
+        />
+        <TextInput
+          placeholder="Delivery Address"
+          value={address}
+          onChangeText={setAddress}
+          style={styles.input}
+          multiline
+          returnKeyType="next"
+        />
+        <TextInput
+          placeholder="Phone Number"
+          value={phone}
+          onChangeText={setPhone}
+          style={styles.input}
+          keyboardType="phone-pad"
+          returnKeyType="done"
+        />
 
-      <Button
-        title="Place Order"
-        buttonStyle={[styles.orderButton, cart.items.length === 0 && styles.disabledButton]}
-        onPress={placeOrder}
-        disabled={cart.items.length === 0}
-      />
-    </ScrollView>
+        <Button
+          title="Place Order"
+          buttonStyle={[styles.orderButton, cart.items.length === 0 && styles.disabledButton]}
+          onPress={placeOrder}
+          disabled={cart.items.length === 0}
+        />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    flex: 1,
     backgroundColor: '#fff',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    padding: 16,
   },
   backButton: {
     position: 'absolute',
-    top: 20,
     left: 0,
     zIndex: 10,
     padding: 8,
@@ -130,8 +153,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     marginBottom: 20,
-    left:50,
-    marginTop: 30, 
+    left: 50,
     color: '#1b5e20',
   },
   itemRow: {
@@ -199,8 +221,9 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#0a0a0aff',
     marginBottom: 12,
+    color: '#000000ff',
   },
   orderButton: {
     backgroundColor: '#1b5e20',

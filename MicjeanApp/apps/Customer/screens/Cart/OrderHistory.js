@@ -66,7 +66,7 @@ export default function OrderHistory() {
           data={orderHistory}
           keyExtractor={(item) => item.order_number.toString()}
           renderItem={renderOrder}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: 56 }}
         />
       )}
     </View>

@@ -77,7 +77,7 @@ const MenuScreen = () => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.menuTitle}>Menu</Text>
       <SearchBar value={search} onChangeText={setSearch} />
       {categories.length > 0 && (
@@ -100,7 +100,7 @@ const MenuScreen = () => {
           </Text>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

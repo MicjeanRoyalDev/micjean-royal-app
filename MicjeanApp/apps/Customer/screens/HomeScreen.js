@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import {View,Text,StyleSheet,SafeAreaView,ScrollView, Image,TouchableOpacity,Dimensions,Animated,} from 'react-native';
+import {View,Text,StyleSheet,ScrollView, Image,TouchableOpacity,Dimensions,Animated,} from 'react-native';
 import Header from '../components/Header';
 import PopularDishes from '../components/PopularDishes';
 import { supabase } from '../../../backend/supabase/clients';
@@ -65,7 +65,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Header Component */}
       <Header userName={userName} />
 
@@ -115,7 +115,7 @@ const HomeScreen = () => {
 
       {/* Bottom Navigation Component */}
     
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 90, // Padding for floating nav
+    paddingBottom: 70, // Padding for floating nav
     flexGrow: 1,
   },
   carouselContainer: {

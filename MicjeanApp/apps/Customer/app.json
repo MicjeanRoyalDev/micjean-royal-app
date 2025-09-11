@@ -1,29 +1,51 @@
 {
-    "expo": {
-        "name": "CustomerApp",
-        "slug": "customer-app",
-        "version": "1.0.0",
-        "orientation": "portrait",
-        "icon": "../../shared/assets/images/micjean royal logo.png",
-        "splash": {
-            "image": "../../shared/assets/images/micjean photo for background.jpg",
-            "resizeMode": "contain",
-            "backgroundColor": "#ffffff"
-        },
-        "assetBundlePatterns": [
-            "../../shared/assets/**/*"
-        ],
-        "ios": {
-            "supportsTablet": true
-        },
-        "android": {
-            "adaptiveIcon": {
-                "foregroundImage": "../../shared/assets/images/micjean royal logo.png",
-                "backgroundColor": "#ffffff"
-            }
-        },
-        "web": {
-            "favicon": "../../shared/assets/images/micjean royal logo.png"
-        }
-    }
+  "expo": {
+    "name": "CustomerApp",
+    "slug": "customer-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "../../shared/assets/images/icon.png",
+    "splash": {
+      "image": "../../shared/assets/images/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "../../shared/assets/**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+       "statusBar": {
+        "barStyle": "dark-content",
+        "translucent": true,
+        "backgroundColor": "transparent"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "../../shared/assets/images/icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "statusBar": {
+        "barStyle": "dark-content",
+      "translucent": true,
+      "backgroundColor": "transparent"
+      },
+      "package": "com.esinam_nessa.customerapp"
+    },
+    "statusBar": {
+       "barStyle": "dark-content",
+      "translucent": true,
+      "backgroundColor": "transparent"
+    },
+    "web": {
+      "favicon": "../../shared/assets/images/micjean royal logo.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3515d01e-b223-45b9-8584-7de4f191daf3"
+      }
+    },
+    "owner": "esinam_nessa"
+  }
 }

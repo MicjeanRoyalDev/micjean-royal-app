@@ -1,9 +1,10 @@
 import React from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
-
+import { ScrollView, View, Text, StyleSheet,TouchableOpacity } from 'react-native';
+import { Linking } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 export default function PrivacyScreen() {
   return (
-    <ScrollView style={styles.container}  contentContainerStyle={{ paddingBottom: 100 }}>
+    <ScrollView style={styles.container}  contentContainerStyle={{ paddingBottom: 70 }}>
       <Text style={styles.heading}>Privacy Policy</Text>
 
       <Text style={styles.sectionTitle}>1. Introduction</Text>
@@ -43,7 +44,9 @@ export default function PrivacyScreen() {
 
       <Text style={styles.sectionTitle}>8. Contact Us</Text>
       <Text style={styles.paragraph}>
-        If you have any questions about this Privacy Policy, please contact us at support@gmail.com.
+        If you have any questions about this Privacy Policy, please contact us at <TouchableOpacity onPress={() => Linking.openURL("mailto:micjeanroyalcateringservices@gmail.com")}>
+  <Text style={styles.info}> <MaterialIcons name ="email" size={12} color={'#0da517ff'} /> micjeanroyalcateringservices@gmail.com</Text>
+</TouchableOpacity>
       </Text>
     </ScrollView>
   );
@@ -53,7 +56,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     backgroundColor: '#fff',
-    paddingBottom:150,
+    paddingBottom:70,
   },
   heading: {
     fontSize: 24,
@@ -68,6 +71,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 8,
     color: '#333',
+  },
+  info:{
+    fontSize:16,
+    color:'#0126ceff',
   },
   paragraph: {
     fontSize: 16,

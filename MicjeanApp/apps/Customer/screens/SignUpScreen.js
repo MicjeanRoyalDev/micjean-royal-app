@@ -14,6 +14,7 @@ ScrollView,
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../../backend/supabase/auth';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const { width } = Dimensions.get('window');
 const CURVE_HEIGHT = width * 0.65; // Make the curve much taller
 
@@ -24,6 +25,7 @@ const SignUpScreen = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const handleSignUp = async () => {
     if (!email || !password || !name || !telephone) {
@@ -51,7 +53,7 @@ const SignUpScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <Image
         source={require('../../../shared/assets/images/leavesglow.jpg')}
         style={styles.backgroundImage}

@@ -1,6 +1,8 @@
-//logic for sending the info hasn't been implemented yet
+//logic for sending the info has been implemented
 import React, { useState } from 'react';
-import {ScrollView, SafeAreaView,TextInput,Text, TouchableOpacity, StyleSheet,LayoutAnimation,UIManager, Platform} from 'react-native';
+import { Linking } from 'react-native';
+import {ScrollView,TextInput,Text, TouchableOpacity, StyleSheet,LayoutAnimation,UIManager, Platform,View } from 'react-native';
+//import { SafeAreaView } from 'react-native-safe-area-context';
 import Button from '../../../components/ui/Button';
 import CheckBox from '../../../components/ui/CheckBox';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -10,6 +12,7 @@ if (Platform.OS === 'android') {
     UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 export default function ContactScreen() {
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [selectedOrder, setSelectedOrder] = useState('');
@@ -36,9 +39,22 @@ export default function ContactScreen() {
     }
   };
 
+  //this is for the sending function
+  const handleSend = () => {
+    const subject = `Customer Support Request -${selectedReason || "General"}`;
+    const body = `
+    Name: ${name}
+    Phone: ${phone}
+    Order Made: ${selectedOrder}
+    Reason: ${selectedReason}
+    Area of Concern: ${selectedArea}
+    Contact Preferences: ${contactOptions.join(', ')}
+    `;
+    Linking.openURL(`mailto:micjeanroyalcateringservices@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+  };
+
   return (
-    <SafeAreaView style={{flex:1}}>
-        <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={[styles.container, { paddingBottom: 56 }]} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
       {/* Heading */}
       <Text style={styles.heading}>Contact Customer Support</Text>
       {/* Paragraph */}
@@ -140,30 +156,37 @@ export default function ContactScreen() {
         type="solid"
         buttonStyle={styles.button}
         titleStyle={styles.buttonText}
+        onPress={handleSend}
       />
-      {/*Options to contact the restaurant*/}
-      <Text style={styles.label}>Contact us through:
-         {'\n\n'}
-         Phone: 05........
-          {'\n\n'}
-         Email: stuff@gmail.com
-      </Text>
-       </ScrollView>
-    </SafeAreaView>
+{/*Options to contact the restaurant*/}
+<Text style={styles.label}>Contact us through:</Text>
+<TouchableOpacity onPress={() => Linking.openURL("tel:0540722847")}>
+  <Text style={styles.info}> <MaterialIcons name ="local-phone" size={13} color={'#0da517ff'} />  0540722847</Text>
+</TouchableOpacity>
+
+<TouchableOpacity onPress={() => Linking.openURL("tel:0244972516")}>
+  <Text style={styles.info}> <MaterialIcons name ="local-phone" size={12} color={'#0da517ff'} />  0244972516</Text>
+</TouchableOpacity>
+
+<TouchableOpacity onPress={() => Linking.openURL("mailto:micjeanroyalcateringservices@gmail.com")}>
+  <Text style={styles.info}> <MaterialIcons name ="email" size={12} color={'#0da517ff'} /> micjeanroyalcateringservices@gmail.com</Text>
+</TouchableOpacity>
+
+ </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    paddingBottom:120,
+    paddingBottom:50,
   },
   heading: {
     fontSize: 22,
     fontWeight: '700',
     marginTop:10,
     marginBottom: 15,
-    color: '#1b5e20',
+    color: '#0aaf15ff',
   },
   paragraph: {
     fontSize: 16,
@@ -176,6 +199,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 20,
     marginBottom: 6,
+    color:'#05970eff',
+  },
+  info:{
+    fontSize:15,
+    color:'#001ea3ff',
   },
   input: {
     borderWidth: 1,
@@ -198,14 +226,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   selectedOption: {
-    backgroundColor: '#1b5e20',
-    borderColor: '#1b5e20',
+    backgroundColor: '#0da517ff',
+    borderColor: '#0da517ff',
   },
   optionText: {
     color: '#333',
   },
   button: {
-    backgroundColor: '#1b5e20',
+    backgroundColor: '#09af14ff',
     borderRadius: 25,
     paddingVertical: 12,
     width: 160,

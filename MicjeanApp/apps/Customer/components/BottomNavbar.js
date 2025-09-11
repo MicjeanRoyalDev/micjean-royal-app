@@ -19,11 +19,6 @@ const theme = {
 
 export default function BottomNavbar() {
   const { getCartItemCount } = useCart();
-  
-  function Orders() {
-    return null;
-  }
-
   const Tab = createBottomTabNavigator();
 
   const CartIcon = ({ focused, color, size }) => {
@@ -67,7 +62,7 @@ export default function BottomNavbar() {
               borderRadius: 20,
               height: 56,
               position: 'absolute',      
-              bottom: 45,                   
+              bottom: 16,                   
               marginHorizontal:8,                  
               alignSelf:'center',            
               elevation: 30,            
@@ -140,7 +135,7 @@ export default function BottomNavbar() {
             borderRadius: 20,
             height: 56,
             position: 'absolute',
-            bottom: 45,
+            bottom: 40,
             marginHorizontal: 8,
             alignSelf: 'center',
             elevation: 30,
@@ -168,7 +163,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: -6,
     top: -3,
-    backgroundColor: '#f3c807ff',
+    backgroundColor: '#c50303ff',
     borderRadius: 10,
     width: 18,
     height: 18,
